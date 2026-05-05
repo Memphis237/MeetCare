@@ -15,18 +15,9 @@ import java.util.Objects;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        URL fxml = Objects.requireNonNull(
-                Main.class.getResource("/view/homePatient.fxml"),
-                "Missing FXML resource: /view/homePatient.fxml"
-        );
-        URL stylesheet = Objects.requireNonNull(
-                Main.class.getResource("/css/style.css"),
-                "Missing stylesheet resource: /css/style.css"
-        );
-
-        FXMLLoader fxmlLoader = new FXMLLoader(fxml);
-        Scene scene = new Scene(fxmlLoader.load(), 620, 520);
-        scene.getStylesheets().add(stylesheet.toExternalForm());
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/homePatient.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 850, 600);
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setTitle("Bibliothèque - Gestion des livres");
         stage.setScene(scene);
         stage.show();
