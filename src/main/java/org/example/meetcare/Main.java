@@ -1,17 +1,38 @@
 package org.example.meetcare;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
-        }
+import java.io.IOException;
+import java.net.URL;
+import java.util.Objects;
+
+/**
+ * Point d'entree JavaFX.
+ */
+public class Main extends Application {
+    @Override
+    public void start(Stage stage) throws IOException {
+        URL fxml = Objects.requireNonNull(
+                Main.class.getResource("/view/homePatient.fxml"),
+                "Missing FXML resource: /view/homePatient.fxml"
+        );
+        URL stylesheet = Objects.requireNonNull(
+                Main.class.getResource("/css/style.css"),
+                "Missing stylesheet resource: /css/style.css"
+        );
+
+        FXMLLoader fxmlLoader = new FXMLLoader(fxml);
+        Scene scene = new Scene(fxmlLoader.load(), 620, 520);
+        scene.getStylesheets().add(stylesheet.toExternalForm());
+        stage.setTitle("Bibliothèque - Gestion des livres");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
