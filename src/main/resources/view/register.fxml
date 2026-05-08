@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane
+    fitToWidth="true"
+    style="-fx-background-color: #ffffff; -fx-background: #ffffff;"
+    xmlns="http://javafx.com/javafx/21"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="org.example.meetcare.controller.RegisterController">
+
+    <StackPane style="-fx-background-color: #ffffff;">
+        <VBox spacing="0" alignment="TOP_CENTER" maxWidth="440" prefWidth="440">
+            <padding>
+                <Insets top="16" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <!-- Back button -->
+            <HBox alignment="CENTER_LEFT" spacing="4">
+                <Label text="←" style="-fx-font-size: 15px; -fx-text-fill: #1a1a1a; -fx-cursor: hand;" />
+                <Label text="Retour" onMouseClicked="#handleBack" style="-fx-font-size: 13px; -fx-text-fill: #1a1a1a; -fx-cursor: hand;" />
+            </HBox>
+
+            <!-- Logo -->
+            <VBox alignment="CENTER">
+                <VBox.margin><Insets top="12" bottom="0"/></VBox.margin>
+                <StackPane prefWidth="52" prefHeight="52" maxWidth="52" maxHeight="52"
+                           style="-fx-background-color: #2979FF; -fx-background-radius: 26;">
+                    <Label text="〜" style="-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;" />
+                </StackPane>
+            </VBox>
+
+            <!-- Title -->
+            <VBox spacing="2" alignment="CENTER">
+                <VBox.margin><Insets top="10" bottom="0"/></VBox.margin>
+                <Label text="Créer un compte patient"
+                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #0d0d0d;" />
+                <Label text="Rejoignez MediConnect"
+                       style="-fx-font-size: 12px; -fx-text-fill: #888888;" />
+                <Label fx:id="errorLabel"
+                       style="-fx-font-size: 12px;"
+                       wrapText="true" />
+            </VBox>
+
+            <!-- Form -->
+            <VBox spacing="10">
+                <VBox.margin><Insets top="16" bottom="0"/></VBox.margin>
+
+                <!-- Nom + Prénom -->
+                <HBox spacing="12">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Nom" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;" />
+                        <TextField fx:id="nameField" maxWidth="Infinity"
+                                   style="-fx-background-color: #F2F2F2;
+                                          -fx-background-radius: 8;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 8;
+                                          -fx-padding: 8 12 8 12;
+                                          -fx-font-size: 13px;
+                                          -fx-pref-height: 38px;" />
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Prénom" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;" />
+                        <TextField fx:id="surnameField" maxWidth="Infinity"
+                                   style="-fx-background-color: #F2F2F2;
+                                          -fx-background-radius: 8;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 8;
+                                          -fx-padding: 8 12 8 12;
+                                          -fx-font-size: 13px;
+                                          -fx-pref-height: 38px;" />
+                    </VBox>
+                </HBox>
+
+                <!-- Email -->
+                <VBox spacing="4">
+                    <Label text="Email" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;" />
+                    <TextField fx:id="emailField" maxWidth="Infinity"
+                               style="-fx-background-color: #F2F2F2;
+                                      -fx-background-radius: 8;
+                                      -fx-border-color: transparent;
+                                      -fx-border-radius: 8;
+                                      -fx-padding: 8 12 8 12;
+                                      -fx-font-size: 13px;
+                                      -fx-pref-height: 38px;" />
+                </VBox>
+
+                <!-- Téléphone -->
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Téléphone" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;" />
+                        <TextField fx:id="phoneField" maxWidth="Infinity"
+                                   style="-fx-background-color: #F2F2F2;
+                                          -fx-background-radius: 8;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 8;
+                                          -fx-padding: 8 12 8 12;
+                                          -fx-font-size: 13px;
+                                          -fx-pref-height: 38px;" />
+            </VBox>
+                    
+                <!-- Mot de passe -->
+                <VBox spacing="4">
+                    <Label text="Mot de passe" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;" />
+                    <PasswordField fx:id="passwordField" maxWidth="Infinity"
+                                   style="-fx-background-color: #F2F2F2;
+                                          -fx-background-radius: 8;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 8;
+                                          -fx-padding: 8 12 8 12;
+                                          -fx-font-size: 13px;
+                                          -fx-pref-height: 38px;" />
+                </VBox>
+
+                <!-- Confirmer mot de passe -->
+                <VBox spacing="4">
+                    <Label text="Confirmer le mot de passe" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;" />
+                    <PasswordField fx:id="confirmPasswordField" maxWidth="Infinity"
+                                   style="-fx-background-color: #F2F2F2;
+                                          -fx-background-radius: 8;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 8;
+                                          -fx-padding: 8 12 8 12;
+                                          -fx-font-size: 13px;
+                                          -fx-pref-height: 38px;" />
+                </VBox>
+
+                <!-- Bouton -->
+                <Button text="Créer mon compte"
+                        maxWidth="Infinity"
+                        onAction="#handleRegister"
+                        style="-fx-background-color: #2979FF;
+                               -fx-text-fill: white;
+                               -fx-font-size: 13px;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-border-radius: 10;
+                               -fx-padding: 10 0 10 0;
+                               -fx-cursor: hand;">
+                    <VBox.margin><Insets top="4"/></VBox.margin>
+                </Button>
+
+            </VBox>
+        </VBox>
+    </StackPane>
+</ScrollPane>

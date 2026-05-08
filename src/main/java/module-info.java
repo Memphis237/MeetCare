@@ -1,6 +1,7 @@
 module org.example.meetcare {
     requires javafx.controls;
     requires javafx.fxml;
+    requires jbcrypt;
 
     requires java.sql;
 
