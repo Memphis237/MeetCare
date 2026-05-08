@@ -6,8 +6,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.Objects;
 
 /**
  * Point d'entree JavaFX.
@@ -15,12 +13,15 @@ import java.util.Objects;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/homePatient.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 850, 600);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        stage.setTitle("Bibliothèque - Gestion des livres");
-        stage.setScene(scene);
-        stage.show();
+       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/register.fxml"));
+       Scene scene = new Scene(fxmlLoader.load(), 500, 650);
+       scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+       stage.setTitle("MeetCare - Inscription");
+       stage.setResizable(true);        // ✅ permet de redimensionner
+       stage.setMinWidth(460);          // ✅ taille minimum
+       stage.setMinHeight(600);         // ✅ taille minimum
+       stage.setScene(scene);
+       stage.show();
     }
 
     public static void main(String[] args) {
