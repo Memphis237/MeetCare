@@ -2,166 +2,372 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<HBox prefHeight="800.0" prefWidth="1280.0" styleClass="main-container" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      
-      <!-- Sidebar Gauche -->
-      <VBox prefWidth="280.0" spacing="10.0" styleClass="sidebar">
-         <children>
-            <VBox alignment="CENTER" spacing="10.0">
-               <children>
-                  <Circle fill="#E0E5F2" radius="40.0" stroke="TRANSPARENT" />
-                  <Label style="-fx-font-weight: bold;" text="Jean" textFill="#1B2559">
-                     <font><Font size="18.0" /></font>
-                  </Label>
-                  <Label text="Cardiologue" textFill="#A3AED0" />
-               </children>
-               <VBox.margin><Insets bottom="40.0" /></VBox.margin>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.HomePatientController"
+            prefWidth="1100" prefHeight="700"
+            style="-fx-background-color: #EBF3FB;">
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!--  SIDEBAR GAUCHE                                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <left>
+        <VBox prefWidth="230" spacing="0"
+              style="-fx-background-color: #FFFFFF; -fx-border-color: #D9E8F5; -fx-border-width: 0 1 0 0;">
+
+            <!-- Logo MediConnect -->
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 22 20 22 20;">
+                <!-- Icône croix médicale (simulée avec un Label stylisé) -->
+                <Label text="✚" style="-fx-text-fill: #2B7FD4; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                <Label text="MediConnect"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+            </HBox>
+
+            <Separator style="-fx-background-color: #D9E8F5;"/>
+
+            <!-- Profil utilisateur -->
+            <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 18 20 18 20;">
+                <!-- Avatar placeholder -->
+                <StackPane>
+                    <Circle fx:id="avatarCircle" radius="24"
+                            style="-fx-fill: #B8D4EE;"/>
+                    <Label text="J" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;"/>
+                </StackPane>
+                <VBox spacing="2">
+                    <Label fx:id="patientNameLabel" text="Jean"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                    <Label fx:id="roleLabel" text="Patient"
+                           style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;"/>
+                </VBox>
+            </HBox>
+
+            <Separator style="-fx-background-color: #D9E8F5;"/>
+
+            <!-- Navigation -->
+            <VBox spacing="2" style="-fx-padding: 10 10 10 10;">
+
+                <!-- Accueil (actif) -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="⌂" style="-fx-font-size: 16px; -fx-text-fill: #2B7FD4;"/>
+                    <Label text="Accueil"
+                           style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;"/>
+                </HBox>
+
+                <!-- Rechercher -->
+                <HBox alignment="CENTER_LEFT" spacing="12" onMouseClicked="#handleSettings"
+                      style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="🔍" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;"/>
+                    <Label text="Rechercher"
+                           style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                </HBox>
+
+                <!-- Mes rendez-vous -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="📅" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;"/>
+                    <Label text="Mes rendez-vous"
+                           style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                </HBox>
+
+                <!-- Documents -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="📄" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;"/>
+                    <Label text="Documents"
+                           style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                </HBox>
+
+                <!-- Factures -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="💲" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;"/>
+                    <Label text="Factures"
+                           style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                </HBox>
+
+                <!-- Messages -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="💬" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;"/>
+                    <Label text="Messages"
+                           style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                </HBox>
+
+                <!-- Assistant IA -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="⚙" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;"/>
+                    <Label text="Assistant IA"
+                           style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                </HBox>
+
+                <!-- Notifications avec badge -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="🔔" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;"/>
+                    <Label text="Notifications"
+                           style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <StackPane>
+                        <Circle radius="10" style="-fx-fill: #2B7FD4;"/>
+                        <Label text="15"
+                               style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    </StackPane>
+                </HBox>
+
+                <!-- Paramètres -->
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+                    <Label text="⚙" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;"/>
+                    <Label text="Paramètres"
+                           style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                </HBox>
+
             </VBox>
 
-            <Button maxWidth="1.7976931348623157E308" styleClass="nav-button, nav-button-active" text="      🏠   Accueil">
-               <padding><Insets bottom="15.0" top="15.0" /></padding></Button>
-            <Button maxWidth="1.7976931348623157E308" styleClass="nav-button" text="      🔍   Rechercher" />
-            <Button maxWidth="1.7976931348623157E308" styleClass="nav-button" text="      📅   Mes rendez-vous" />
-            <Button maxWidth="1.7976931348623157E308" styleClass="nav-button" text="      📄   Documents" />
-            <Button maxWidth="1.7976931348623157E308" styleClass="nav-button" text="      💳   Factures" />
-            <Button maxWidth="1.7976931348623157E308" styleClass="nav-button" text="      ✉   Messages" />
-            
-            <Region VBox.vgrow="ALWAYS" />
-            
-            <Button maxWidth="1.7976931348623157E308" style="-fx-text-fill: #EE5D50;" styleClass="nav-button" text="      ↪   Déconnexion">
-               <VBox.margin><Insets bottom="20.0" /></VBox.margin>
-            </Button>
-         </children>
-      </VBox>
+            <!-- Spacer -->
+            <Region VBox.vgrow="ALWAYS"/>
 
-      <!-- Contenu Central -->
-      <VBox spacing="30.0" HBox.hgrow="ALWAYS">
-         <padding><Insets bottom="30.0" left="40.0" right="40.0" top="40.0" /></padding>
-         <children>
-            
-            <VBox>
-               <children>
-                  <Label text="Bienvenue, Jean" textFill="#1B2559">
-                     <font><Font name="System Bold" size="34.0" /></font>
-                  </Label>
-                  <Label text="Votre espace santé personnel" textFill="#A3AED0">
-                     <font><Font size="16.0" /></font></Label>
-               </children>
+            <Separator style="-fx-background-color: #D9E8F5;"/>
+
+            <!-- Déconnexion -->
+            <HBox alignment="CENTER_LEFT" spacing="12" onMouseClicked="#handleLogout"
+                  style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
+                <Label text="→" style="-fx-font-size: 16px; -fx-text-fill: #6B8CAD;"/>
+                <Label text="Déconnexion"
+                       style="-fx-font-size: 13px; -fx-text-fill: #6B8CAD;"/>
+            </HBox>
+
+        </VBox>
+    </left>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!--  CONTENU PRINCIPAL                                               -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 28 28 28 28; -fx-background-color: #EBF3FB;">
+
+                <!-- ── En-tête de bienvenue ── -->
+                <VBox spacing="4">
+                    <Label fx:id="welcomeLabel" text="Bienvenue, Jean"
+                           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                    <Label text="Votre espace santé personnel"
+                           style="-fx-font-size: 13px; -fx-text-fill: #6B8CAD;"/>
+                </VBox>
+
+                <!-- ── Cartes statistiques (4 colonnes) ── -->
+                <GridPane hgap="14" vgap="14">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                    </columnConstraints>
+
+                    <!-- Rendez-vous -->
+                    <VBox GridPane.columnIndex="0" spacing="8"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 20 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="📅" style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;"/>
+                            <Label text="Rendez-vous"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                        </HBox>
+                        <Label text="5"
+                               style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                        <Label text="À venir"
+                               style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;"/>
+                    </VBox>
+
+                    <!-- Documents -->
+                    <VBox GridPane.columnIndex="1" spacing="8"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 20 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="📁" style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;"/>
+                            <Label text="Documents"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                        </HBox>
+                        <Label text="12"
+                               style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                        <Label text="Documents médicaux"
+                               style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;"/>
+                    </VBox>
+
+                    <!-- Factures -->
+                    <VBox GridPane.columnIndex="2" spacing="8"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 20 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="💲" style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;"/>
+                            <Label text="Factures"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                        </HBox>
+                        <Label text="3"
+                               style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                        <Label text="En attente"
+                               style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;"/>
+                    </VBox>
+
+                    <!-- Messages -->
+                    <VBox GridPane.columnIndex="3" spacing="8"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 20 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="💬" style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;"/>
+                            <Label text="Messages"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"/>
+                        </HBox>
+                        <Label text="2"
+                               style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                        <Label text="Non lus"
+                               style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- ── Ligne centrale : Prochain RDV + Notifications ── -->
+                <HBox spacing="14">
+
+                    <!-- Prochain rendez-vous -->
+                    <VBox HBox.hgrow="ALWAYS" spacing="14"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 22 22 22; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);">
+                        <Label text="Prochain rendez-vous"
+                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+
+                        <!-- Carte RDV -->
+                        <HBox spacing="14" alignment="CENTER_LEFT"
+                              style="-fx-background-color: #EBF3FB; -fx-background-radius: 10; -fx-padding: 16 16 16 16;">
+
+                            <!-- Icône calendrier -->
+                            <StackPane>
+                                <Rectangle width="44" height="44" arcWidth="10" arcHeight="10"
+                                           style="-fx-fill: #D6E9F8;"/>
+                                <Label text="📅" style="-fx-font-size: 20px;"/>
+                            </StackPane>
+
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="Dr. Sarah Martin"
+                                           style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Button text="Voir les détails"
+                                            style="-fx-background-color: #2B7FD4; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 6; -fx-padding: 5 12 5 12; -fx-cursor: hand;"/>
+                                </HBox>
+                                <Label text="Cardiologue"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <Label text="🕐" style="-fx-font-size: 12px;"/>
+                                    <Label text="Lundi 5 mai 2026 à 14:30"
+                                           style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;"/>
+                                    <Label text="Confirmé"
+                                           style="-fx-background-color: #D6F0E0; -fx-text-fill: #2A7A4F; -fx-font-size: 11px; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 2 8 2 8;"/>
+                                </HBox>
+                                <Label text="15 Avenue des Champs élysées Paris"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Notifications récentes -->
+                    <VBox prefWidth="320" spacing="12"
+                          style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 22 22 22; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);">
+                        <Label text="Notifications récentes"
+                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+
+                        <!-- Notification 1 : Rappel RDV -->
+                        <HBox spacing="12" alignment="TOP_LEFT"
+                              style="-fx-background-color: #EBF3FB; -fx-background-radius: 10; -fx-padding: 14 14 14 14;">
+                            <Label text="🔔" style="-fx-font-size: 18px;"/>
+                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label text="Rappel de rendez-vous"
+                                           style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Button text="Voir les détails"
+                                            style="-fx-background-color: #2B7FD4; -fx-text-fill: white; -fx-font-size: 11px; -fx-background-radius: 5; -fx-padding: 4 10 4 10; -fx-cursor: hand;"/>
+                                </HBox>
+                                <Label text="Votre rendez-vous avec Dr."
+                                       style="-fx-font-size: 11px; -fx-text-fill: #6B8CAD;" wrapText="true"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Notification 2 : Nouveau document -->
+                        <HBox spacing="12" alignment="TOP_LEFT"
+                              style="-fx-background-color: #EBF3FB; -fx-background-radius: 10; -fx-padding: 14 14 14 14;">
+                            <Label text="📄" style="-fx-font-size: 18px;"/>
+                            <VBox spacing="4">
+                                <Label text="Nouveau document"
+                                       style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                                <Label text="Dr. Dupont vous a envoyé une ordonnance"
+                                       style="-fx-font-size: 11px; -fx-text-fill: #6B8CAD;" wrapText="true"/>
+                                <Label text="Hier"
+                                       style="-fx-font-size: 11px; -fx-text-fill: #9BB5CC;"/>
+                            </VBox>
+                        </HBox>
+
+                    </VBox>
+                </HBox>
+
+                <!-- ── Raccourcis rapides (3 tuiles) ── -->
+                <GridPane hgap="14">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33"/>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33"/>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33"/>
+                    </columnConstraints>
+
+                    <!-- Rechercher un médecin -->
+                    <StackPane GridPane.columnIndex="0"
+                               style="-fx-background-color: #C8DDEF; -fx-background-radius: 12; -fx-cursor: hand; -fx-min-height: 100;">
+                        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 24 24 24 24;">
+                            <VBox spacing="4">
+                                <Label text="Rechercher"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                                <Label text="un médecin"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="🔍" style="-fx-font-size: 48px; -fx-text-fill: #2B7FD4;"/>
+                        </HBox>
+                    </StackPane>
+
+                    <!-- Gérer mes rendez-vous -->
+                    <StackPane GridPane.columnIndex="1"
+                               style="-fx-background-color: #C8DDEF; -fx-background-radius: 12; -fx-cursor: hand; -fx-min-height: 100;">
+                        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 24 24 24 24;">
+                            <VBox spacing="4">
+                                <Label text="Gérer mes"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                                <Label text="rendez-vous"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="📆" style="-fx-font-size: 48px; -fx-text-fill: #2B7FD4;"/>
+                        </HBox>
+                    </StackPane>
+
+                    <!-- Mes documents -->
+                    <StackPane GridPane.columnIndex="2"
+                               style="-fx-background-color: #C8DDEF; -fx-background-radius: 12; -fx-cursor: hand; -fx-min-height: 100;">
+                        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 24 24 24 24;">
+                            <VBox spacing="4">
+                                <Label text="Mes"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                                <Label text="documents"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="📋" style="-fx-font-size: 48px; -fx-text-fill: #2E8B57;"/>
+                        </HBox>
+                    </StackPane>
+
+                </GridPane>
+
             </VBox>
+        </ScrollPane>
+    </center>
 
-            <HBox spacing="25.0">
-               <children>
-                  <VBox prefHeight="120.0" prefWidth="220.0" styleClass="card">
-                     <padding><Insets bottom="20.0" left="25.0" right="20.0" top="20.0" /></padding>
-                     <children>
-                        <Label styleClass="card-title" text="Rendez-vous" />
-                        <Region VBox.vgrow="ALWAYS" />
-                        <Label styleClass="card-value" text="5" />
-                        <Label text="À venir" textFill="#01B574" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="120.0" prefWidth="220.0" styleClass="card">
-                     <padding><Insets bottom="20.0" left="25.0" right="20.0" top="20.0" /></padding>
-                     <children>
-                        <Label styleClass="card-title" text="Documents" />
-                        <Region VBox.vgrow="ALWAYS" />
-                        <Label styleClass="card-value" text="12" />
-                        <Label text="Nouveaux reçus" textFill="#A3AED0" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-
-            <HBox spacing="25.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <!-- Section Prochain RDV -->
-                  <VBox spacing="20.0" styleClass="card" HBox.hgrow="ALWAYS">
-                     <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
-                     <children>
-                        <HBox alignment="CENTER_LEFT">
-                           <children>
-                              <Label text="Prochain rendez-vous" textFill="#1B2559">
-                                 <font><Font name="System Bold" size="20.0" /></font>
-                              </Label>
-                              <Region HBox.hgrow="ALWAYS" />
-                              <Button style="-fx-background-radius: 10;" text="Voir les détails" />
-                           </children>
-                        </HBox>
-                        <HBox spacing="20.0" style="-fx-background-color: #F4F7FE; -fx-background-radius: 20; -fx-padding: 25;">
-                           <children>
-                              <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label text="Dr. Sarah Martin" textFill="#1B2559">
-                                       <font><Font name="System Bold" size="18.0" /></font>
-                                    </Label>
-                                    <Label text="Cardiologue" textFill="#A3AED0" />
-                                    <HBox spacing="15.0">
-                                       <children>
-                                          <Label text="📅 Lundi 5 mai 2026 à 14:30" />
-                                          <Label style="-fx-background-color: #1B2559; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 2 8;" text="Confirmé" />
-                                       </children>
-                                       <VBox.margin><Insets top="10.0" /></VBox.margin>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-                  
-                  <!-- Notifications -->
-                  <VBox prefWidth="350.0" spacing="20.0" styleClass="card">
-                     <padding><Insets bottom="25.0" left="25.0" right="25.0" top="25.0" /></padding>
-                     <children>
-                        <Label text="Notifications récentes" textFill="#1B2559">
-                           <font><Font name="System Bold" size="18.0" /></font>
-                        </Label>
-                        <VBox spacing="15.0">
-                           <HBox spacing="15.0" alignment="CENTER_LEFT">
-                              <Circle fill="#0052FF" radius="5.0" />
-                              <VBox>
-                                 <Label style="-fx-font-weight: bold;" text="Rappel de rendez-vous" />
-                                 <Label text="Votre RDV est dans 3 jours" textFill="#A3AED0" />
-                              </VBox>
-                           </HBox>
-                        </VBox>
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-
-            <!-- Tuiles d'action en bas -->
-            <HBox spacing="25.0">
-               <children>
-                  <VBox alignment="CENTER" spacing="10.0" styleClass="action-tile" HBox.hgrow="ALWAYS">
-                     <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
-                     <children>
-                        <Label text="🔍"> <font><Font size="24.0" /></font></Label>
-                        <Label text="Rechercher un médecin" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER" spacing="10.0" styleClass="action-tile" HBox.hgrow="ALWAYS">
-                     <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
-                     <children>
-                        <Label text="📅"> <font><Font size="24.0" /></font></Label>
-                        <Label text="Gérer mes rendez-vous" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER" spacing="10.0" styleClass="action-tile" HBox.hgrow="ALWAYS">
-                     <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
-                     <children>
-                        <Label text="📂"> <font><Font size="24.0" /></font></Label>
-                        <Label text="Mes documents" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </children>
-</HBox>
+</BorderPane>

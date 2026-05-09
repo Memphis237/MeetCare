@@ -1,5 +1,11 @@
+CREATE DATABASE IF NOT EXISTS meetcare
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE meetcare;
+
 -- USERS
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id_users INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,

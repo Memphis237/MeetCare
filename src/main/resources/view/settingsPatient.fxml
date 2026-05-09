@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #EBF3FB;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.SettingsPatientController">
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!--  SIDEBAR GAUCHE                                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <left>
+        <VBox prefWidth="230" spacing="0" style="-fx-background-color: #FFFFFF; -fx-border-color: #D9E8F5; -fx-border-width: 0 1 0 0;">
+
+            <!-- Logo MediConnect -->
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 22 20 22 20;">
+                <Label style="-fx-text-fill: #2B7FD4; -fx-font-size: 20px; -fx-font-weight: bold;                               -fx-background-color: #D6E9F8; -fx-background-radius: 6; -fx-padding: 2 8 2 8;" text="+" />
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="MediConnect" />
+            </HBox>
+
+            <Separator />
+
+            <!-- Profil utilisateur -->
+            <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 18 20 18 20;">
+                <StackPane>
+                    <Circle radius="26" style="-fx-fill: #B8D4EE;" />
+                    <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="J" />
+                </StackPane>
+                <VBox spacing="2">
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Jean" />
+                    <Label style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="Cardiologue" />
+                </VBox>
+            </HBox>
+
+            <Separator />
+
+            <!-- Navigation -->
+            <VBox spacing="2" style="-fx-padding: 10 10 10 10;">
+
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Accueil" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rechercher" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Mes rendez-vous" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Documents" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Factures" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Messages" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Assistant IA" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Notifications" HBox.hgrow="ALWAYS" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <StackPane>
+                        <Circle radius="11" style="-fx-fill: #2B7FD4;" />
+                        <Label style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: white;" text="15" />
+                    </StackPane>
+                </HBox>
+
+                <!-- Parametres (actif) -->
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="Parametres" />
+                </HBox>
+
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+            <Separator />
+
+            <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 16 24 16 24;">
+                <Label style="-fx-font-size: 13px; -fx-text-fill: red;" text="Déconnexion" textFill="#f40505" />
+            </HBox>
+
+        </VBox>
+    </left>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!--  CONTENU PRINCIPAL                                               -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox spacing="18" style="-fx-padding: 28 28 28 28; -fx-background-color: #EBF3FB;">
+
+                <!-- Titre de la page -->
+                <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Parametres" />
+
+                <!-- Ligne haute : Photos + Informations personnelles -->
+                <HBox alignment="TOP_LEFT" spacing="16">
+
+                    <!-- Colonne gauche : Photo de profil + Modifier mdp -->
+                    <VBox spacing="16" HBox.hgrow="ALWAYS">
+
+                        <!-- Bloc photos de profil -->
+                        <HBox spacing="14">
+
+                            <!-- Photo de profil -->
+                            <VBox alignment="TOP_LEFT" spacing="16" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22;                                          -fx-effect: dropshadow(gaussian, #c8d8e8, 10, 0, 0, 3);" HBox.hgrow="ALWAYS">
+                                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="382.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Photo de profil" />
+                                <StackPane alignment="CENTER">
+                                    <Circle radius="44" style="-fx-fill: #B8D4EE;" />
+                                    <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="JD" />
+                                </StackPane>
+                                <Button maxWidth="Infinity" style="-fx-background-color: #EBF3FB; -fx-text-fill: #2B7FD4;                                                -fx-font-size: 12px; -fx-font-weight: bold;                                                -fx-background-radius: 8; -fx-padding: 8 0 8 0;                                                -fx-border-color: #C8DDEF; -fx-border-radius: 8;" text="Modifier la photo" />
+                            </VBox>
+
+                        </HBox>
+
+                        <!-- Bloc modifier le mot de passe -->
+                        <VBox spacing="14" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22;                                      -fx-effect: dropshadow(gaussian, #c8d8e8, 10, 0, 0, 3);">
+                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Modifier le mot de passe" />
+
+                            <VBox spacing="6">
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Mot de passe actuel" />
+                                <PasswordField maxWidth="Infinity" promptText="Mot de passe actuel" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                      -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                      -fx-padding: 10 12 10 12; -fx-font-size: 13px;" />
+                            </VBox>
+
+                            <VBox spacing="6">
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Nouveau mot de passe" />
+                                <PasswordField maxWidth="Infinity" promptText="Nouveau mot de passe" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                      -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                      -fx-padding: 10 12 10 12; -fx-font-size: 13px;" />
+                            </VBox>
+
+                            <VBox spacing="6">
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Confirmer le nouveau mot de passe" />
+                                <PasswordField maxWidth="Infinity" promptText="Confirmer le nouveau mot de passe" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                      -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                      -fx-padding: 10 12 10 12; -fx-font-size: 13px;" />
+                            </VBox>
+
+                            <Button style="-fx-background-color: white; -fx-text-fill: #1A2C42;                                            -fx-font-size: 13px; -fx-background-radius: 8;                                            -fx-border-color: #C8DDEF; -fx-border-radius: 8;                                            -fx-padding: 10 20 10 20;" text="Modifier le mot de passe" />
+                        </VBox>
+
+                    </VBox>
+
+                    <!-- Colonne droite : Infos perso + Notifications + Recherche -->
+                    <VBox prefWidth="370" spacing="16">
+
+                        <!-- Informations personnelles -->
+                        <VBox spacing="14" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22;                                      -fx-effect: dropshadow(gaussian, #c8d8e8, 10, 0, 0, 3);">
+                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Informations personnelles" />
+
+                            <!-- Prenom + Nom sur une ligne -->
+                            <GridPane hgap="10" vgap="10">
+                                <columnConstraints>
+                                    <ColumnConstraints minWidth="70" prefWidth="80" />
+                                    <ColumnConstraints hgrow="ALWAYS" />
+                                    <ColumnConstraints hgrow="ALWAYS" />
+                                </columnConstraints>
+
+                                <!-- Prenom -->
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Prenom" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <TextField style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                   -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                   -fx-padding: 8 10 8 10; -fx-font-size: 13px;" text="Jean" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <TextField style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                   -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                   -fx-padding: 8 10 8 10; -fx-font-size: 13px;" text="Dupont" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+
+                                <!-- Email -->
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Email" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <TextField style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                   -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                   -fx-padding: 8 10 8 10; -fx-font-size: 13px;" text="jean.dupont@email.com" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+
+                                <!-- Telephone -->
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Telephone" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <TextField style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                   -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                   -fx-padding: 8 10 8 10; -fx-font-size: 13px;" text="06 12 34 56 78" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+
+                                <!-- Adresse -->
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Adresse" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <TextField style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                   -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                   -fx-padding: 8 10 8 10; -fx-font-size: 13px;" text="123 Rue de la Paix, 75001 Paris" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                        <rowConstraints>
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                        </rowConstraints>
+                            </GridPane>
+
+                            <HBox alignment="CENTER_RIGHT">
+                                <Button style="-fx-background-color: #2B7FD4; -fx-text-fill: white;                                                -fx-font-size: 12px; -fx-font-weight: bold;                                                -fx-background-radius: 8; -fx-padding: 9 18 9 18;" text="Enregistrer les modifications" />
+                            </HBox>
+                        </VBox>
+
+                        <!-- Preferences de notification -->
+                        <VBox spacing="14" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22;                                      -fx-effect: dropshadow(gaussian, #c8d8e8, 10, 0, 0, 3);">
+                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Preferences de notification" />
+
+                            <!-- Notifications par email -->
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label style="-fx-font-size: 13px; -fx-text-fill: #1A2C42;" text="Notifications par email" HBox.hgrow="ALWAYS" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <CheckBox fx:id="emailNotifToggle" selected="true" style="-fx-padding: 0;" />
+                            </HBox>
+
+                            <!-- Notifications par SMS -->
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label style="-fx-font-size: 13px; -fx-text-fill: #1A2C42;" text="Notifications par SMS" HBox.hgrow="ALWAYS" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <CheckBox fx:id="smsNotifToggle" selected="true" style="-fx-padding: 0;" />
+                            </HBox>
+                        </VBox>
+
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
