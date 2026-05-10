@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.meetcare.controller.SearchDoctorController"
+            prefWidth="1200"
+            prefHeight="800"
+            style="-fx-background-color: #f5f7fb;">
+
+    <left>
+        <VBox prefWidth="280" spacing="15" style="-fx-background-color: white; -fx-border-color: #e5e7eb;">
+            <padding>
+                <Insets top="25" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="MeetCare" style="-fx-text-fill: #2563eb; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Menu" style="-fx-background-color: transparent; -fx-font-size: 16px;"/>
+            </HBox>
+
+            <Separator/>
+
+            <Button text="Accueil" maxWidth="Infinity" styleClass="menu-button"/>
+            <Button text="Rechercher" maxWidth="Infinity" styleClass="menu-button-active"/>
+            <Button text="Mes rendez-vous" maxWidth="Infinity" styleClass="menu-button"/>
+            <Button text="Documents" maxWidth="Infinity" styleClass="menu-button"/>
+            <Button text="Factures" maxWidth="Infinity" styleClass="menu-button"/>
+            <Button text="Messages" maxWidth="Infinity" styleClass="menu-button"/>
+            <Button text="Assistant IA" maxWidth="Infinity" styleClass="menu-button"/>
+            <Button text="Notifications" maxWidth="Infinity" styleClass="menu-button"/>
+            <Button text="Parametres" maxWidth="Infinity" styleClass="menu-button"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Separator/>
+            <Button text="Deconnexion"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: transparent; -fx-text-fill: red; -fx-font-size: 16px;"/>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="30">
+                <padding>
+                    <Insets top="25" right="35" bottom="30" left="35"/>
+                </padding>
+
+                <VBox spacing="5">
+                    <Label text="Rechercher un medecin"
+                           style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <Label text="Trouve le praticien qui correspond a tes besoins"
+                           style="-fx-font-size: 18px; -fx-text-fill: #6b7280;"/>
+                </VBox>
+
+                <VBox spacing="20" styleClass="card">
+                    <HBox spacing="25">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="Specialite, medecin ou etablissement" styleClass="field-label"/>
+                            <TextField fx:id="searchField"
+                                       onAction="#handleSearch"
+                                       promptText="Ex: Cardiologue, Dr. Martin..."
+                                       prefHeight="45"/>
+                        </VBox>
+
+                        <VBox spacing="8">
+                            <Label text="Ville" styleClass="field-label"/>
+                            <TextField fx:id="cityField"
+                                       onAction="#handleSearch"
+                                       promptText="Ex: Paris"
+                                       prefWidth="180"
+                                       prefHeight="45"/>
+                        </VBox>
+
+                        <VBox spacing="8">
+                            <Label text="Date souhaitee" styleClass="field-label"/>
+                            <DatePicker fx:id="datePicker"
+                                        onAction="#handleSearch"
+                                        prefWidth="180"
+                                        prefHeight="45"/>
+                        </VBox>
+                    </HBox>
+
+                    <Button fx:id="searchButton"
+                            text="Rechercher"
+                            prefWidth="170"
+                            prefHeight="45"
+                            onAction="#handleSearch"
+                            styleClass="primary-button"/>
+                </VBox>
+
+                <Label fx:id="resultsCountLabel"
+                       text="0 resultat"
+                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+
+                <VBox fx:id="doctorResultsContainer" spacing="20"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

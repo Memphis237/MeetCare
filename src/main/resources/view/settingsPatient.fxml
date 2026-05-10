@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.meetcare.controller.SettingsPatientController"
+            prefWidth="1200" prefHeight="800"
+            style="-fx-background-color: #f8fafc;">
+
+    <left>
+        <fx:include source="sidebarPatient.fxml"/>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="25" style="-fx-padding: 35;">
+
+                <VBox spacing="6">
+                    <Label text="Paramètres" style="-fx-font-size: 38px; -fx-font-weight: bold;"/>
+                    <Label text="Gérez vos informations personnelles" style="-fx-font-size: 18px; -fx-text-fill: #64748b;"/>
+                </VBox>
+
+                <VBox spacing="20" styleClass="card">
+                    <Label text="Photo de profil" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+                    <HBox spacing="25" alignment="CENTER_LEFT">
+                        <Label text="JD" styleClass="avatar"/>
+                        <VBox spacing="8">
+                            <Button text="Modifier la photo" styleClass="secondary-button"/>
+                            <Label text="JPG ou PNG. Taille maximale 2MB" style="-fx-text-fill: #64748b;"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="18" styleClass="card">
+                    <Label text="Informations personnelles" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+                    <HBox spacing="25">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="Prénom"/>
+                            <TextField text="Jean" prefHeight="45"/>
+                        </VBox>
+
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="Nom"/>
+                            <TextField text="Dupont" prefHeight="45"/>
+                        </VBox>
+                    </HBox>
+
+                    <VBox spacing="8">
+                        <Label text="Email"/>
+                        <TextField text="jean.dupont@email.com" prefHeight="45"/>
+                    </VBox>
+
+                    <VBox spacing="8">
+                        <Label text="Téléphone"/>
+                        <TextField text="06 12 34 56 78" prefHeight="45"/>
+                    </VBox>
+
+                    <VBox spacing="8">
+                        <Label text="Adresse"/>
+                        <TextField text="123 Rue de la Paix, 75001 Paris" prefHeight="45"/>
+                    </VBox>
+
+                    <Button text="Enregistrer les modifications" styleClass="primary-button" prefWidth="260"/>
+                </VBox>
+
+                <VBox spacing="18" styleClass="card">
+                    <Label text="Modifier le mot de passe" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+                    <VBox spacing="8">
+                        <Label text="Mot de passe actuel"/>
+                        <PasswordField prefHeight="45"/>
+                    </VBox>
+
+                    <VBox spacing="8">
+                        <Label text="Nouveau mot de passe"/>
+                        <PasswordField prefHeight="45"/>
+                    </VBox>
+
+                    <VBox spacing="8">
+                        <Label text="Confirmer le nouveau mot de passe"/>
+                        <PasswordField prefHeight="45"/>
+                    </VBox>
+
+                    <Button text="Modifier le mot de passe" styleClass="secondary-button" prefWidth="250"/>
+                </VBox>
+
+                <VBox spacing="20" styleClass="card">
+                    <Label text="Préférences de notification" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+                    <CheckBox text="Notifications par email" selected="true"/>
+                    <CheckBox text="Notifications par SMS"/>
+                    <CheckBox text="Rappels de rendez-vous" selected="true"/>
+                    <CheckBox text="Nouveaux messages" selected="true"/>
+                    <CheckBox text="Nouveaux documents" selected="true"/>
+
+                    <Button text="Enregistrer les préférences" styleClass="primary-button" prefWidth="250"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

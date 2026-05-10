@@ -119,3 +119,169 @@ CREATE TABLE medical_records (
     FOREIGN KEY (id_doctors) REFERENCES doctors(id_doctors) ON DELETE CASCADE,
     FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
 );
+
+-- =========================================
+-- AJOUT DES COLONNES MANQUANTES
+-- =========================================
+
+ALTER TABLE users
+    ADD COLUMN first_login BOOLEAN DEFAULT TRUE,
+ADD COLUMN must_change_password BOOLEAN DEFAULT FALSE,
+ADD COLUMN account_status VARCHAR(50) DEFAULT 'ACTIVE';
+
+ALTER TABLE doctors
+    ADD COLUMN address VARCHAR(255),
+ADD COLUMN sector VARCHAR(20),
+ADD COLUMN accepts_vitale BOOLEAN DEFAULT FALSE,
+ADD COLUMN teleconsultation BOOLEAN DEFAULT FALSE,
+ADD COLUMN public_profile_completed BOOLEAN DEFAULT FALSE;
+
+
+-- =========================================
+-- INSERTION DES UTILISATEURS MÉDECINS
+-- =========================================
+
+INSERT INTO users
+(username, email, password, phone, role, city, first_login, must_change_password)
+VALUES
+
+    (
+        'Sarah Martin',
+        'sarah@mediconnect.fr',
+        '123456',
+        '0600000001',
+        'MEDECIN',
+        'Paris',
+        TRUE,
+        TRUE
+    ),
+
+    (
+        'Marc Dubois',
+        'marc@mediconnect.fr',
+        '123456',
+        '0600000002',
+        'MEDECIN',
+        'Lyon',
+        TRUE,
+        TRUE
+    ),
+
+    (
+        'Julie Bernard',
+        'julie@mediconnect.fr',
+        '123456',
+        '0600000003',
+        'MEDECIN',
+        'Paris',
+        TRUE,
+        TRUE
+    ),
+
+    (
+        'Sophie Durand',
+        'sophie@mediconnect.fr',
+        '123456',
+        '0600000004',
+        'MEDECIN',
+        'Marseille',
+        TRUE,
+        TRUE
+    ),
+
+    (
+        'Mathieu Bernard',
+        'mathieu@mediconnect.fr',
+        '123456',
+        '0600000005',
+        'MEDECIN',
+        'Toulouse',
+        TRUE,
+        TRUE
+    );
+
+
+-- =========================================
+-- INSERTION DES MÉDECINS
+-- =========================================
+
+INSERT INTO doctors
+(
+    speciality,
+    experience,
+    consultation_price,
+    biography,
+    address,
+    sector,
+    accepts_vitale,
+    teleconsultation,
+    public_profile_completed,
+    id_users
+)
+
+VALUES
+
+    (
+        'Cardiologue',
+        12,
+        30,
+        'Cardiologue spécialisée dans le suivi cardiaque.',
+        '15 Avenue des Champs-Élysées',
+        'Secteur 1',
+        TRUE,
+        TRUE,
+        TRUE,
+        1
+    ),
+
+    (
+        'Généraliste',
+        8,
+        25,
+        'Médecin généraliste expérimenté.',
+        '23 Rue de la République',
+        'Secteur 1',
+        TRUE,
+        FALSE,
+        TRUE,
+        2
+    ),
+
+    (
+        'Dermatologue',
+        15,
+        50,
+        'Dermatologue spécialisée dans les maladies de la peau.',
+        '8 Boulevard Saint-Germain',
+        'Secteur 2',
+        TRUE,
+        TRUE,
+        TRUE,
+        3
+    ),
+
+    (
+        'Radiologue',
+        10,
+        45,
+        'Spécialiste en radiologie et imagerie médicale.',
+        '5 Rue Victor Hugo',
+        'Secteur 2',
+        FALSE,
+        FALSE,
+        TRUE,
+        4
+    ),
+
+    (
+        'Généraliste',
+        7,
+        28,
+        'Médecin généraliste orienté téléconsultation.',
+        '12 Rue Nationale',
+        'Secteur 1',
+        TRUE,
+        TRUE,
+        TRUE,
+        5
+    );
