@@ -10,6 +10,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.example.meetcare.dao.UsersDao;
+import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.service.RegisterService;
 import org.example.meetcare.utils.AppSession;
@@ -35,7 +36,7 @@ public class LoginController {
             Users user = authService.login(username.getText(), password.getText());
             AppSession.setCurrentUser(user);
             usersDao.updateOnlineStatus(user.getIdUsers(), true);
-            navigateToHome(event);
+            navigateAfterLogin(event, user);
         } catch (IllegalArgumentException ex) {
             showMessage(ex.getMessage(), false);
         } catch (Exception ex) {
@@ -45,33 +46,34 @@ public class LoginController {
 
     @FXML
     private void handleRegister(ActionEvent event) {
-        navigate(event, "/view/register.fxml");
+        navigate(event, "/view/register.fxml", 620, 520, "MeetCare - Inscription");
     }
 
-    private void navigateToHome(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/homePatient.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 1280, 800);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setTitle("MeetCare - Espace patient");
-            stage.centerOnScreen();
-            stage.show();
-        } catch (IOException ex) {
-            showMessage("Impossible d'ouvrir l'espace patient.", false);
+    private void navigateAfterLogin(ActionEvent event, Users user) {
+        Role role = user == null ? null : user.getRole();
+
+        if (role == Role.ADMIN) {
+            navigate(event, "/view/dashboard.fxml", 1200, 750, "MeetCare - Dashboard");
+            return;
         }
+
+        if (role == Role.MEDECIN) {
+            navigate(event, "/view/homeMedecin.fxml", 1100, 700, "MeetCare - Espace médecin");
+            return;
+        }
+
+        navigate(event, "/view/homePatient.fxml", 1100, 700, "MeetCare - Espace patient");
     }
 
-    private void navigate(ActionEvent event, String fxmlPath) {
+    private void navigate(ActionEvent event, String fxmlPath, double width, double height, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, width, height);
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
             stage.setScene(scene);
+            stage.setTitle(title);
             stage.centerOnScreen();
             stage.show();
         } catch (IOException ex) {

@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AppSession;
+import org.example.meetcare.utils.NavigationUtil;
 import org.example.meetcare.dao.UsersDao;
 
 import java.io.IOException;
@@ -67,22 +68,7 @@ public class HomePatientController {
 
     @FXML
     private void handleSettings(MouseEvent event) {
-        navigateTo(event, "/view/settingsPatient.fxml", 1100, 700, "MeetCare - Paramètres");
-    }
-
-    private void navigateTo(MouseEvent event, String fxmlPath, double width, double height, String title) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-            Scene scene = new Scene(root, width, height);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle(title);
-            stage.centerOnScreen();
-            stage.show();
-        } catch (IOException ex) {
-            throw new IllegalStateException("Impossible d'ouvrir la page demandée.", ex);
-        }
+        NavigationUtil.navigateTo(event, "/view/settingsPatient.fxml", 1100, 700, "MeetCare - Paramètres");
     }
 
     private String roleToLabel(Role role) {
