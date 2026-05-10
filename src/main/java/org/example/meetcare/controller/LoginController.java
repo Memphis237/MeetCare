@@ -34,9 +34,10 @@ public class LoginController {
     private void handleLogin(ActionEvent event) {
         try {
             Users user = authService.login(username.getText(), password.getText());
-            AppSession.setCurrentUser(user);
-            usersDao.updateOnlineStatus(user.getIdUsers(), true);
-            navigateAfterLogin(event, user);
+            Users freshUser = usersDao.findById(user.getIdUsers()).orElse(user);
+            AppSession.setCurrentUser(freshUser);
+            usersDao.updateOnlineStatus(freshUser.getIdUsers(), true);
+            navigateAfterLogin(event, freshUser);
         } catch (IllegalArgumentException ex) {
             showMessage(ex.getMessage(), false);
         } catch (Exception ex) {

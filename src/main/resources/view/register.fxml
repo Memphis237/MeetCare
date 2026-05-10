@@ -1,86 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane
-    prefHeight="740" prefWidth="620"
-    style="-fx-background-color: linear-gradient(to bottom right, #a8c8f0, #d6eaf8);"
-    xmlns="http://javafx.com/javafx/21"
-    xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="org.example.meetcare.controller.RegisterController">
+<StackPane prefHeight="900" prefWidth="620"
+           style="-fx-background-color: linear-gradient(to bottom right, #a8c8f0, #d6eaf8);"
+           xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.meetcare.controller.RegisterController">
 
-    <!-- Carte blanche centrée -->
-    <VBox alignment="CENTER" spacing="14"
-          prefWidth="400"
-          style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,40,100,0.18), 28, 0, 0, 8);"
-          StackPane.alignment="CENTER">
+    <ScrollPane fitToWidth="true" pannable="true"
+                hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                style="-fx-background: transparent; -fx-background-color: transparent;">
+        <content>
+            <VBox alignment="CENTER" spacing="18"
+                  maxWidth="420" prefWidth="420"
+                  style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,40,100,0.18), 28, 0, 0, 8);"
+                  StackPane.alignment="CENTER">
 
-        <padding>
-            <Insets top="36" right="50" bottom="36" left="50"/>
-        </padding>
+                <padding>
+                    <Insets top="30" right="48" bottom="30" left="48"/>
+                </padding>
 
-        <!-- Icône cercle bleu -->
-        <StackPane prefWidth="72" prefHeight="72" maxWidth="72" maxHeight="72"
-                   style="-fx-background-color: #2f6fd4; -fx-background-radius: 50; -fx-effect: dropshadow(gaussian, rgba(47,111,212,0.4), 12, 0, 0, 4);"
-                   StackPane.alignment="CENTER">
-            <Label text="👤" style="-fx-font-size: 28px;"/>
-        </StackPane>
+                <StackPane prefWidth="72" prefHeight="72" maxWidth="72" maxHeight="72"
+                           style="-fx-background-color: #2f6fd4; -fx-background-radius: 50; -fx-effect: dropshadow(gaussian, rgba(47,111,212,0.4), 12, 0, 0, 4);"
+                           StackPane.alignment="CENTER">
+                    <Label text="👤" style="-fx-font-size: 28px;"/>
+                </StackPane>
 
-        <!-- Titre -->
-        <Label text="Créer un compte"
-               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1a2540;"/>
+                <Label text="Créer un compte"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1a2540;"/>
 
-        <!-- Message retour -->
-        <Label fx:id="messageLabel" wrapText="true" maxWidth="300" styleClass="msg-label"/>
+                <Label fx:id="messageLabel" wrapText="true" maxWidth="320" styleClass="msg-label"/>
 
-        <!-- Prénom -->
-        <VBox spacing="5">
-            <Label text="Prénom" styleClass="form-label"/>
-            <TextField fx:id="prenom" promptText="Jean" styleClass="auth-field" prefWidth="300"/>
-        </VBox>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Prénom" styleClass="form-label"/>
+                    <TextField fx:id="prenom" promptText="Jean" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-        <!-- Nom d'utilisateur -->
-        <VBox spacing="5">
-            <Label text="Nom d'utilisateur" styleClass="form-label"/>
-            <TextField fx:id="username" promptText="Dupont" styleClass="auth-field" prefWidth="300"/>
-        </VBox>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Nom d'utilisateur" styleClass="form-label"/>
+                    <TextField fx:id="username" promptText="Dupont" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-        <!-- Email -->
-        <VBox spacing="5">
-            <Label text="Email" styleClass="form-label"/>
-            <TextField fx:id="email" promptText="jean.dupont@example.com" styleClass="auth-field" prefWidth="300"/>
-        </VBox>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Email" styleClass="form-label"/>
+                    <TextField fx:id="email" promptText="jean.dupont@example.com" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-        <!-- Téléphone -->
-        <VBox spacing="5">
-            <Label text="Téléphone" styleClass="form-label"/>
-            <TextField fx:id="telephone" promptText="06 00 00 00 00" styleClass="auth-field" prefWidth="300"/>
-        </VBox>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Téléphone" styleClass="form-label"/>
+                    <TextField fx:id="telephone" promptText="06 00 00 00 00" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-        <!-- Mot de passe -->
-        <VBox spacing="5">
-            <Label text="Mot de passe" styleClass="form-label"/>
-            <PasswordField fx:id="password" promptText="••••••••" styleClass="auth-field" prefWidth="300"/>
-        </VBox>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Adresse" styleClass="form-label"/>
+                    <TextField fx:id="address" promptText="123 Rue de la Paix" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-        <!-- Confirmation mot de passe -->
-        <VBox spacing="5">
-            <Label text="Confirmation mot de passe" styleClass="form-label"/>
-            <PasswordField fx:id="confirmPassword" promptText="••••••••" styleClass="auth-field" prefWidth="300"/>
-        </VBox>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Ville" styleClass="form-label"/>
+                    <TextField fx:id="city" promptText="Paris" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-        <!-- Bouton S'inscrire -->
-        <Button text="S'inscrire" onAction="#handleInscription"
-                styleClass="btn-primary" prefWidth="300"/>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Code postal" styleClass="form-label"/>
+                    <TextField fx:id="codePostal" promptText="75001" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-        <!-- Lien connexion -->
-        <Hyperlink fx:id="hyperlink" text="Déjà un compte ? Se connecter"
-                   onAction="#handleBackToLogin" styleClass="auth-link"/>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Pays" styleClass="form-label"/>
+                    <TextField fx:id="country" promptText="France" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-        <!-- Cadenas décoratif -->
-        <Label text="🔒" style="-fx-font-size: 18px; -fx-text-fill: #c5d0dc; -fx-opacity: 0.7;"/>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Mot de passe" styleClass="form-label"/>
+                    <PasswordField fx:id="password" promptText="••••••••" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
 
-    </VBox>
+                <VBox spacing="5" maxWidth="320">
+                    <Label text="Confirmation mot de passe" styleClass="form-label"/>
+                    <PasswordField fx:id="confirmPassword" promptText="••••••••" styleClass="auth-field" prefWidth="320"/>
+                </VBox>
+
+                <Button text="S'inscrire" onAction="#handleInscription"
+                        styleClass="btn-primary" prefWidth="320"/>
+
+                <Hyperlink fx:id="hyperlink" text="Déjà un compte ? Se connecter"
+                           onAction="#handleBackToLogin" styleClass="auth-link"/>
+
+                <Label text="🔒" style="-fx-font-size: 18px; -fx-text-fill: #c5d0dc; -fx-opacity: 0.7;"/>
+
+            </VBox>
+        </content>
+    </ScrollPane>
 </StackPane>

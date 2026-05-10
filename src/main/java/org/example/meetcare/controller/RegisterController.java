@@ -29,6 +29,18 @@ public class RegisterController {
     private TextField telephone;
 
     @FXML
+    private TextField address;
+
+    @FXML
+    private TextField city;
+
+    @FXML
+    private TextField codePostal;
+
+    @FXML
+    private TextField country;
+
+    @FXML
     private PasswordField password;
 
     @FXML
@@ -43,9 +55,14 @@ public class RegisterController {
     private void handleInscription(ActionEvent event) {
         try {
             Users user = new Users();
-            user.setUsername(isBlank(username.getText()) ? prenom.getText() : username.getText());
+            user.setPrenom(prenom.getText());
+            user.setUsername(username.getText());
             user.setEmail(email.getText());
             user.setPhone(telephone.getText());
+            user.setAddress(address.getText());
+            user.setCity(city.getText());
+            user.setCodePostal(codePostal.getText());
+            user.setCountry(country.getText());
             user.setPassword(password.getText());
 
             registerService.register(user, confirmPassword.getText());

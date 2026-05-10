@@ -5,13 +5,16 @@ import java.time.LocalDateTime;
 public class Users {
     private int idUsers;
     private String username;
+    private String prenom;
     private String email;
     private String password;
     private String phone;
     private String avatar;
     private Role role;
+    private String address;
     private String city;
     private String codePostal;
+    private String country;
     private boolean online;
     private LocalDateTime lastSeen;
     private LocalDateTime date;
@@ -20,17 +23,21 @@ public class Users {
         this.role = Role.USER;
     }
 
-    public Users(int idUsers, String username, String email, String password, String phone, String avatar, Role role,
-                 String city, String codePostal, boolean online, LocalDateTime lastSeen, LocalDateTime date) {
+    public Users(int idUsers, String username, String prenom, String email, String password, String phone,
+                 String avatar, Role role, String address, String city, String codePostal, String country,
+                 boolean online, LocalDateTime lastSeen, LocalDateTime date) {
         this.idUsers = idUsers;
         this.username = username;
+        this.prenom = prenom;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.avatar = avatar;
         this.role = role;
+        this.address = address;
         this.city = city;
         this.codePostal = codePostal;
+        this.country = country;
         this.online = online;
         this.lastSeen = lastSeen;
         this.date = date;
@@ -50,6 +57,14 @@ public class Users {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
     }
 
     public String getEmail() {
@@ -92,6 +107,14 @@ public class Users {
         this.role = role;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getCity() {
         return city;
     }
@@ -106,6 +129,14 @@ public class Users {
 
     public void setCodePostal(String codePostal) {
         this.codePostal = codePostal;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public boolean isOnline() {
