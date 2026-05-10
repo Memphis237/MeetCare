@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #EBF3FB;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.SettingsPatientController">
+
+    <left>
+        <VBox prefWidth="230" spacing="0" style="-fx-background-color: #FFFFFF; -fx-border-color: #D9E8F5; -fx-border-width: 0 1 0 0;">
+
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 22 20 22 20;">
+                <Label style="-fx-text-fill: #2B7FD4; -fx-font-size: 22px; -fx-font-weight: bold;" text="✚" />
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="MediConnect" />
+            </HBox>
+
+            <Separator style="-fx-background-color: #D9E8F5;" />
+
+            <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 18 20 18 20;">
+                <StackPane>
+                    <Circle fx:id="avatarCircle" radius="26" />
+                    <Label fx:id="avatarInitialsLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="J" />
+                </StackPane>
+                <VBox spacing="2">
+                    <Label fx:id="profileNameLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Jean" />
+                    <Label fx:id="profileRoleLabel" style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="Patient" />
+                </VBox>
+            </HBox>
+
+            <Separator style="-fx-background-color: #D9E8F5;" />
+
+            <VBox spacing="2" style="-fx-padding: 10 10 10 10;">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#handleHome" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Accueil" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rechercher" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Mes rendez-vous" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Documents" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Factures" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Messages" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Assistant IA" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Notifications" HBox.hgrow="ALWAYS" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <StackPane>
+                        <Circle radius="11" style="-fx-fill: #2B7FD4;" />
+                        <Label style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: white;" text="15" />
+                    </StackPane>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8;">
+                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="Parametres" />
+                </HBox>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+            <Separator />
+
+            <HBox alignment="CENTER_LEFT" onMouseClicked="#handleLogout" spacing="12" style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #E05A2B; -fx-font-weight: bold;" text="Déconnexion" />
+            </HBox>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox spacing="18" style="-fx-padding: 28 28 28 28; -fx-background-color: #EBF3FB;">
+
+                <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Parametres" />
+
+                <HBox alignment="TOP_LEFT" spacing="16">
+
+                    <VBox spacing="16" HBox.hgrow="ALWAYS">
+                        <VBox spacing="14" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22; -fx-effect: dropshadow(gaussian, #c8d8e8, 10, 0, 0, 3);">
+                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Photo de profil" />
+                            <StackPane alignment="CENTER">
+                                <Circle fx:id="settingsAvatarCircle" radius="44" />
+                                <Label fx:id="settingsAvatarInitialsLabel" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="J" />
+                            </StackPane>
+                            <HBox alignment="CENTER" spacing="10">
+                                <Button onAction="#handleChangePhoto" prefHeight="35.0" prefWidth="189.0" style="-fx-background-color: #EBF3FB; -fx-text-fill: #2B7FD4;                                                -fx-font-size: 12px; -fx-font-weight: bold;                                                -fx-background-radius: 8; -fx-padding: 8 0 8 0;                                                -fx-border-color: #C8DDEF; -fx-border-radius: 8;" text="Changer la photo de profil" HBox.hgrow="ALWAYS" />
+                                <Button onAction="#handleDeletePhoto" prefHeight="35.0" prefWidth="156.0" style="-fx-background-color: #FFF4F4; -fx-text-fill: #C0392B;                                                -fx-font-size: 12px; -fx-font-weight: bold;                                                -fx-background-radius: 8; -fx-padding: 8 0 8 0;                                                -fx-border-color: #F0C5C0; -fx-border-radius: 8;" text="Supprimer la photo" HBox.hgrow="ALWAYS" />
+                            </HBox>
+                        </VBox>
+
+                        <VBox spacing="14" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22; -fx-effect: dropshadow(gaussian, #c8d8e8, 10, 0, 0, 3);">
+                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Modifier le mot de passe" />
+
+                            <VBox spacing="6">
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Mot de passe actuel" />
+                                <PasswordField fx:id="currentPasswordField" promptText="Mot de passe actuel" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 10 12 10 12; -fx-font-size: 13px;" />
+                            </VBox>
+
+                            <VBox spacing="6">
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Nouveau mot de passe" />
+                                <PasswordField fx:id="newPasswordField" promptText="Nouveau mot de passe" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 10 12 10 12; -fx-font-size: 13px;" />
+                            </VBox>
+
+                            <VBox spacing="6">
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Confirmer le nouveau mot de passe" />
+                                <PasswordField fx:id="confirmNewPasswordField" promptText="Confirmer le nouveau mot de passe" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 10 12 10 12; -fx-font-size: 13px;" />
+                            </VBox>
+
+                            <Button onAction="#handleChangePassword" style="-fx-background-color: white; -fx-text-fill: #1A2C42;                                            -fx-font-size: 13px; -fx-background-radius: 8;                                            -fx-border-color: #C8DDEF; -fx-border-radius: 8;                                            -fx-padding: 10 20 10 20;" text="Modifier le mot de passe" />
+                        </VBox>
+                    </VBox>
+
+                    <VBox prefWidth="400" spacing="16">
+                        <VBox spacing="14" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22; -fx-effect: dropshadow(gaussian, #c8d8e8, 10, 0, 0, 3);">
+                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Informations personnelles" />
+
+                            <VBox spacing="10">
+                                <VBox spacing="5">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Prenom" />
+                                    <TextField fx:id="prenomField" promptText="Jean" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Nom d'utilisateur" />
+                                    <TextField fx:id="usernameField" promptText="Dupont" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Email" />
+                                    <TextField fx:id="emailField" promptText="jean.dupont@email.com" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Telephone" />
+                                    <TextField fx:id="phoneField" promptText="06 12 34 56 78" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Adresse" />
+                                    <TextField fx:id="addressField" promptText="123 Rue de la Paix" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Ville" />
+                                    <TextField fx:id="cityField" promptText="Paris" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Code postal" />
+                                    <TextField fx:id="codePostalField" promptText="75001" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
+                                </VBox>
+                                <VBox spacing="5">
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="Pays" />
+                                    <TextField fx:id="countryField" promptText="France" style="-fx-background-color: #F2F7FB; -fx-background-radius: 8;                                                       -fx-border-color: #D9E8F5; -fx-border-radius: 8;                                                       -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
+                                </VBox>
+                            </VBox>
+
+                            <HBox alignment="CENTER_RIGHT">
+                                <Button onAction="#handleSaveProfile" style="-fx-background-color: #2B7FD4; -fx-text-fill: white;                                                -fx-font-size: 12px; -fx-font-weight: bold;                                                -fx-background-radius: 8; -fx-padding: 9 18 9 18;" text="Enregistrer les modifications" />
+                            </HBox>
+                        </VBox>
+
+                        <VBox spacing="14" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22; -fx-effect: dropshadow(gaussian, #c8d8e8, 10, 0, 0, 3);">
+                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Preferences de notification" />
+
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label style="-fx-font-size: 13px; -fx-text-fill: #1A2C42;" text="Notifications par email" HBox.hgrow="ALWAYS" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <CheckBox fx:id="emailNotifToggle" selected="true" style="-fx-padding: 0;" />
+                            </HBox>
+
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label style="-fx-font-size: 13px; -fx-text-fill: #1A2C42;" text="Notifications par SMS" HBox.hgrow="ALWAYS" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <CheckBox fx:id="smsNotifToggle" selected="true" style="-fx-padding: 0;" />
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

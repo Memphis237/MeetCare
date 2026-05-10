@@ -1,0 +1,112 @@
+/* Palette de couleurs */
+.root {
+    -fx-accent-blue: #0052FF;
+    -fx-bg-gray: #F4F7FE;
+    -fx-sidebar-white: #FFFFFF;
+    -fx-text-dark: #1B2559;
+    -fx-text-gray: #A3AED0;
+}
+
+/* Fond principal */
+.main-container {
+    -fx-background-color: -fx-bg-gray;
+}
+
+/* Style de la barre latérale */
+.sidebar {
+    -fx-background-color: -fx-sidebar-white;
+    -fx-padding: 30 0 30 0;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-gray;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.nav-button:hover {
+    -fx-text-fill: -fx-accent-blue;
+}
+
+.nav-button-active {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-accent-blue;
+    -fx-border-color: -fx-accent-blue;
+    -fx-border-width: 0 0 0 4; /* Barre bleue sur le côté */
+}
+
+/* Style des Cartes (Statistiques et Rendez-vous) */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(112, 144, 176, 0.15), 15, 0, 0, 5);
+}
+
+.card-title {
+    -fx-text-fill: -fx-text-gray;
+    -fx-font-size: 14px;
+}
+
+.card-value {
+    -fx-text-fill: -fx-text-dark;
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+}
+
+/* Boutons d'action en bas */
+.action-tile {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-padding: 20;
+}
+
+.action-tile:hover {
+    -fx-background-color: #f8f9ff;
+}
+
+/* Auth screens */
+.auth-field {
+    -fx-background-color: #f7f9fc;
+    -fx-background-radius: 12;
+    -fx-border-color: #dbe5f0;
+    -fx-border-radius: 12;
+    -fx-padding: 10 14;
+}
+
+.auth-field:focused {
+    -fx-border-color: #2f6fd4;
+    -fx-background-color: white;
+}
+
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, #2f6fd4, #4b8bf5);
+    -fx-background-radius: 12;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 12 18;
+}
+
+.btn-primary:hover {
+    -fx-opacity: 0.92;
+}
+
+.auth-link {
+    -fx-text-fill: #2f6fd4;
+    -fx-border-color: transparent;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.form-label {
+    -fx-text-fill: #1b2559;
+    -fx-font-weight: bold;
+}
+
+.msg-label {
+    -fx-font-size: 13px;
+}

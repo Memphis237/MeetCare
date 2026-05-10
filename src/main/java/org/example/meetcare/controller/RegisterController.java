@@ -1,87 +1,112 @@
 package org.example.meetcare.controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;        // ✅ ajouté
-import javafx.scene.Scene;             // ✅ ajouté
-import javafx.stage.Stage;             // ✅ ajouté
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import org.example.meetcare.model.Users;
 import org.example.meetcare.service.RegisterService;
-import org.example.meetcare.dao.UsersDao;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.io.IOException;
 
 public class RegisterController {
+    @FXML
+    private TextField prenom;
 
     @FXML
-    private TextField nameField;
-    @FXML
-    private TextField surnameField;
-    @FXML
-    private TextField emailField;
-    @FXML
-    private TextField phoneField;
-    @FXML
-    private PasswordField passwordField;
-    @FXML
-    private PasswordField confirmPasswordField;
-    @FXML
-    private Label errorLabel;
-
-    private final RegisterService registerService = new RegisterService(new UsersDao());
+    private TextField username;
 
     @FXML
-    private void handleRegister() {
-        // Réinitialiser le message d'erreur
-        errorLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: red;");
-        errorLabel.setText("");
+    private TextField email;
 
-        String name = nameField.getText();
-        String surname = surnameField.getText();
-        String email = emailField.getText();
-        String phone = phoneField.getText();
-        String password = passwordField.getText();
-        String confirm_password = confirmPasswordField.getText();
+    @FXML
+    private TextField telephone;
 
-        String result = registerService.register(
-                name, surname, email, phone, password, confirm_password
-        );
+    @FXML
+    private TextField address;
 
-        if (result.equals("Registration successful")) {
-            // Afficher en vert en cas de succès
-            errorLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: green;");
-            errorLabel.setText("Compte créé avec succès !");
+    @FXML
+    private TextField city;
 
-            // Optionnel : vider les champs après inscription
-            clearFields();
-        }
-        
-        else  {
-            errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText(result);
+    @FXML
+    private TextField codePostal;
+
+    @FXML
+    private TextField country;
+
+    @FXML
+    private PasswordField password;
+
+    @FXML
+    private PasswordField confirmPassword;
+
+    @FXML
+    private Label messageLabel;
+
+    private final RegisterService registerService = new RegisterService();
+
+    @FXML
+    private void handleInscription(ActionEvent event) {
+        try {
+            Users user = new Users();
+            user.setPrenom(prenom.getText());
+            user.setUsername(username.getText());
+            user.setEmail(email.getText());
+            user.setPhone(telephone.getText());
+            user.setAddress(address.getText());
+            user.setCity(city.getText());
+            user.setCodePostal(codePostal.getText());
+            user.setCountry(country.getText());
+            user.setPassword(password.getText());
+
+            registerService.register(user, confirmPassword.getText());
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Inscription réussie");
+            alert.setHeaderText(null);
+            alert.setContentText("Compte créé avec succès. Vous pouvez maintenant vous connecter.");
+            alert.showAndWait();
+            navigate(event, "/view/login.fxml");
+        } catch (IllegalArgumentException ex) {
+            showMessage(ex.getMessage(), false);
+        } catch (Exception ex) {
+            showMessage("Une erreur est survenue pendant l'inscription.", false);
         }
     }
 
     @FXML
-   private void handleBack() {
-     try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/login.fxml"));
-        Scene scene = new Scene(loader.load());
-        Stage stage = (Stage) nameField.getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
-     } catch (Exception e) {
-        e.printStackTrace();
-     }
-   }
-    @FXML
-    private void clearFields() {
-        nameField.clear();
-        surnameField.clear();
-        emailField.clear();
-        phoneField.clear();
-        passwordField.clear();
-        confirmPasswordField.clear();
+    private void handleBackToLogin(ActionEvent event) {
+        navigate(event, "/view/login.fxml");
+    }
+
+    private void navigate(ActionEvent event, String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException ex) {
+            showMessage("Impossible d'ouvrir la page demandée.", false);
+        }
+    }
+
+    private void showMessage(String message, boolean success) {
+        messageLabel.setText(message);
+        messageLabel.setStyle(success
+                ? "-fx-text-fill: #1b8f4b; -fx-font-size: 13px;"
+                : "-fx-text-fill: #d64545; -fx-font-size: 13px;");
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }
