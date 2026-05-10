@@ -97,7 +97,7 @@
             <Region VBox.vgrow="ALWAYS" />
             <Separator />
 
-            <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 16 24 16 24;">
+            <HBox alignment="CENTER_LEFT" spacing="12" onMouseClicked="#handleLogout" style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
                 <Label style="-fx-font-size: 13px; -fx-text-fill: red;" text="Déconnexion" textFill="#f40505" />
             </HBox>
 

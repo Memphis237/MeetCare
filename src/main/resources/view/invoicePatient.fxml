@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #F2F2F2;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #F2F2F2;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.InvoicePatientController">
 
     <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
     <left>
@@ -133,7 +133,7 @@
             <Separator />
 
                   <!-- Deconnexion -->
-            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 16 20 16 20;">
+            <HBox alignment="CENTER_LEFT" spacing="10" onMouseClicked="#handleLogout" style="-fx-padding: 16 20 16 20; -fx-cursor: hand;">
                 <Label style="-fx-font-size: 13px; -fx-text-fill: #E05A2B; -fx-font-weight: bold;" text="Déconnexion" />
             </HBox>
          <Separator />

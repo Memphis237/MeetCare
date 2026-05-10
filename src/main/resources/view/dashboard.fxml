@@ -6,6 +6,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.DashboardController"
             prefWidth="1200" prefHeight="750"
             style="-fx-background-color: #F8F8F8;">
 
@@ -133,7 +134,7 @@
             <Separator/>
 
             <!-- Deconnexion -->
-            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 18 24 18 24;">
+            <HBox alignment="CENTER_LEFT" spacing="10" onMouseClicked="#handleLogout" style="-fx-padding: 18 24 18 24; -fx-cursor: hand;">
                 <Label text="->"
                        style="-fx-font-size: 14px; -fx-text-fill: #E05A2B; -fx-font-weight: bold;"/>
                 <Label text="Deconnexion"

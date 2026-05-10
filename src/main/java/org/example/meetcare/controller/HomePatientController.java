@@ -1,23 +1,16 @@
 package org.example.meetcare.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AppSession;
+import org.example.meetcare.utils.LogoutUtil;
 import org.example.meetcare.utils.NavigationUtil;
-import org.example.meetcare.dao.UsersDao;
-
-import java.io.IOException;
 
 public class HomePatientController {
-    private final UsersDao usersDao = new UsersDao();
-
     @FXML
     private Label patientNameLabel;
 
@@ -34,7 +27,9 @@ public class HomePatientController {
             return;
         }
 
-        String displayName = user.getUsername() == null || user.getUsername().isBlank() ? "Patient" : user.getUsername();
+        String displayName = user.getUsername() == null || user.getUsername().isBlank()
+                ? "Patient"
+                : user.getUsername();
         patientNameLabel.setText(displayName);
         welcomeLabel.setText("Bienvenue, " + displayName);
         roleLabel.setText(roleToLabel(user.getRole()));
@@ -42,28 +37,7 @@ public class HomePatientController {
 
     @FXML
     private void handleLogout(MouseEvent event) {
-        Users user = AppSession.getCurrentUser();
-        try {
-            if (user != null) {
-                usersDao.updateOnlineStatus(user.getIdUsers(), false);
-            }
-        } catch (RuntimeException ignored) {
-            // On continue la déconnexion locale même si la base répond mal.
-        }
-        AppSession.clear();
-
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
-            Scene scene = new Scene(root, 620, 520);
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("MeetCare - Connexion");
-            stage.centerOnScreen();
-            stage.show();
-        } catch (IOException ex) {
-            throw new IllegalStateException("Impossible de revenir à la page de connexion.", ex);
-        }
+        LogoutUtil.logout((Node) event.getSource());
     }
 
     @FXML
