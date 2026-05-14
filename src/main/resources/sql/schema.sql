@@ -1,14 +1,23 @@
+CREATE DATABASE IF NOT EXISTS meetcare
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE meetcare;
+
 -- USERS
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id_users INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
+    prenom VARCHAR(255) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     avatar VARCHAR(255),
     role VARCHAR(50),
+    address VARCHAR(255),
     city VARCHAR(100),
     code_postal VARCHAR(20),
+    country VARCHAR(100),
     is_online BOOLEAN DEFAULT FALSE,
     last_seen DATETIME,
     date DATETIME DEFAULT CURRENT_TIMESTAMP
