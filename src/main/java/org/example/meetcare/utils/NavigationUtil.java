@@ -51,7 +51,7 @@ public class NavigationUtil {
     }
 
     public static void openPatientMessages(Event event) {
-        navigateTo(event, "/view/messagePatient.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Messages");
+        navigateTo(event, "/view/messagePatient.fxml", 1280, 760, "MeetCare - Messages");
     }
 
     public static void openPatientSettings(Event event) {
@@ -119,7 +119,7 @@ public class NavigationUtil {
     }
 
     public static void openMedecinMessages(Event event) {
-        navigateTo(event, "/view/messageMedecin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Messagerie");
+        navigateTo(event, "/view/messageMedecin.fxml", 1280, 760, "MeetCare - Messagerie");
     }
 
     public static void openMedecinStats(Event event) {

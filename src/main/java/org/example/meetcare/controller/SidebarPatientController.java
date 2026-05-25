@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.Role;
@@ -27,6 +28,12 @@ public class SidebarPatientController {
     private Label roleLabel;
 
     @FXML
+    private StackPane messagesBadgeContainer;
+
+    @FXML
+    private Label messagesBadgeLabel;
+
+    @FXML
     private void initialize() {
         refreshSidebar(null);
     }
@@ -40,6 +47,17 @@ public class SidebarPatientController {
         patientNameLabel.setText(buildDisplayName(user));
         roleLabel.setText(roleToLabel(user.getRole()));
         AvatarUtil.applyAvatar(avatarCircle, avatarInitialsLabel, user);
+    }
+
+    public void setMessageBadgeCount(int count) {
+        if (messagesBadgeContainer == null || messagesBadgeLabel == null) {
+            return;
+        }
+
+        boolean hasUnread = count > 0;
+        messagesBadgeContainer.setVisible(hasUnread);
+        messagesBadgeContainer.setManaged(hasUnread);
+        messagesBadgeLabel.setText(hasUnread ? (count > 99 ? "99+" : String.valueOf(count)) : "");
     }
 
     @FXML
@@ -69,6 +87,12 @@ public class SidebarPatientController {
 
     @FXML
     private void handleMessages(MouseEvent event) {
+        NavigationUtil.openPatientMessages(event);
+    }
+
+    @FXML
+    private void handleAssistant(MouseEvent event) {
+        AppSession.setOpenAssistantConversation(true);
         NavigationUtil.openPatientMessages(event);
     }
 

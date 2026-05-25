@@ -4,6 +4,7 @@ import org.example.meetcare.model.Users;
 
 public final class AppSession {
     private static Users currentUser;
+    private static boolean openAssistantConversation;
 
     private AppSession() {
     }
@@ -18,5 +19,14 @@ public final class AppSession {
 
     public static void clear() {
         currentUser = null;
+        openAssistantConversation = false;
+    }
+
+    public static boolean isOpenAssistantConversation() {
+        return openAssistantConversation;
+    }
+
+    public static void setOpenAssistantConversation(boolean openAssistantConversation) {
+        this.openAssistantConversation = openAssistantConversation;
     }
 }

@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.meetcare.utils.DatabaseConnection;
 import org.example.meetcare.utils.EnvLoader;
+import org.example.meetcare.utils.AppSession;
+import org.example.meetcare.dao.UsersDao;
 
 import java.io.IOException;
 
@@ -31,6 +33,13 @@ public class Main extends Application {
 
     @Override
     public void stop() {
+        if (AppSession.getCurrentUser() != null) {
+            try {
+                new UsersDao().updateOnlineStatus(AppSession.getCurrentUser().getIdUsers(), false);
+            } catch (Exception ignored) {
+                // We keep shutdown resilient even if presence syncing fails.
+            }
+        }
         DatabaseConnection.closeConnection();
     }
 }

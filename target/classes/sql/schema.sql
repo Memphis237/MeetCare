@@ -59,6 +59,27 @@ CREATE TABLE conversations (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE conversation_participants (
+    id_conversation_participants INT AUTO_INCREMENT PRIMARY KEY,
+    id_conversations INT NOT NULL,
+    id_users INT NOT NULL,
+    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_conversation_user (id_conversations, id_users),
+    FOREIGN KEY (id_conversations) REFERENCES conversations(id_conversations) ON DELETE CASCADE,
+    FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
+);
+
+CREATE TABLE conversation_typing (
+    id_conversation_typing INT AUTO_INCREMENT PRIMARY KEY,
+    id_conversations INT NOT NULL,
+    id_users INT NOT NULL,
+    is_typing BOOLEAN DEFAULT FALSE,
+    typing_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_typing_conversation_user (id_conversations, id_users),
+    FOREIGN KEY (id_conversations) REFERENCES conversations(id_conversations) ON DELETE CASCADE,
+    FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
+);
+
 -- NOTIFICATIONS
 CREATE TABLE notifications (
     id_notifications INT AUTO_INCREMENT PRIMARY KEY,
@@ -118,7 +139,7 @@ CREATE TABLE attachments (
     file_name VARCHAR(255),
     file_path VARCHAR(255),
     file_type VARCHAR(100),
-    file_size INT,
+    file_size BIGINT,
     date DATETIME DEFAULT CURRENT_TIMESTAMP,
     id_messages INT,
     FOREIGN KEY (id_messages) REFERENCES messages(id_messages) ON DELETE CASCADE

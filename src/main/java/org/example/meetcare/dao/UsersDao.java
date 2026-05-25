@@ -150,6 +150,117 @@ public class UsersDao {
         return users;
     }
 
+    public java.util.List<Users> findAllDoctors() {
+        return findAllByRole(Role.MEDECIN);
+    }
+
+    public java.util.List<Users> findAllByRole(Role role) {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, is_online, last_seen, `date`
+                FROM users
+                WHERE role = ?
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, role == null ? Role.USER.name() : role.name());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(mapUser(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors du chargement des utilisateurs.", e);
+        }
+        return users;
+    }
+
+    public java.util.List<Users> findAllUsers() {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, is_online, last_seen, `date`
+                FROM users
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        try (PreparedStatement statement = getConnection().prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                users.add(mapUser(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors du chargement des utilisateurs.", e);
+        }
+        return users;
+    }
+
+    public java.util.List<Users> searchByRole(Role role, String query) {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, is_online, last_seen, `date`
+                FROM users
+                WHERE role = ?
+                  AND (
+                    LOWER(username) LIKE ?
+                    OR LOWER(prenom) LIKE ?
+                    OR LOWER(email) LIKE ?
+                  )
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        String normalizedQuery = "%" + (query == null ? "" : query.trim().toLowerCase()) + "%";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, role == null ? Role.USER.name() : role.name());
+            statement.setString(2, normalizedQuery);
+            statement.setString(3, normalizedQuery);
+            statement.setString(4, normalizedQuery);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(mapUser(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la recherche des utilisateurs.", e);
+        }
+        return users;
+    }
+
+    public java.util.List<Users> searchAll(String query) {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, is_online, last_seen, `date`
+                FROM users
+                WHERE LOWER(username) LIKE ?
+                   OR LOWER(prenom) LIKE ?
+                   OR LOWER(email) LIKE ?
+                   OR LOWER(role) LIKE ?
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        String normalizedQuery = "%" + (query == null ? "" : query.trim().toLowerCase()) + "%";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, normalizedQuery);
+            statement.setString(2, normalizedQuery);
+            statement.setString(3, normalizedQuery);
+            statement.setString(4, normalizedQuery);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(mapUser(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la recherche des utilisateurs.", e);
+        }
+        return users;
+    }
+
     public void updateProfile(Users user) {
         String sql = """
                 UPDATE users
@@ -195,10 +306,18 @@ public class UsersDao {
     }
 
     public void updateOnlineStatus(int userId, boolean online) {
-        String sql = "UPDATE users SET is_online = ?, last_seen = ? WHERE id_users = ?";
+        String sql = """
+                UPDATE users
+                SET is_online = ?,
+                    last_seen = CASE
+                        WHEN ? = FALSE THEN CURRENT_TIMESTAMP
+                        ELSE last_seen
+                    END
+                WHERE id_users = ?
+                """;
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setBoolean(1, online);
-            statement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            statement.setBoolean(2, online);
             statement.setInt(3, userId);
             statement.executeUpdate();
         } catch (SQLException e) {
