@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/homePatient.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 850, 600);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
         stage.setTitle("Bibliothèque - Gestion des livres");
