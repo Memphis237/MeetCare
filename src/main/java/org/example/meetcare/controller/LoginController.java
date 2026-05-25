@@ -15,8 +15,6 @@ import org.example.meetcare.model.Users;
 import org.example.meetcare.service.RegisterService;
 import org.example.meetcare.utils.AppSession;
 
-import java.io.IOException;
-
 public class LoginController {
     @FXML
     private TextField username;
@@ -41,6 +39,7 @@ public class LoginController {
         } catch (IllegalArgumentException ex) {
             showMessage(ex.getMessage(), false);
         } catch (Exception ex) {
+            ex.printStackTrace();
             showMessage("Une erreur est survenue pendant la connexion.", false);
         }
     }
@@ -59,7 +58,7 @@ public class LoginController {
         }
 
         if (role == Role.MEDECIN) {
-            navigate(event, "/view/homeMedecin.fxml", 1100, 700, "MeetCare - Espace médecin");
+            navigate(event, "/view/homeMedecin.fxml", 1100, 700, "MeetCare - Espace medecin");
             return;
         }
 
@@ -77,9 +76,23 @@ public class LoginController {
             stage.setTitle(title);
             stage.centerOnScreen();
             stage.show();
-        } catch (IOException ex) {
-            showMessage("Impossible d'ouvrir la page demandée.", false);
+        } catch (Exception ex) {
+            System.err.println("Erreur lors de la navigation vers " + fxmlPath + ":");
+            ex.printStackTrace();
+            showMessage("Impossible d'ouvrir la page demandee. " + rootCauseMessage(ex), false);
         }
+    }
+
+    private String rootCauseMessage(Throwable throwable) {
+        Throwable current = throwable;
+        while (current.getCause() != null && current.getCause() != current) {
+            current = current.getCause();
+        }
+        String message = current.getMessage();
+        if (message == null || message.isBlank()) {
+            return current.getClass().getSimpleName();
+        }
+        return message;
     }
 
     private void showMessage(String message, boolean success) {

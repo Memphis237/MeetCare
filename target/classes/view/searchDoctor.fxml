@@ -19,36 +19,7 @@
             style="-fx-background-color: #f5f7fb;">
 
     <left>
-        <VBox prefWidth="280" spacing="15" style="-fx-background-color: white; -fx-border-color: #e5e7eb;">
-            <padding>
-                <Insets top="25" right="20" bottom="20" left="20"/>
-            </padding>
-
-            <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="MeetCare" style="-fx-text-fill: #2563eb; -fx-font-size: 24px; -fx-font-weight: bold;"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button text="Menu" style="-fx-background-color: transparent; -fx-font-size: 16px;"/>
-            </HBox>
-
-            <Separator/>
-
-            <Button text="Accueil" maxWidth="Infinity" styleClass="menu-button"/>
-            <Button text="Rechercher" maxWidth="Infinity" styleClass="menu-button-active"/>
-            <Button text="Mes rendez-vous" maxWidth="Infinity" styleClass="menu-button"/>
-            <Button text="Documents" maxWidth="Infinity" styleClass="menu-button"/>
-            <Button text="Factures" maxWidth="Infinity" styleClass="menu-button"/>
-            <Button text="Messages" maxWidth="Infinity" styleClass="menu-button"/>
-            <Button text="Assistant IA" maxWidth="Infinity" styleClass="menu-button"/>
-            <Button text="Notifications" maxWidth="Infinity" styleClass="menu-button"/>
-            <Button text="Parametres" maxWidth="Infinity" styleClass="menu-button"/>
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-            <Separator/>
-            <Button text="Deconnexion"
-                    maxWidth="Infinity"
-                    style="-fx-background-color: transparent; -fx-text-fill: red; -fx-font-size: 16px;"/>
-        </VBox>
+        <fx:include source="sidebarPatient.fxml"/>
     </left>
 
     <center>

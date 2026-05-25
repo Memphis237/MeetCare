@@ -7,37 +7,115 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.BorderPane?>
 
-<VBox fx:controller="org.example.meetcare.controller.SidebarPatientController"
-      prefWidth="260" spacing="12"
-      style="-fx-background-color: white; -fx-border-color: #e5e7eb;"
-      xmlns:fx="http://javafx.com/fxml/1">
 
-    <padding>
-        <Insets top="18" right="14" bottom="14" left="14"/>
-    </padding>
 
-    <HBox alignment="CENTER_LEFT">
-        <Label text="MeetCare" style="-fx-text-fill: #2563eb; -fx-font-size: 20px; -fx-font-weight: bold;"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="☰" style="-fx-font-size: 22px;"/>
+<VBox xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.SidebarPatientController"
+            prefWidth="230" spacing="0" style="-fx-background-color: #FFFFFF; -fx-border-color: #D9E8F5; -fx-border-width: 0 1 0 0;">
+
+    <!-- Logo MediConnect -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 22 20 22 20;">
+        <!-- Icône croix médicale (simulée avec un Label stylisé) -->
+        <Label style="-fx-text-fill: #2B7FD4; -fx-font-size: 22px; -fx-font-weight: bold;" text="✚" />
+        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="MediConnect" />
     </HBox>
 
-    <Separator/>
+    <Separator style="-fx-background-color: #D9E8F5;" />
 
-    <Button text="⌂   Accueil" maxWidth="Infinity" onAction="#handleHome" styleClass="menu-button"/>
-    <Button text="🔍   Rechercher" maxWidth="Infinity" onAction="#handleSearchDoctor" styleClass="menu-button"/>
-    <Button text="📅   Mes rendez-vous" maxWidth="Infinity" onAction="#handleAppointments" styleClass="menu-button-active"/>
-    <Button text="📄   Documents" maxWidth="Infinity" onAction="#handleDocuments" styleClass="menu-button"/>
-    <Button text="💳   Factures" maxWidth="Infinity" onAction="#handleInvoices" styleClass="menu-button"/>
-    <Button text="💬   Messages" maxWidth="Infinity" styleClass="menu-button"/>
-    <Button text="🤖   Assistant IA" maxWidth="Infinity" styleClass="menu-button"/>
-    <Button text="🔔   Notifications" maxWidth="Infinity" styleClass="menu-button"/>
-    <Button text="⚙   Paramètres" maxWidth="Infinity" onAction="#handleSettings" styleClass="menu-button"/>
+    <!-- Profil utilisateur -->
+    <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 18 20 18 20;">
+        <!-- Avatar placeholder -->
+        <StackPane>
+            <Circle fx:id="avatarCircle" radius="24" />
+            <Label fx:id="avatarInitialsLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="J" />
+        </StackPane>
+        <VBox spacing="2">
+            <Label fx:id="patientNameLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Jean" />
+            <Label fx:id="roleLabel" style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="Patient" />
+        </VBox>
+    </HBox>
 
-    <Region VBox.vgrow="ALWAYS"/>
+    <Separator style="-fx-background-color: #D9E8F5;" />
 
-    <Separator/>
-    <Button text="↪   Déconnexion" maxWidth="Infinity" onAction="#handleLogout"
-            style="-fx-background-color: transparent; -fx-text-fill: red; -fx-font-size: 14px; -fx-alignment: CENTER_LEFT;"/>
+    <!-- Navigation -->
+    <VBox spacing="2" style="-fx-padding: 10 10 10 10;">
+
+        <!-- Accueil (actif) -->
+        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleHome" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 16px; -fx-text-fill: #2B7FD4;" text="⌂" />
+            <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="Accueil" />
+        </HBox>
+
+        <!-- Rechercher -->
+        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleSearchDoctor" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔍" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rechercher" />
+        </HBox>
+
+        <!-- Mes rendez-vous -->
+        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleAppointments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📅" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Mes rendez-vous" />
+        </HBox>
+
+        <!-- Documents -->
+        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleDocuments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📄" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Documents" />
+        </HBox>
+
+        <!-- Factures -->
+        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleInvoices" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="💲" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Factures" />
+        </HBox>
+
+        <!-- Messages -->
+        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleMessages" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="💬" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Messages" />
+        </HBox>
+
+        <!-- Assistant IA -->
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🤖" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Assistant IA" />
+        </HBox>
+
+        <!-- Notifications avec badge -->
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔔" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Notifications" />
+            <Region HBox.hgrow="ALWAYS" />
+            <StackPane>
+                <Circle radius="10" style="-fx-fill: #2B7FD4;" />
+                <Label style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: white;" text="15" />
+            </StackPane>
+        </HBox>
+
+        <!-- Paramètres -->
+        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleSettings" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="⚙" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Paramètres" />
+        </HBox>
+
+    </VBox>
+
+    <!-- Spacer -->
+    <Region VBox.vgrow="ALWAYS" />
+
+    <Separator style="-fx-background-color: #D9E8F5;" />
+
+    <!-- Déconnexion -->
+    <HBox alignment="CENTER_LEFT" onMouseClicked="#handleLogout" spacing="12" style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
+        <Label style="-fx-font-size: 16px; -fx-text-fill: #6B8CAD;" text="→" />
+        <Label style="-fx-font-size: 13px; -fx-text-fill: #6B8CAD;" text="Déconnexion" />
+    </HBox>
+
 </VBox>

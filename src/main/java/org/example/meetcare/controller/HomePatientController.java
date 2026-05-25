@@ -15,18 +15,6 @@ import org.example.meetcare.utils.NavigationUtil;
 
 public class HomePatientController {
     @FXML
-    private Circle avatarCircle;
-
-    @FXML
-    private Label avatarInitialsLabel;
-
-    @FXML
-    private Circle mainAvatarCircle;
-
-    @FXML
-    private Label mainAvatarInitialsLabel;
-
-    @FXML
     private Label patientNameLabel;
 
     @FXML
@@ -37,17 +25,20 @@ public class HomePatientController {
 
     @FXML
     private void initialize() {
-        Users user = refreshCurrentUser();
-        if (user == null) {
-            return;
-        }
+        try {
+            Users user = refreshCurrentUser();
+            if (user == null) {
+                return;
+            }
 
-        String displayName = buildDisplayName(user);
-        patientNameLabel.setText(displayName);
-        welcomeLabel.setText("Bienvenue, " + displayName);
-        roleLabel.setText(roleToLabel(user.getRole()));
-        AvatarUtil.applyAvatar(avatarCircle, avatarInitialsLabel, user);
-        AvatarUtil.applyAvatar(mainAvatarCircle, mainAvatarInitialsLabel, user);
+            String displayName = buildDisplayName(user);
+            patientNameLabel.setText(displayName);
+            welcomeLabel.setText("Bienvenue, " + displayName);
+            roleLabel.setText(roleToLabel(user.getRole()));
+        } catch (Exception ex) {
+            System.err.println("Erreur lors de l'initialisation de l'accueil patient:");
+            ex.printStackTrace();
+        }
     }
 
     @FXML
@@ -93,7 +84,7 @@ public class HomePatientController {
         }
         return switch (role) {
             case ADMIN -> "Administrateur";
-            case MEDECIN -> "MÃ©decin";
+            case MEDECIN -> "Médecin";
             default -> "Patient";
         };
     }

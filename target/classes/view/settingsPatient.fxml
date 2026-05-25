@@ -21,7 +21,7 @@
             style="-fx-background-color: #f8fafc;">
 
     <left>
-        <fx:include source="sidebarPatient.fxml"/>
+        <fx:include fx:id="sidebarPatient" source="sidebarPatient.fxml"/>
     </left>
 
     <center>
