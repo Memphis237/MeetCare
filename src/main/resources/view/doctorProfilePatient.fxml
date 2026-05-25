@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.DoctorProfilePatientController"
+            prefWidth="1200"
+            prefHeight="800"
+            stylesheets="@../css/patient-pages.css"
+            style="-fx-background-color: #f8fafc;">
+
+    <left>
+        <fx:include source="sidebarPatient.fxml"/>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="22" style="-fx-padding: 24;">
+                <HBox alignment="CENTER_LEFT">
+                    <VBox spacing="4">
+                        <Label text="Profil du medecin" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                        <Label text="Consulte les informations avant de prendre rendez-vous" style="-fx-font-size: 15px; -fx-text-fill: #64748b;"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Retour a la recherche" onAction="#handleBackToSearch" styleClass="secondary-button"/>
+                </HBox>
+
+                <HBox spacing="20" styleClass="card">
+                    <StackPane>
+                        <Circle radius="42" style="-fx-fill: #dbeafe;"/>
+                        <Label fx:id="doctorAvatarLabel" text="D" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>
+                    </StackPane>
+
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <VBox spacing="4">
+                                <Label fx:id="doctorNameLabel" text="Dr. Nom Prenom" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                                <Label fx:id="specialityLabel" text="Specialite" style="-fx-font-size: 18px; -fx-text-fill: #475569;"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="ratingLabel" text="Note 4.8" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2563eb;"/>
+                        </HBox>
+
+                        <HBox spacing="10">
+                            <Label fx:id="cityLabel" text="Ville" styleClass="badge-blue"/>
+                            <Label fx:id="sectorLabel" text="Secteur" styleClass="badge"/>
+                            <Label fx:id="priceLabel" text="30 EUR" styleClass="badge-green"/>
+                        </HBox>
+
+                        <HBox spacing="24">
+                            <Label fx:id="experienceLabel" text="10 ans d'experience" style="-fx-font-size: 14px; -fx-text-fill: #334155;"/>
+                            <Label fx:id="vitaleLabel" text="Carte Vitale acceptee" style="-fx-font-size: 14px; -fx-text-fill: #334155;"/>
+                            <Label fx:id="teleconsultationLabel" text="Teleconsultation disponible" style="-fx-font-size: 14px; -fx-text-fill: #334155;"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="20">
+                    <VBox spacing="16" styleClass="card" HBox.hgrow="ALWAYS">
+                        <Label text="Presentation" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                        <Label fx:id="biographyLabel" text="Biographie du medecin" wrapText="true" style="-fx-font-size: 15px; -fx-text-fill: #475569;"/>
+                    </VBox>
+
+                    <VBox spacing="16" styleClass="card" prefWidth="360">
+                        <Label text="Informations pratiques" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                        <VBox spacing="8">
+                            <Label text="Adresse" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                            <Label fx:id="addressLabel" text="Adresse" wrapText="true" style="-fx-font-size: 14px; -fx-text-fill: #475569;"/>
+                        </VBox>
+                        <VBox spacing="8">
+                            <Label text="Email" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                            <Label fx:id="emailLabel" text="email@medecin.fr" style="-fx-font-size: 14px; -fx-text-fill: #475569;"/>
+                        </VBox>
+                        <VBox spacing="8">
+                            <Label text="Prochain creneau disponible" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                            <Label fx:id="nextSlotLabel" text="12/05/2026 a 09:00" style="-fx-font-size: 14px; -fx-text-fill: #16a34a;"/>
+                        </VBox>
+                        <VBox spacing="8">
+                            <Label text="Choisir un creneau" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                            <ComboBox fx:id="slotComboBox" prefWidth="260" prefHeight="42"/>
+                        </VBox>
+                        <Button fx:id="appointmentButton" text="Prendre rendez-vous" onAction="#handleBookAppointment" styleClass="primary-button" prefWidth="200"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

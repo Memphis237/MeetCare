@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="1200"
+            prefHeight="760"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #f8fafc;">
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="16" style="-fx-padding: 24;">
+                <Label text="Messages" styleClass="doctor-title"/>
+                <Label text="Boîte de réception du médecin." styleClass="doctor-subtitle"/>
+                <VBox spacing="8" styleClass="doctor-card">
+                    <Label text="Aucun nouveau message" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                    <Label text="La messagerie complète pourra être branchée ensuite sans casser le design." styleClass="doctor-subtitle"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,141 +1,63 @@
 package org.example.meetcare.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.DatePicker;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.example.meetcare.model.Appointment;
-import org.example.meetcare.utils.AppointmentStore;
+import org.example.meetcare.dao.PatientCareDao;
+import org.example.meetcare.model.AvailabilitySlot;
+import org.example.meetcare.model.Doctor;
+import org.example.meetcare.model.DoctorProfileData;
+import org.example.meetcare.utils.DoctorProfileStore;
+import org.example.meetcare.utils.NavigationUtil;
 
-import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class SearchDoctorController {
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    @FXML
-    private TextField searchField;
+    @FXML private TextField searchField;
+    @FXML private TextField cityField;
+    @FXML private DatePicker datePicker;
+    @FXML private VBox doctorResultsContainer;
+    @FXML private Label resultsCountLabel;
 
-    @FXML
-    private TextField cityField;
-
-    @FXML
-    private DatePicker datePicker;
-
-    @FXML
-    private VBox doctorResultsContainer;
-
-    @FXML
-    private Label resultsCountLabel;
-
-    private List<DoctorViewData> doctors;
+    private final PatientCareDao patientCareDao = new PatientCareDao();
 
     @FXML
     private void initialize() {
-        doctors = List.of(
-                new DoctorViewData(
-                        "Dr. Sarah Martin",
-                        "Cardiologue",
-                        "Paris",
-                        "15 Avenue des Champs-Elysees, 75008 Paris",
-                        "Secteur 1",
-                        "30 EUR",
-                        true,
-                        true,
-                        "4.8",
-                        LocalDate.of(2026, 5, 11),
-                        "14:30"
-                ),
-                new DoctorViewData(
-                        "Dr. Marc Dubois",
-                        "Generaliste",
-                        "Lyon",
-                        "23 Rue de la Republique, 69002 Lyon",
-                        "Secteur 1",
-                        "25 EUR",
-                        true,
-                        false,
-                        "4.9",
-                        LocalDate.of(2026, 5, 12),
-                        "10:00"
-                ),
-                new DoctorViewData(
-                        "Dr. Julie Bernard",
-                        "Dermatologue",
-                        "Paris",
-                        "8 Boulevard Saint-Germain, 75005 Paris",
-                        "Secteur 2",
-                        "50 EUR",
-                        true,
-                        true,
-                        "4.7",
-                        LocalDate.of(2026, 5, 13),
-                        "16:00"
-                ),
-                new DoctorViewData(
-                        "Dr. Amine Rahmani",
-                        "Pediatre",
-                        "Marseille",
-                        "42 Rue Paradis, 13001 Marseille",
-                        "Secteur 1",
-                        "35 EUR",
-                        true,
-                        false,
-                        "4.6",
-                        LocalDate.of(2026, 5, 14),
-                        "09:15"
-                ),
-                new DoctorViewData(
-                        "Dr. Lea Moreau",
-                        "Ophtalmologue",
-                        "Toulouse",
-                        "12 Allees Jean Jaures, 31000 Toulouse",
-                        "Secteur 2",
-                        "60 EUR",
-                        true,
-                        true,
-                        "4.9",
-                        LocalDate.of(2026, 5, 15),
-                        "11:45"
-                )
-        );
-
-        refreshResults(doctors);
+        loadDoctors();
     }
 
     @FXML
     private void handleSearch() {
-        String keyword = normalize(searchField.getText());
-        String city = normalize(cityField.getText());
-        LocalDate selectedDate = datePicker.getValue();
-
-        List<DoctorViewData> filteredDoctors = doctors.stream()
-                .filter(doctor -> keyword.isBlank()
-                        || normalize(doctor.name()).contains(keyword)
-                        || normalize(doctor.speciality()).contains(keyword)
-                        || normalize(doctor.address()).contains(keyword))
-                .filter(doctor -> city.isBlank() || normalize(doctor.city()).contains(city))
-                .filter(doctor -> selectedDate == null || !doctor.nextSlotDate().isBefore(selectedDate))
-                .collect(Collectors.toList());
-
-        refreshResults(filteredDoctors);
+        loadDoctors();
     }
 
-    private void refreshResults(List<DoctorViewData> doctorsToDisplay) {
+    private void loadDoctors() {
+        LocalDate selectedDate = datePicker == null ? null : datePicker.getValue();
+        List<PatientCareDao.DoctorSearchRecord> doctors = patientCareDao.searchDoctors(
+                safe(searchField.getText()),
+                safe(cityField.getText()),
+                selectedDate
+        );
+        refreshResults(doctors);
+    }
+
+    private void refreshResults(List<PatientCareDao.DoctorSearchRecord> doctorsToDisplay) {
         doctorResultsContainer.getChildren().clear();
         resultsCountLabel.setText(doctorsToDisplay.size() + (doctorsToDisplay.size() > 1 ? " resultats" : " resultat"));
 
@@ -146,7 +68,7 @@ public class SearchDoctorController {
             Label title = new Label("Aucun medecin trouve");
             title.getStyleClass().add("doctor-name");
 
-            Label subtitle = new Label("Essaie une autre specialite, ville ou date.");
+            Label subtitle = new Label("Essaie une autre ville, une autre specialite ou demande d'abord au medecin d'ouvrir des disponibilites.");
             subtitle.getStyleClass().add("doctor-info");
 
             emptyState.getChildren().addAll(title, subtitle);
@@ -154,16 +76,19 @@ public class SearchDoctorController {
             return;
         }
 
-        for (DoctorViewData doctor : doctorsToDisplay) {
+        for (PatientCareDao.DoctorSearchRecord doctor : doctorsToDisplay) {
             doctorResultsContainer.getChildren().add(createDoctorCard(doctor));
         }
     }
 
-    private HBox createDoctorCard(DoctorViewData doctor) {
+    private HBox createDoctorCard(PatientCareDao.DoctorSearchRecord doctorRecord) {
+        Doctor doctor = doctorRecord.doctor();
+        List<AvailabilitySlot> slots = doctorRecord.availableSlots();
+
         HBox card = new HBox(25);
         card.getStyleClass().add("doctor-card");
 
-        Label avatar = new Label(doctor.name().substring(4, 5).toUpperCase(Locale.ROOT));
+        Label avatar = new Label(getAvatarInitial(doctor.getUsername()));
         avatar.getStyleClass().add("avatar");
 
         VBox content = new VBox(8);
@@ -172,100 +97,135 @@ public class SearchDoctorController {
         HBox header = new HBox();
         VBox identity = new VBox(5);
 
-        Label name = new Label(doctor.name());
+        Label name = new Label(formatDoctorName(doctor.getUsername()));
         name.getStyleClass().add("doctor-name");
 
-        Label speciality = new Label(doctor.speciality());
+        Label speciality = new Label(safeValue(doctor.getSpeciality(), "Specialite non renseignee"));
         speciality.getStyleClass().add("doctor-speciality");
-
         identity.getChildren().addAll(name, speciality);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label rating = new Label("Note " + doctor.rating());
+        Label rating = new Label("Experience " + Math.max(doctor.getExperience(), 0) + " ans");
         rating.getStyleClass().add("rating");
 
         header.getChildren().addAll(identity, spacer, rating);
 
-        Label address = new Label(doctor.address());
+        Label address = new Label(buildAddress(doctor.getAddress(), doctor.getCity()));
         address.getStyleClass().add("doctor-info");
 
         HBox badges = new HBox(10);
         badges.getChildren().addAll(
-                createBadge(doctor.sector(), "badge"),
-                createBadge(doctor.price(), "badge"),
-                createBadge("Carte Vitale", "badge-green")
+                createBadge(safeValue(doctor.getSector(), "Secteur non renseigne"), "badge"),
+                createBadge(formatPrice(doctor.getPrice()), "badge")
         );
-
-        if (doctor.teleconsultation()) {
+        if (doctor.isAcceptsVitale()) {
+            badges.getChildren().add(createBadge("Carte Vitale", "badge-green"));
+        }
+        if (doctor.isTeleconsultation()) {
             badges.getChildren().add(createBadge("Teleconsultation", "badge-blue"));
         }
 
+        VBox availabilityBox = new VBox(8);
+        Label availabilityTitle = new Label("Creneaux disponibles");
+        availabilityTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a;");
+
+        ComboBox<AvailabilitySlot> slotComboBox = new ComboBox<>();
+        slotComboBox.setPrefWidth(280);
+        slotComboBox.setPromptText("Choisir un creneau");
+        slotComboBox.getItems().addAll(slots);
+        slotComboBox.setCellFactory(listView -> new javafx.scene.control.ListCell<>() {
+            @Override
+            protected void updateItem(AvailabilitySlot item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.toDisplayLabel());
+            }
+        });
+        slotComboBox.setButtonCell(new javafx.scene.control.ListCell<>() {
+            @Override
+            protected void updateItem(AvailabilitySlot item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "Choisir un creneau" : item.toDisplayLabel());
+            }
+        });
+        if (!slots.isEmpty()) {
+            slotComboBox.setValue(slots.get(0));
+        }
+
+        Label noSlotLabel = new Label("Aucun creneau disponible pour le moment");
+        noSlotLabel.getStyleClass().add("doctor-info");
+        noSlotLabel.setVisible(slots.isEmpty());
+        noSlotLabel.setManaged(slots.isEmpty());
+        slotComboBox.setVisible(!slots.isEmpty());
+        slotComboBox.setManaged(!slots.isEmpty());
+
+        availabilityBox.getChildren().addAll(availabilityTitle, slotComboBox, noSlotLabel);
+
         HBox actions = new HBox(15);
-
-        Label nextSlot = new Label("Prochain creneau: " + formatDate(doctor.nextSlotDate()) + " a " + doctor.nextSlotTime());
-        nextSlot.setStyle("-fx-text-fill: #16a34a; -fx-font-size: 16px;");
-
         Region actionsSpacer = new Region();
         HBox.setHgrow(actionsSpacer, Priority.ALWAYS);
 
         Button profileButton = new Button("Voir profil");
         profileButton.getStyleClass().add("secondary-button");
+        profileButton.setOnAction(event -> handleViewProfile(doctor, slots, profileButton));
 
         Button appointmentButton = new Button("Prendre rendez-vous");
         appointmentButton.getStyleClass().add("primary-button");
-        appointmentButton.setOnAction(event -> handleAppointmentBooking(doctor, appointmentButton));
+        appointmentButton.setDisable(slots.isEmpty());
+        appointmentButton.setOnAction(event -> handleAppointmentBooking(doctor, slotComboBox.getValue(), appointmentButton));
 
-        actions.getChildren().addAll(nextSlot, actionsSpacer, profileButton, appointmentButton);
-        content.getChildren().addAll(header, address, badges, actions);
+        actions.getChildren().addAll(actionsSpacer, profileButton, appointmentButton);
+
+        content.getChildren().addAll(header, address, badges, availabilityBox, actions);
         card.getChildren().addAll(avatar, content);
-
         return card;
     }
 
-    private void handleAppointmentBooking(DoctorViewData doctor, Button sourceButton) {
+    private void handleViewProfile(Doctor doctor, List<AvailabilitySlot> slots, Button sourceButton) {
+        DoctorProfileStore.setCurrentDoctor(new DoctorProfileData(
+                doctor.getId(),
+                formatDoctorName(doctor.getUsername()),
+                safeValue(doctor.getEmail(), "Email non renseigne"),
+                safeValue(doctor.getSpeciality(), "Specialite non renseignee"),
+                safeValue(doctor.getCity(), "Ville non renseignee"),
+                buildAddress(doctor.getAddress(), doctor.getCity()),
+                safeValue(doctor.getSector(), "Secteur non renseigne"),
+                formatPrice(doctor.getPrice()),
+                doctor.isAcceptsVitale(),
+                doctor.isTeleconsultation(),
+                buildRating(doctor.getExperience()),
+                Math.max(doctor.getExperience(), 0),
+                safeValue(doctor.getBiography(), "Ce medecin n'a pas encore ajoute de presentation."),
+                slots
+        ));
+        NavigationUtil.navigateTo(sourceButton, "/view/doctorProfilePatient.fxml", 1200, 800, "MeetCare - Profil medecin");
+    }
+
+    private void handleAppointmentBooking(Doctor doctor, AvailabilitySlot slot, Button sourceButton) {
+        if (slot == null) {
+            showInfo("Creneau manquant", "Choisis d'abord un creneau disponible.");
+            return;
+        }
+
         ButtonType confirmButton = new ButtonType("Confirmer", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation du rendez-vous");
-        alert.setHeaderText("Prendre rendez-vous avec " + doctor.name());
-        alert.setContentText("Confirmer le creneau du " + formatDate(doctor.nextSlotDate()) + " a " + doctor.nextSlotTime() + " ?");
+        alert.setHeaderText("Prendre rendez-vous avec " + formatDoctorName(doctor.getUsername()));
+        alert.setContentText("Confirmer le creneau du " + slot.toDisplayLabel() + " ?");
         alert.getButtonTypes().setAll(confirmButton, cancelButton);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == confirmButton) {
-            AppointmentStore.addAppointment(AppointmentStore.createAppointment(
-                    doctor.name(),
-                    doctor.speciality(),
-                    doctor.city(),
-                    doctor.address(),
-                    AppointmentStore.STATUS_CONFIRMED,
-                    doctor.teleconsultation() ? "Motif: Teleconsultation reservee" : "Motif: Consultation reservee",
-                    doctor.teleconsultation(),
-                    doctor.nextSlotDate(),
-                    doctor.nextSlotTime()
-            ));
-            openMyAppointmentsPage(sourceButton);
-        }
-    }
-
-    private void openMyAppointmentsPage(Button sourceButton) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/myAppointments.fxml"));
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-
-            Stage stage = (Stage) sourceButton.getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException exception) {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setTitle("Erreur");
-            errorAlert.setHeaderText("Impossible d'ouvrir la page des rendez-vous");
-            errorAlert.setContentText("Verifie que myAppointments.fxml est bien disponible.");
-            errorAlert.showAndWait();
+            boolean created = patientCareDao.createAppointment(doctor.getId(), slot, doctor.isTeleconsultation());
+            if (created) {
+                NavigationUtil.navigateTo(sourceButton, "/view/myAppointments.fxml", 1200, 720, "MeetCare - Mes rendez-vous");
+            } else {
+                showInfo("Creneau indisponible", "Ce creneau vient d'etre reserve ou n'est plus disponible.");
+                loadDoctors();
+            }
         }
     }
 
@@ -275,26 +235,53 @@ public class SearchDoctorController {
         return badge;
     }
 
-    private String normalize(String text) {
-        return text == null ? "" : text.toLowerCase(Locale.ROOT).trim();
+    private void showInfo(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("MeetCare");
+        alert.setHeaderText(title);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
-    private String formatDate(LocalDate date) {
-        return date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear();
+    private String safe(String value) {
+        return value == null ? "" : value.trim();
     }
 
-    private record DoctorViewData(
-            String name,
-            String speciality,
-            String city,
-            String address,
-            String sector,
-            String price,
-            boolean acceptsVitale,
-            boolean teleconsultation,
-            String rating,
-            LocalDate nextSlotDate,
-            String nextSlotTime
-    ) {
+    private String safeValue(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value;
+    }
+
+    private String formatDoctorName(String username) {
+        if (username == null || username.isBlank()) {
+            return "Dr. Inconnu";
+        }
+        return username.startsWith("Dr.") ? username : "Dr. " + username;
+    }
+
+    private String buildAddress(String address, String city) {
+        if (address == null || address.isBlank()) {
+            return safeValue(city, "Adresse non renseignee");
+        }
+        if (city == null || city.isBlank() || address.toLowerCase(Locale.ROOT).contains(city.toLowerCase(Locale.ROOT))) {
+            return address;
+        }
+        return address + ", " + city;
+    }
+
+    private String formatPrice(double price) {
+        return String.format(Locale.US, "%.0f EUR", price);
+    }
+
+    private String buildRating(int experience) {
+        double rating = Math.max(4.2, Math.min(5.0, 4.3 + (experience * 0.03)));
+        return String.format(Locale.US, "%.1f", rating);
+    }
+
+    private String getAvatarInitial(String doctorName) {
+        String cleanName = doctorName == null ? "" : doctorName.replace("Dr. ", "").trim();
+        if (cleanName.isEmpty()) {
+            return "D";
+        }
+        return cleanName.substring(0, 1).toUpperCase(Locale.ROOT);
     }
 }

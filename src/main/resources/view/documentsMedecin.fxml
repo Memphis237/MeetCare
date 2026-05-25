@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.DocumentsMedecinController"
+            prefWidth="1200"
+            prefHeight="760"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #f8fafc;">
+
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="18" style="-fx-padding: 18 18 24 18;">
+                <VBox spacing="2">
+                    <Label text="Documents" styleClass="doctor-title"/>
+                    <Label text="Documents envoyés à vos patients" styleClass="doctor-subtitle"/>
+                </VBox>
+
+                <HBox spacing="16" styleClass="doctor-card">
+                    <ComboBox fx:id="patientFilterComboBox" prefWidth="260" prefHeight="42"/>
+                    <ComboBox fx:id="typeFilterComboBox" prefWidth="220" prefHeight="42"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="actionAnchorButton" text="+ Nouveau document" onAction="#handleCreateDocument" styleClass="doctor-primary-button"/>
+                </HBox>
+
+                <Label fx:id="documentsCountLabel" text="0 document(s)" style="-fx-font-size: 16px; -fx-text-fill: #475569;"/>
+
+                <VBox fx:id="documentsContainer" spacing="12"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

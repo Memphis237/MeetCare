@@ -3,6 +3,7 @@ package org.example.meetcare.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import org.example.meetcare.utils.LogoutUtil;
 import org.example.meetcare.utils.NavigationUtil;
 
@@ -33,6 +34,21 @@ public class SidebarPatientController {
     }
 
     @FXML
+    private void handleMessages(ActionEvent event) {
+        showUnavailableFeature("Messages");
+    }
+
+    @FXML
+    private void handleAssistant(ActionEvent event) {
+        showUnavailableFeature("Assistant IA");
+    }
+
+    @FXML
+    private void handleNotifications(ActionEvent event) {
+        showUnavailableFeature("Notifications");
+    }
+
+    @FXML
     private void handleSettings(ActionEvent event) {
         NavigationUtil.navigateTo(event, "/view/settingsPatient.fxml", 1100, 700, "MeetCare - Parametres");
     }
@@ -40,5 +56,13 @@ public class SidebarPatientController {
     @FXML
     private void handleLogout(ActionEvent event) {
         LogoutUtil.logout((Node) event.getSource());
+    }
+
+    private void showUnavailableFeature(String featureName) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("MeetCare");
+        alert.setHeaderText(featureName);
+        alert.setContentText("Cette page sera bientot disponible.");
+        alert.showAndWait();
     }
 }

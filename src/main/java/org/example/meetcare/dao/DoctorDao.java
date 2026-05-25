@@ -15,7 +15,8 @@ public class DoctorDao {
         String sql = """
             SELECT d.id_doctors, u.username, u.email, u.city,
                    d.speciality, d.address, d.sector,
-                   d.consultation_price, d.accepts_vitale, d.teleconsultation
+                   d.consultation_price, d.experience, d.biography,
+                   d.accepts_vitale, d.teleconsultation
             FROM doctors d
             JOIN users u ON d.id_users = u.id_users
             WHERE u.role = 'MEDECIN'
@@ -54,6 +55,8 @@ public class DoctorDao {
                         rs.getString("address"),
                         rs.getString("sector"),
                         rs.getDouble("consultation_price"),
+                        rs.getInt("experience"),
+                        rs.getString("biography"),
                         rs.getBoolean("accepts_vitale"),
                         rs.getBoolean("teleconsultation")
                 );

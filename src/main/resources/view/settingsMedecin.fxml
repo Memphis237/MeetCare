@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.SettingsMedecinController"
+            prefWidth="1200"
+            prefHeight="760"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #f8fafc;">
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="18" style="-fx-padding: 18 18 24 18;">
+                <VBox spacing="2">
+                    <Label text="Parametres" styleClass="doctor-title"/>
+                    <Label text="Gerez vos parametres de compte" styleClass="doctor-subtitle"/>
+                </VBox>
+
+                <HBox spacing="14" styleClass="doctor-card" alignment="CENTER_LEFT">
+                    <StackPane>
+                        <Circle fx:id="avatarCircle" radius="26"/>
+                        <Label fx:id="avatarInitialsLabel" text="SM" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #9333ea;"/>
+                    </StackPane>
+                    <VBox spacing="4">
+                        <Label fx:id="accountNameLabel" text="Dr. Sarah Martin" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                        <Label fx:id="accountStatusLabel" text="Statut du compte : ACTIVE" styleClass="doctor-subtitle"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="14" styleClass="doctor-card">
+                    <Label text="Informations de contact" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <VBox spacing="8">
+                        <Label text="Email professionnel" styleClass="doctor-subtitle"/>
+                        <TextField fx:id="emailField" styleClass="doctor-form-field"/>
+                    </VBox>
+                    <VBox spacing="8">
+                        <Label text="Telephone" styleClass="doctor-subtitle"/>
+                        <TextField fx:id="phoneField" styleClass="doctor-form-field"/>
+                    </VBox>
+                    <Button text="Enregistrer les modifications" onAction="#handleSaveContact" styleClass="doctor-primary-button"/>
+                </VBox>
+
+                <VBox spacing="14" styleClass="doctor-card">
+                    <Label text="Modifier le mot de passe" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <VBox spacing="8">
+                        <Label text="Mot de passe actuel" styleClass="doctor-subtitle"/>
+                        <PasswordField fx:id="currentPasswordField" styleClass="doctor-form-field"/>
+                    </VBox>
+                    <VBox spacing="8">
+                        <Label text="Nouveau mot de passe" styleClass="doctor-subtitle"/>
+                        <PasswordField fx:id="newPasswordField" styleClass="doctor-form-field"/>
+                    </VBox>
+                    <VBox spacing="8">
+                        <Label text="Confirmer le nouveau mot de passe" styleClass="doctor-subtitle"/>
+                        <PasswordField fx:id="confirmPasswordField" styleClass="doctor-form-field"/>
+                    </VBox>
+                    <Button text="Modifier le mot de passe" onAction="#handleChangePassword" styleClass="doctor-outline-button"/>
+                </VBox>
+
+                <VBox spacing="14" styleClass="doctor-card">
+                    <Label text="Preferences de notification" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="2">
+                            <Label text="Notifications par email" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                            <Label text="Recevoir les notifications par email" styleClass="doctor-subtitle"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <CheckBox fx:id="emailNotifCheckBox"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="2">
+                            <Label text="Notifications par SMS" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                            <Label text="Recevoir les notifications par SMS" styleClass="doctor-subtitle"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <CheckBox fx:id="smsNotifCheckBox"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="2">
+                            <Label text="Nouveaux rendez-vous" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                            <Label text="Etre notifie des nouvelles prises de rendez-vous" styleClass="doctor-subtitle"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <CheckBox fx:id="newAppointmentsNotifCheckBox"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="2">
+                            <Label text="Annulations" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                            <Label text="Etre notifie des annulations de rendez-vous" styleClass="doctor-subtitle"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <CheckBox fx:id="cancellationsNotifCheckBox"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="2">
+                            <Label text="Nouveaux messages" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                            <Label text="Etre notifie des nouveaux messages patients" styleClass="doctor-subtitle"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <CheckBox fx:id="messagesNotifCheckBox"/>
+                    </HBox>
+
+                    <Button text="Enregistrer les preferences" onAction="#handleSaveNotifications" styleClass="doctor-primary-button"/>
+                </VBox>
+
+                <VBox spacing="14" style="-fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #fca5a5; -fx-border-radius: 16; -fx-padding: 18;">
+                    <Label text="Zone de danger" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #dc2626;"/>
+                    <HBox alignment="CENTER_LEFT">
+                        <VBox spacing="4">
+                            <Label text="Desactiver le compte" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                            <Label text="Desactiver temporairement votre compte professionnel" styleClass="doctor-subtitle"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Desactiver" onAction="#handleDeactivateAccount" style="-fx-background-color: transparent; -fx-border-color: #f87171; -fx-text-fill: #dc2626; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 8 16;"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

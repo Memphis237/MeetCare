@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.PatientDetailMedecinController"
+            prefWidth="1200"
+            prefHeight="760"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #f8fafc;">
+
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="18" style="-fx-padding: 18 18 24 18;">
+                <Button fx:id="actionAnchorButton" text="← Retour à la liste" onAction="#handleBackToList" styleClass="doctor-link-button"/>
+
+                <HBox spacing="18" styleClass="doctor-card">
+                    <Label fx:id="initialsLabel" text="MD" styleClass="doctor-patient-avatar-large"/>
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label fx:id="patientNameLabel" text="Marie Dubois" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                        <Label fx:id="patientContactLabel" text="marie@email.com • 06 00 00 00 00" styleClass="doctor-subtitle"/>
+                        <Label fx:id="patientBirthLabel" text="Né(e) le 15/05/1985" styleClass="doctor-subtitle"/>
+                        <Label fx:id="patientAddressLabel" text="Adresse" styleClass="doctor-subtitle"/>
+                    </VBox>
+                    <HBox spacing="8">
+                        <Button text="Envoyer document" onAction="#handleSendDocument" styleClass="doctor-outline-button"/>
+                        <Button text="Créer facture" onAction="#handleCreateInvoice" styleClass="doctor-outline-button"/>
+                        <Button text="Envoyer message" onAction="#handleSendMessage" styleClass="doctor-outline-button"/>
+                    </HBox>
+                </HBox>
+
+                <HBox spacing="6">
+                    <Button fx:id="historyTabButton" text="Historique RDV" onAction="#handleShowHistory" styleClass="doctor-tab-button"/>
+                    <Button fx:id="documentsTabButton" text="Documents envoyés" onAction="#handleShowDocuments" styleClass="doctor-tab-button"/>
+                    <Button fx:id="invoicesTabButton" text="Factures" onAction="#handleShowInvoices" styleClass="doctor-tab-button"/>
+                    <Button fx:id="notesTabButton" text="Notes du médecin" onAction="#handleShowNotes" styleClass="doctor-tab-button"/>
+                </HBox>
+
+                <VBox fx:id="historySection" spacing="12" styleClass="doctor-card">
+                    <Label text="Historique des rendez-vous" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                    <VBox fx:id="historyContainer" spacing="10"/>
+                </VBox>
+
+                <VBox fx:id="documentsSection" spacing="12" styleClass="doctor-card" visible="false" managed="false">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Documents envoyés" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="+ Nouveau document" onAction="#handleSendDocument" styleClass="doctor-primary-button"/>
+                    </HBox>
+                    <VBox fx:id="documentsContainer" spacing="10"/>
+                </VBox>
+
+                <VBox fx:id="invoicesSection" spacing="12" styleClass="doctor-card" visible="false" managed="false">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Factures" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="+ Nouvelle facture" onAction="#handleCreateInvoice" styleClass="doctor-primary-button"/>
+                    </HBox>
+                    <VBox fx:id="invoicesContainer" spacing="10"/>
+                </VBox>
+
+                <VBox fx:id="notesSection" spacing="14" visible="false" managed="false">
+                    <VBox spacing="12" styleClass="doctor-card">
+                        <Label text="Ajouter une note" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                        <TextArea fx:id="noteInputArea" promptText="Écrivez votre note médicale..." prefRowCount="4" wrapText="true"/>
+                        <Button text="+ Ajouter la note" onAction="#handleAddNote" styleClass="doctor-primary-button"/>
+                    </VBox>
+                    <VBox spacing="12" styleClass="doctor-card">
+                        <Label text="Historique des notes" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                        <VBox fx:id="notesContainer" spacing="10"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.AdminWaitlistController"
+            prefWidth="1280" prefHeight="820"
+            styleClass="admin-root"
+            stylesheets="@../css/admin-pages.css">
+    <left><fx:include source="sidebarAdmin.fxml"/></left>
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="admin-content">
+                <VBox spacing="4">
+                    <Label text="Liste d'attente" styleClass="admin-title"/>
+                    <Label text="Comptes médecins à valider" styleClass="admin-subtitle"/>
+                </VBox>
+                <Label fx:id="waitlistCountLabel" text="0 dossier en attente" styleClass="admin-subtitle"/>
+                <VBox fx:id="waitlistContainer" spacing="14"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

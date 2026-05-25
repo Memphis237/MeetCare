@@ -7,8 +7,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.example.meetcare.dao.PatientCareDao;
 import org.example.meetcare.model.Appointment;
-import org.example.meetcare.utils.AppointmentStore;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,19 +16,17 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class MyAppointmentsController {
-    @FXML
-    private VBox appointmentsContainer;
+    private static final String STATUS_CONFIRMED = "CONFIRME";
+    private static final String STATUS_COMPLETED = "TERMINE";
+    private static final String STATUS_CANCELLED = "ANNULE";
 
-    @FXML
-    private Button confirmedTabButton;
+    @FXML private VBox appointmentsContainer;
+    @FXML private Button confirmedTabButton;
+    @FXML private Button completedTabButton;
+    @FXML private Button cancelledTabButton;
 
-    @FXML
-    private Button completedTabButton;
-
-    @FXML
-    private Button cancelledTabButton;
-
-    private String activeStatus = AppointmentStore.STATUS_CONFIRMED;
+    private final PatientCareDao patientCareDao = new PatientCareDao();
+    private String activeStatus = STATUS_CONFIRMED;
 
     @FXML
     private void initialize() {
@@ -37,9 +35,9 @@ public class MyAppointmentsController {
     }
 
     private void bindTabActions() {
-        confirmedTabButton.setOnAction(event -> switchTab(AppointmentStore.STATUS_CONFIRMED));
-        completedTabButton.setOnAction(event -> switchTab(AppointmentStore.STATUS_COMPLETED));
-        cancelledTabButton.setOnAction(event -> switchTab(AppointmentStore.STATUS_CANCELLED));
+        confirmedTabButton.setOnAction(event -> switchTab(STATUS_CONFIRMED));
+        completedTabButton.setOnAction(event -> switchTab(STATUS_COMPLETED));
+        cancelledTabButton.setOnAction(event -> switchTab(STATUS_CANCELLED));
     }
 
     private void switchTab(String status) {
@@ -48,16 +46,16 @@ public class MyAppointmentsController {
     }
 
     private void refreshView() {
-        List<Appointment> appointments = AppointmentStore.getAppointments();
+        List<Appointment> appointments = patientCareDao.getPatientAppointments();
         updateTabCounts(appointments);
         updateTabStyles();
         renderAppointments(filterAppointments(appointments, activeStatus));
     }
 
     private void updateTabCounts(List<Appointment> appointments) {
-        confirmedTabButton.setText("Confirmes (" + countByStatus(appointments, AppointmentStore.STATUS_CONFIRMED) + ")");
-        completedTabButton.setText("Termines (" + countByStatus(appointments, AppointmentStore.STATUS_COMPLETED) + ")");
-        cancelledTabButton.setText("Annules (" + countByStatus(appointments, AppointmentStore.STATUS_CANCELLED) + ")");
+        confirmedTabButton.setText("Confirmes (" + countByStatus(appointments, STATUS_CONFIRMED) + ")");
+        completedTabButton.setText("Termines (" + countByStatus(appointments, STATUS_COMPLETED) + ")");
+        cancelledTabButton.setText("Annules (" + countByStatus(appointments, STATUS_CANCELLED) + ")");
     }
 
     private long countByStatus(List<Appointment> appointments, String status) {
@@ -65,9 +63,9 @@ public class MyAppointmentsController {
     }
 
     private void updateTabStyles() {
-        applyTabStyle(confirmedTabButton, AppointmentStore.STATUS_CONFIRMED.equals(activeStatus));
-        applyTabStyle(completedTabButton, AppointmentStore.STATUS_COMPLETED.equals(activeStatus));
-        applyTabStyle(cancelledTabButton, AppointmentStore.STATUS_CANCELLED.equals(activeStatus));
+        applyTabStyle(confirmedTabButton, STATUS_CONFIRMED.equals(activeStatus));
+        applyTabStyle(completedTabButton, STATUS_COMPLETED.equals(activeStatus));
+        applyTabStyle(cancelledTabButton, STATUS_CANCELLED.equals(activeStatus));
     }
 
     private void applyTabStyle(Button button, boolean active) {
@@ -91,7 +89,7 @@ public class MyAppointmentsController {
             Label title = new Label("Aucune consultation dans cette categorie");
             title.getStyleClass().add("doctor-name");
 
-            Label subtitle = new Label("Change d'onglet pour voir les autres rendez-vous.");
+            Label subtitle = new Label("Les rendez-vous apparaitront ici au fur et a mesure de tes reservations.");
             subtitle.getStyleClass().add("doctor-info");
 
             emptyState.getChildren().addAll(title, subtitle);
@@ -140,21 +138,20 @@ public class MyAppointmentsController {
         VBox actions = new VBox(6);
         Label status = new Label(getDisplayStatus(appointment.getStatus()));
         status.getStyleClass().add(getStatusStyleClass(appointment.getStatus()));
-
         actions.getChildren().add(status);
 
-        if (AppointmentStore.STATUS_CONFIRMED.equals(appointment.getStatus())) {
+        if (STATUS_CONFIRMED.equals(appointment.getStatus())) {
             Button completeButton = new Button("Terminer");
             completeButton.getStyleClass().add("secondary-button");
             completeButton.setOnAction(event -> {
-                AppointmentStore.updateStatus(appointment.getId(), AppointmentStore.STATUS_COMPLETED);
+                patientCareDao.updateAppointmentStatus(appointment.getId(), STATUS_COMPLETED);
                 refreshView();
             });
 
             Button cancelButton = new Button("Annuler");
             cancelButton.getStyleClass().add("danger-button");
             cancelButton.setOnAction(event -> {
-                AppointmentStore.updateStatus(appointment.getId(), AppointmentStore.STATUS_CANCELLED);
+                patientCareDao.updateAppointmentStatus(appointment.getId(), STATUS_CANCELLED);
                 refreshView();
             });
 
@@ -170,20 +167,20 @@ public class MyAppointmentsController {
     }
 
     private String getStatusStyleClass(String status) {
-        if (AppointmentStore.STATUS_CANCELLED.equals(status)) {
+        if (STATUS_CANCELLED.equals(status)) {
             return "badge-orange";
         }
-        if (AppointmentStore.STATUS_COMPLETED.equals(status)) {
+        if (STATUS_COMPLETED.equals(status)) {
             return "badge-blue";
         }
         return "badge-green";
     }
 
     private String getDisplayStatus(String status) {
-        if (AppointmentStore.STATUS_CANCELLED.equals(status)) {
+        if (STATUS_CANCELLED.equals(status)) {
             return "Annule";
         }
-        if (AppointmentStore.STATUS_COMPLETED.equals(status)) {
+        if (STATUS_COMPLETED.equals(status)) {
             return "Termine";
         }
         return "Confirme";

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.AdminAppointmentsController"
+            prefWidth="1280" prefHeight="820"
+            styleClass="admin-root"
+            stylesheets="@../css/admin-pages.css">
+    <left><fx:include source="sidebarAdmin.fxml"/></left>
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="admin-content">
+                <VBox spacing="4">
+                    <Label text="Gestion des rendez-vous" styleClass="admin-title"/>
+                    <Label text="Supervisez tous les rendez-vous de la plateforme" styleClass="admin-subtitle"/>
+                </VBox>
+                <HBox spacing="12" styleClass="admin-card">
+                    <TextField fx:id="searchField" promptText="Rechercher patient ou médecin..." styleClass="admin-filter-field" HBox.hgrow="ALWAYS"/>
+                    <DatePicker fx:id="dateFilterPicker" prefWidth="180" styleClass="admin-filter-date"/>
+                    <ComboBox fx:id="statusFilterComboBox" prefWidth="220" styleClass="admin-filter-combo"/>
+                </HBox>
+                <Label fx:id="appointmentsCountLabel" text="0 rendez-vous" styleClass="admin-subtitle"/>
+                <VBox fx:id="appointmentsContainer" spacing="14"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

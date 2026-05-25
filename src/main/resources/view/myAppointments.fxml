@@ -12,6 +12,7 @@
             fx:controller="org.example.meetcare.controller.MyAppointmentsController"
             prefWidth="1200"
             prefHeight="720"
+            stylesheets="@../css/patient-pages.css"
             style="-fx-background-color: #f8fafc;">
 
     <left>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.ProfilMedecinController"
+            prefWidth="1200"
+            prefHeight="760"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #f8fafc;">
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="18" style="-fx-padding: 18 18 24 18;">
+                <VBox spacing="2">
+                    <Label text="Profil public" styleClass="doctor-title"/>
+                    <Label text="Mettez a jour les informations visibles par les patients." styleClass="doctor-subtitle"/>
+                </VBox>
+
+                <VBox spacing="14" styleClass="doctor-card">
+                    <Label text="Photo de profil" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <StackPane>
+                            <Circle fx:id="avatarCircle" radius="30"/>
+                            <Label fx:id="avatarInitialsLabel" text="SM" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #9333ea;"/>
+                        </StackPane>
+                        <VBox spacing="6">
+                            <Button text="Modifier la photo" onAction="#handleChangePhoto" styleClass="doctor-outline-button"/>
+                            <Label text="JPG ou PNG. Taille maximale 2MB" styleClass="doctor-subtitle"/>
+                            <Label fx:id="profileStatusLabel" text="Profil public a completer" styleClass="doctor-subtitle"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="16" styleClass="doctor-card">
+                    <Label text="Informations generales" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <GridPane hgap="12" vgap="12">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Prenom" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="firstNameField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Nom" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="lastNameField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Specialite" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="specialityField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Label text="Ville" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="cityField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                            <Label text="Adresse du cabinet" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="officeAddressField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2">
+                            <Label text="Presentation publique" styleClass="doctor-subtitle"/>
+                            <TextArea fx:id="biographyArea" prefRowCount="4" wrapText="true" styleClass="doctor-form-area"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <VBox spacing="16" styleClass="doctor-card">
+                    <Label text="Tarifs et modalites" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <GridPane hgap="12" vgap="12">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Secteur" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="sectorField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Tarif de consultation (EUR)" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="consultationPriceField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <CheckBox fx:id="acceptsVitaleCheckBox" text="Carte Vitale acceptee"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <CheckBox fx:id="teleconsultationCheckBox" text="Teleconsultation disponible"/>
+                        </VBox>
+                        <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                            <Label text="Moyens de paiement" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="paymentMethodsField" styleClass="doctor-form-field"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <VBox spacing="16" styleClass="doctor-card">
+                    <Label text="Informations complementaires" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <VBox spacing="10">
+                        <VBox spacing="6">
+                            <Label text="Langues parlees" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="spokenLanguagesField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="Experience" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="experienceField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="Horaires" styleClass="doctor-subtitle"/>
+                            <TextArea fx:id="officeHoursArea" prefRowCount="3" wrapText="true" styleClass="doctor-form-area"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="Email professionnel" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="emailField" styleClass="doctor-form-field"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="Telephone" styleClass="doctor-subtitle"/>
+                            <TextField fx:id="phoneField" styleClass="doctor-form-field"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+
+                <HBox alignment="CENTER_RIGHT">
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="saveProfileButton" text="Mettre a jour mon profil public" onAction="#handleSavePublicProfile" styleClass="doctor-primary-button"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

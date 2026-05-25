@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="520" prefWidth="620" style="-fx-background-color: linear-gradient(to bottom right, #a8c8f0, #d6eaf8);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.LoginController">
+<StackPane prefHeight="520" prefWidth="620" style="-fx-background-color: linear-gradient(to bottom right, #a8c8f0, #d6eaf8);" xmlns="http://javafx.com/javafx/21.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.LoginController">
 
     <padding>
         <Insets bottom="24" left="24" right="24" top="24" />

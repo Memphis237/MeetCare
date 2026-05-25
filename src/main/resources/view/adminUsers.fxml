@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.AdminUsersController"
+            prefWidth="1280" prefHeight="820"
+            styleClass="admin-root"
+            stylesheets="@../css/admin-pages.css">
+    <left><fx:include source="sidebarAdmin.fxml"/></left>
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="admin-content">
+                <VBox spacing="4">
+                    <Label text="Gestion des utilisateurs" styleClass="admin-title"/>
+                    <Label text="Gérez les comptes patients" styleClass="admin-subtitle"/>
+                </VBox>
+                <HBox spacing="12" styleClass="admin-card">
+                    <TextField fx:id="searchField" promptText="Rechercher par nom ou email..." styleClass="admin-filter-field" HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="statusFilterComboBox" prefWidth="220" styleClass="admin-filter-combo"/>
+                </HBox>
+                <Label fx:id="usersCountLabel" text="0 utilisateur" styleClass="admin-subtitle"/>
+                <VBox fx:id="usersContainer" spacing="14"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

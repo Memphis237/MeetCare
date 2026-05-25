@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.SidebarAdminController"
+            prefWidth="210"
+            minWidth="210"
+            maxWidth="210"
+            styleClass="admin-sidebar">
+
+    <VBox AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <HBox styleClass="admin-brand-row">
+            <Label text="MeetCare Admin" styleClass="admin-brand" HBox.hgrow="ALWAYS"/>
+            <Label text="≡" style="-fx-font-size: 15px; -fx-text-fill: #6b7280;"/>
+        </HBox>
+        <Separator/>
+    </VBox>
+
+    <ScrollPane fitToWidth="true"
+                styleClass="admin-menu-scroll"
+                AnchorPane.topAnchor="54.0"
+                AnchorPane.bottomAnchor="58.0"
+                AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0">
+        <VBox fx:id="menuContainer" styleClass="admin-menu-box">
+            <Button fx:id="dashboardButton" text="Dashboard" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleDashboard"/>
+            <Button fx:id="usersButton" text="Utilisateurs" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleUsers"/>
+            <Button fx:id="doctorsButton" text="Médecins" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleDoctors"/>
+            <Button fx:id="appointmentsButton" text="Rendez-vous" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleAppointments"/>
+            <Button fx:id="documentsButton" text="Documents" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleDocuments"/>
+            <Button fx:id="invoicesButton" text="Factures" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleInvoices"/>
+            <Button fx:id="statisticsButton" text="Statistiques" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleStatistics"/>
+            <Button fx:id="waitlistButton" text="Liste d'attente" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleWaitlist"/>
+            <Button fx:id="notificationsButton" text="Notifications" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleNotifications"/>
+            <Button fx:id="activityButton" text="Activité" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleActivity"/>
+            <Button fx:id="settingsButton" text="Paramètres" maxWidth="Infinity" styleClass="admin-menu-button" onAction="#handleSettings"/>
+        </VBox>
+    </ScrollPane>
+
+    <VBox styleClass="admin-sidebar-footer"
+          AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0">
+        <Separator/>
+        <Button text="Déconnexion" maxWidth="Infinity" styleClass="admin-logout-button" onAction="#handleLogout"/>
+    </VBox>
+</AnchorPane>

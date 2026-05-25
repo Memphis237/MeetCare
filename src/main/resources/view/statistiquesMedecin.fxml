@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.StatistiquesMedecinController"
+            prefWidth="1200"
+            prefHeight="760"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #f8fafc;">
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="18" style="-fx-padding: 18 18 24 18;">
+                <VBox spacing="2">
+                    <Label text="Statistiques" styleClass="doctor-title"/>
+                    <Label text="Vue analytique de votre activite" styleClass="doctor-subtitle"/>
+                </VBox>
+
+                <GridPane hgap="16" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                    </columnConstraints>
+
+                    <VBox spacing="10" styleClass="doctor-card" GridPane.columnIndex="0">
+                        <Label text="Total patients" style="-fx-font-size: 15px; -fx-text-fill: #111827;"/>
+                        <Label fx:id="totalPatientsValueLabel" text="0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #ef4444;"/>
+                        <Label text="Patients suivis" styleClass="doctor-subtitle"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="doctor-card" GridPane.columnIndex="1">
+                        <Label text="Total RDV" style="-fx-font-size: 15px; -fx-text-fill: #111827;"/>
+                        <Label fx:id="totalAppointmentsValueLabel" text="0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #ef4444;"/>
+                        <Label fx:id="currentYearLabel" text="Cette annee" styleClass="doctor-subtitle"/>
+                    </VBox>
+
+                    <VBox spacing="10" styleClass="doctor-card" GridPane.columnIndex="2">
+                        <Label text="Taux de remplissage" style="-fx-font-size: 15px; -fx-text-fill: #111827;"/>
+                        <Label fx:id="fillRateValueLabel" text="0%" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #16a34a;"/>
+                        <Label text="Global" styleClass="doctor-subtitle"/>
+                    </VBox>
+                </GridPane>
+
+                <VBox spacing="14" styleClass="doctor-card">
+                    <Label text="Rendez-vous par mois" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <VBox fx:id="monthlyAppointmentsContainer" spacing="14"/>
+                </VBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="14" styleClass="doctor-card" HBox.hgrow="ALWAYS">
+                        <Label text="Repartition des rendez-vous" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+
+                        <VBox spacing="6">
+                            <HBox>
+                                <Label text="Rendez-vous confirmes" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="confirmedSummaryLabel" text="0 (0%)" style="-fx-font-size: 14px; -fx-text-fill: #16a34a;"/>
+                            </HBox>
+                            <Region fx:id="confirmedSummaryBar" style="-fx-background-color: #16a34a; -fx-background-radius: 999;" minHeight="16"/>
+                        </VBox>
+
+                        <VBox spacing="6">
+                            <HBox>
+                                <Label text="Rendez-vous annules" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="cancelledSummaryLabel" text="0 (0%)" style="-fx-font-size: 14px; -fx-text-fill: #ef4444;"/>
+                            </HBox>
+                            <Region fx:id="cancelledSummaryBar" style="-fx-background-color: #ef4444; -fx-background-radius: 999;" minHeight="16"/>
+                        </VBox>
+                    </VBox>
+
+                    <VBox spacing="14" styleClass="doctor-card" prefWidth="380">
+                        <Label text="Croissance mensuelle" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+
+                        <VBox spacing="6">
+                            <HBox>
+                                <Label text="Nouveaux patients" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="newPatientsGrowthLabel" text="+0" style="-fx-font-size: 14px; -fx-text-fill: #2563eb;"/>
+                            </HBox>
+                            <Region fx:id="newPatientsGrowthBar" style="-fx-background-color: #3b82f6; -fx-background-radius: 999;" minHeight="12"/>
+                        </VBox>
+
+                        <VBox spacing="6">
+                            <HBox>
+                                <Label text="Nouveaux RDV ce mois" style="-fx-font-size: 14px; -fx-text-fill: #111827;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="newAppointmentsGrowthLabel" text="+0" style="-fx-font-size: 14px; -fx-text-fill: #16a34a;"/>
+                            </HBox>
+                            <Region fx:id="newAppointmentsGrowthBar" style="-fx-background-color: #16a34a; -fx-background-radius: 999;" minHeight="12"/>
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.PatientsMedecinController"
+            prefWidth="1200"
+            prefHeight="760"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #f8fafc;">
+
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="18" style="-fx-padding: 18 18 24 18;">
+                <VBox spacing="2">
+                    <Label text="Patients" styleClass="doctor-title"/>
+                    <Label text="Liste de vos patients" styleClass="doctor-subtitle"/>
+                </VBox>
+
+                <VBox spacing="10" styleClass="doctor-card">
+                    <TextField fx:id="searchField" promptText="Rechercher un patient par nom ou email..." prefHeight="42" styleClass="doctor-search-field"/>
+                </VBox>
+
+                <Label fx:id="patientsCountLabel" text="0 patient(s)" style="-fx-font-size: 16px; -fx-text-fill: #475569;"/>
+
+                <VBox fx:id="patientsContainer" spacing="12"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,16 +1,19 @@
 .menu-button {
     -fx-background-color: transparent;
-    -fx-font-size: 14px;
+    -fx-font-size: 13px;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 8;
+    -fx-padding: 8 12;
+    -fx-min-height: 38;
+    -fx-background-radius: 10;
 }
 
 .menu-button-active {
     -fx-background-color: #eaf2ff;
     -fx-text-fill: #2563eb;
-    -fx-font-size: 14px;
+    -fx-font-size: 13px;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 8;
+    -fx-padding: 8 12;
+    -fx-min-height: 38;
     -fx-background-radius: 10;
 }
 

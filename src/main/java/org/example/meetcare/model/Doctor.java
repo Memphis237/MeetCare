@@ -9,11 +9,13 @@ public class Doctor {
     private String address;
     private String sector;
     private double price;
+    private int experience;
+    private String biography;
     private boolean acceptsVitale;
     private boolean teleconsultation;
 
     public Doctor(int id, String username, String email, String city, String speciality,
-                  String address, String sector, double price,
+                  String address, String sector, double price, int experience, String biography,
                   boolean acceptsVitale, boolean teleconsultation) {
         this.id = id;
         this.username = username;
@@ -23,6 +25,8 @@ public class Doctor {
         this.address = address;
         this.sector = sector;
         this.price = price;
+        this.experience = experience;
+        this.biography = biography;
         this.acceptsVitale = acceptsVitale;
         this.teleconsultation = teleconsultation;
     }
@@ -35,6 +39,8 @@ public class Doctor {
     public String getAddress() { return address; }
     public String getSector() { return sector; }
     public double getPrice() { return price; }
+    public int getExperience() { return experience; }
+    public String getBiography() { return biography; }
     public boolean isAcceptsVitale() { return acceptsVitale; }
     public boolean isTeleconsultation() { return teleconsultation; }
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.AdminInvoicesController"
+            prefWidth="1280" prefHeight="820"
+            styleClass="admin-root"
+            stylesheets="@../css/admin-pages.css">
+    <left><fx:include source="sidebarAdmin.fxml"/></left>
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="admin-content">
+                <VBox spacing="4">
+                    <Label text="Gestion des factures" styleClass="admin-title"/>
+                    <Label text="Supervisez la facturation de la plateforme" styleClass="admin-subtitle"/>
+                </VBox>
+                <FlowPane hgap="14" vgap="14" prefWrapLength="900">
+                    <VBox styleClass="admin-stat-card" prefWidth="180">
+                        <Label text="Total factures" styleClass="admin-stat-label"/>
+                        <Label fx:id="totalInvoicesLabel" text="0" styleClass="admin-stat-value"/>
+                    </VBox>
+                    <VBox styleClass="admin-stat-card" prefWidth="180">
+                        <Label text="En attente" styleClass="admin-stat-label"/>
+                        <Label fx:id="pendingInvoicesLabel" text="0" styleClass="admin-stat-value" style="-fx-text-fill: #ea580c;"/>
+                    </VBox>
+                    <VBox styleClass="admin-stat-card" prefWidth="180">
+                        <Label text="Payées" styleClass="admin-stat-label"/>
+                        <Label fx:id="paidInvoicesLabel" text="0" styleClass="admin-stat-value" style="-fx-text-fill: #16a34a;"/>
+                    </VBox>
+                </FlowPane>
+                <HBox spacing="12" styleClass="admin-card">
+                    <TextField fx:id="searchField" promptText="Rechercher patient ou facture..." styleClass="admin-filter-field" HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="statusFilterComboBox" prefWidth="220" styleClass="admin-filter-combo"/>
+                </HBox>
+                <VBox fx:id="invoicesContainer" spacing="14"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

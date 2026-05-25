@@ -2,24 +2,21 @@ package org.example.meetcare;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.meetcare.utils.DatabaseConnection;
 
 import java.io.IOException;
 
-/**
- * Point d'entree JavaFX.
- */
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/homePatient.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 850, 600);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/login.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 620, 520);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
-        stage.setTitle("Bibliothèque - Gestion des livres");
+        stage.setTitle("MeetCare - Connexion");
         stage.setScene(scene);
+        stage.centerOnScreen();
         stage.show();
     }
 

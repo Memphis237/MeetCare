@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.AdminDocumentsController"
+            prefWidth="1280" prefHeight="820"
+            styleClass="admin-root"
+            stylesheets="@../css/admin-pages.css">
+    <left><fx:include source="sidebarAdmin.fxml"/></left>
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox styleClass="admin-content">
+                <VBox spacing="4">
+                    <Label text="Gestion des documents" styleClass="admin-title"/>
+                    <Label text="Supervisez tous les documents médicaux" styleClass="admin-subtitle"/>
+                </VBox>
+                <HBox spacing="12" styleClass="admin-card">
+                    <TextField fx:id="searchField" promptText="Rechercher document, patient ou médecin..." styleClass="admin-filter-field" HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="typeFilterComboBox" prefWidth="220" styleClass="admin-filter-combo"/>
+                    <ComboBox fx:id="patientFilterComboBox" prefWidth="220" styleClass="admin-filter-combo"/>
+                </HBox>
+                <Label fx:id="documentsCountLabel" text="0 document" styleClass="admin-subtitle"/>
+                <VBox fx:id="documentsContainer" spacing="14"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
