@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mediconnect.controller.ValidationsController">
+<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.ValidationMedecinController">
 
     <!-- ═══════════════════ SIDEBAR SOMBRE ═══════════════════ -->
     <left>

@@ -1,4 +1,5 @@
 C:\wamp64\www\MeetCare\src\main\java\module-info.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AbstractChatController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DashboardController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DocumentsPatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\HomeMedecinController.java
@@ -6,12 +7,17 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\HomePatient
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\InvoiceMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\InvoicePatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\LoginController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\MessageMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\MessagePatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\MyAppointmentsController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\RegisterController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SearchDoctorController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SettingsPatientController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SidebarAdminController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SidebarMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SidebarPatientController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\ValidationAdminController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\ValidationMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\ChatbotMessageDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\DoctorDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\InvoiceDao.java

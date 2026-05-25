@@ -53,7 +53,7 @@ public class LoginController {
         Role role = user == null ? null : user.getRole();
 
         if (role == Role.ADMIN) {
-            navigate(event, "/view/dashboard.fxml", 1200, 750, "MeetCare - Dashboard");
+            navigate(event, "/view/validationAdmin.fxml", 1200, 750, "MeetCare - Dashboard");
             return;
         }
 

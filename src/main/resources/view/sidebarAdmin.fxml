@@ -75,12 +75,12 @@
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Factures" />
         </HBox>
 
-        <!-- Messages -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleMessages" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <!-- stats -->
+        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStats" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📈" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Statistiques" />
         </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <HBox alignment="CENTER_LEFT" spacing="12" onMouseClicked="#handleValidation" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
                <children>
                   <Label prefHeight="20.0" prefWidth="63.0" style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔓✔" />
                   <Label prefHeight="19.0" prefWidth="130.0" style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Validation" />
