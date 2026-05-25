@@ -28,7 +28,6 @@
                 <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 20 16 16 16;">
                     <VBox spacing="2" HBox.hgrow="ALWAYS">
                         <Label text="Messages" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" />
-                        <Label fx:id="conversationsCountLabel" text="0" style="-fx-font-size: 11px; -fx-text-fill: #6B8CAD;" />
                     </VBox>
                     <Region HBox.hgrow="ALWAYS" />
                     <Button text="+" onAction="#handleAddConversation"
@@ -61,8 +60,6 @@
                         <Label fx:id="chatStatusLabel" text="" style="-fx-font-size: 11px; -fx-text-fill: #8A96A8;" />
                         <Label fx:id="typingLabel" text="" style="-fx-font-size: 11px; -fx-text-fill: #2B7FD4;" />
                     </VBox>
-                    <Label onMouseClicked="#handleLogout" text="↩"
-                           style="-fx-font-size: 16px; -fx-text-fill: #E05A2B; -fx-cursor: hand;" />
                 </HBox>
 
                 <ScrollPane fx:id="messagesScrollPane" fitToWidth="true"

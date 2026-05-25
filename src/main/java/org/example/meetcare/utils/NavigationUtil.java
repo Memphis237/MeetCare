@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.meetcare.controller.AbstractMessagingController;
 
 public class NavigationUtil {
     private static final double PATIENT_WIDTH = 1200;
@@ -52,6 +53,14 @@ public class NavigationUtil {
 
     public static void openPatientMessages(Event event) {
         navigateTo(event, "/view/messagePatient.fxml", 1280, 760, "MeetCare - Messages");
+    }
+
+    public static void openPatientAssistantMessages(Event event) {
+        navigateToWithPostLoad(event, "/view/messagePatient.fxml", 1280, 760, "MeetCare - Messages", controller -> {
+            if (controller instanceof AbstractMessagingController messagingController) {
+                messagingController.openAssistantConversationFromNavigation();
+            }
+        });
     }
 
     public static void openPatientSettings(Event event) {
@@ -122,6 +131,14 @@ public class NavigationUtil {
         navigateTo(event, "/view/messageMedecin.fxml", 1280, 760, "MeetCare - Messagerie");
     }
 
+    public static void openMedecinAssistantMessages(Event event) {
+        navigateToWithPostLoad(event, "/view/messageMedecin.fxml", 1280, 760, "MeetCare - Messagerie", controller -> {
+            if (controller instanceof AbstractMessagingController messagingController) {
+                messagingController.openAssistantConversationFromNavigation();
+            }
+        });
+    }
+
     public static void openMedecinStats(Event event) {
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Statistiques");
     }
@@ -132,5 +149,28 @@ public class NavigationUtil {
 
     public static void openMedecinSettings(Event event) {
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
+    }
+
+    private static void navigateToWithPostLoad(Event event, String fxmlPath, double width, double height, String title, java.util.function.Consumer<Object> afterLoad) {
+        try {
+            FXMLLoader loader = new FXMLLoader(NavigationUtil.class.getResource(fxmlPath));
+            Parent root = loader.load();
+            Object controller = loader.getController();
+            if (afterLoad != null) {
+                afterLoad.accept(controller);
+            }
+
+            Scene scene = new Scene(root, width, height);
+            scene.getStylesheets().add(NavigationUtil.class.getResource("/css/style.css").toExternalForm());
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle(title);
+            stage.centerOnScreen();
+            stage.show();
+        } catch (Exception ex) {
+            System.err.println("Erreur lors de l'ouverture de la page " + fxmlPath + ":");
+            ex.printStackTrace();
+            throw new IllegalStateException("Impossible d'ouvrir la page demandee.", ex);
+        }
     }
 }

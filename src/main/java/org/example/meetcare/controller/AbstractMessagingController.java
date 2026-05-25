@@ -161,12 +161,14 @@ public abstract class AbstractMessagingController {
 
         usersDao.updateOnlineStatus(currentUser.getIdUsers(), true);
         assistantConversationId = chatbotMessageDao.ensureConversationForUser(currentUser.getIdUsers());
-        if (currentConversation == null) {
+
+        if (AppSession.isOpenAssistantConversation()) {
+            AppSession.setOpenAssistantConversation(false);
+            assistantMode = true;
+            loadAssistantConversation();
+        } else {
             loadConversations();
-            if (AppSession.isOpenAssistantConversation()) {
-                AppSession.setOpenAssistantConversation(false);
-                loadAssistantConversation();
-            } else if (currentConversation == null) {
+            if (currentConversation == null) {
                 showEmptyConversationState();
             }
         }
@@ -231,6 +233,16 @@ public abstract class AbstractMessagingController {
         loadAssistantConversation();
     }
 
+    public void openAssistantConversationFromNavigation() {
+        if (currentUser == null) {
+            AppSession.setOpenAssistantConversation(true);
+            return;
+        }
+
+        assistantMode = true;
+        loadAssistantConversation();
+    }
+
     protected void loadAssistantConversation() {
         assistantMode = true;
         currentConversation = null;
@@ -272,7 +284,9 @@ public abstract class AbstractMessagingController {
         String query = conversationSearchField == null ? "" : conversationSearchField.getText();
         List<ChatConversation> conversations = conversationDao.findConversationsForUser(currentUser.getIdUsers(), null, query);
         conversationsContainer.getChildren().clear();
-        conversationsCountLabel.setText(String.valueOf(conversations.size() + 1));
+        if (conversationsCountLabel != null) {
+            conversationsCountLabel.setText("");
+        }
         updateSidebarUnreadBadge(messageDao.countUnreadTotalForUser(currentUser.getIdUsers()));
 
         conversationsContainer.getChildren().add(createAssistantConversationRow());
@@ -493,7 +507,7 @@ public abstract class AbstractMessagingController {
         boolean typing = currentConversation != null && conversationDao.isOtherUserTyping(currentConversation.getIdConversation(), currentUser.getIdUsers());
         typingLabel.setText(typing ? "En train d'écrire..." : "");
         typingLabel.setStyle("-fx-text-fill: #2B7FD4; -fx-font-size: 11px;");
-        chatStatusLabel.setText(currentConversation == null ? "" : "Conversation #" + currentConversation.getIdConversation());
+        chatStatusLabel.setText("");
     }
 
     protected HBox createConversationRow(ChatConversation conversation) {

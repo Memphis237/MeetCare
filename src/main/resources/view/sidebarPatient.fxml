@@ -90,7 +90,7 @@
         <!-- Assistant IA -->
         <HBox alignment="CENTER_LEFT" onMouseClicked="#handleAssistant" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🤖" />
-            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Assistant IA" />
+            <Label onMouseClicked="#handleAssistant" style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A; -fx-cursor: hand;" text="Assistant IA" />
         </HBox>
 
         <!-- Notifications avec badge -->

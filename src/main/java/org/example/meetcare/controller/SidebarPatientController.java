@@ -92,8 +92,7 @@ public class SidebarPatientController {
 
     @FXML
     private void handleAssistant(MouseEvent event) {
-        AppSession.setOpenAssistantConversation(true);
-        NavigationUtil.openPatientMessages(event);
+        NavigationUtil.openPatientAssistantMessages(event);
     }
 
     @FXML
