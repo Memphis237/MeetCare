@@ -20,6 +20,9 @@ public class SettingsPatientController {
     private final UserProfileService profileService = new UserProfileService();
 
     @FXML
+    private SidebarPatientController sidebarPatientController;
+
+    @FXML
     private Circle avatarCircle;
 
     @FXML
@@ -109,6 +112,7 @@ public class SettingsPatientController {
         AppSession.setCurrentUser(updatedUser);
         profileNameLabel.setText(buildDisplayName(updatedUser));
         refreshAvatars(updatedUser);
+        refreshSidebar(updatedUser);
         showInfo("Photo de profil mise a jour.");
     }
 
@@ -119,6 +123,7 @@ public class SettingsPatientController {
         AppSession.setCurrentUser(updatedUser);
         profileNameLabel.setText(buildDisplayName(updatedUser));
         refreshAvatars(updatedUser);
+        refreshSidebar(updatedUser);
         showInfo("Photo de profil supprimee.");
     }
 
@@ -140,6 +145,7 @@ public class SettingsPatientController {
         profileNameLabel.setText(buildDisplayName(updatedUser));
         profileRoleLabel.setText(roleToLabel(updatedUser.getRole()));
         refreshAvatars(updatedUser);
+        refreshSidebar(updatedUser);
         showInfo("Informations personnelles mises a jour.");
     }
 
@@ -181,6 +187,12 @@ public class SettingsPatientController {
     private void refreshAvatars(Users user) {
         AvatarUtil.applyAvatar(avatarCircle, avatarInitialsLabel, user);
         AvatarUtil.applyAvatar(settingsAvatarCircle, settingsAvatarInitialsLabel, user);
+    }
+
+    private void refreshSidebar(Users user) {
+        if (sidebarPatientController != null) {
+            sidebarPatientController.refreshSidebar(user);
+        }
     }
 
     private String buildDisplayName(Users user) {

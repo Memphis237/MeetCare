@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+
+<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.ValidationAdminController">
+
+    <!-- ═══════════════════ SIDEBAR SOMBRE ═══════════════════ -->
+    <left>
+        <fx:include source="sidebarAdmin.fxml" />
+    </left>
+
+    <!-- ═══════════════════ CONTENU PRINCIPAL ═══════════════════ -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 36 36 36 36; -fx-background-color: #F0F2F5;">
+
+                <!-- Titre -->
+                <VBox spacing="6">
+                    <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Validations" />
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #6B7280;" text="2 demandes en attente" />
+                </VBox>
+
+                <!-- ── Carte Dr. Nicolas Lambert ── -->
+                <VBox spacing="0" style="-fx-background-color: white; -fx-background-radius: 14;                              -fx-border-color: #E5E7EB; -fx-border-radius: 14; -fx-border-width: 1;                              -fx-effect: dropshadow(gaussian, #d8dde6, 6, 0, 0, 2);">
+                    <HBox alignment="CENTER_LEFT" spacing="18" style="-fx-padding: 26 26 26 26;">
+
+                        <!-- Avatar N (jaune) -->
+                        <StackPane>
+                            <Rectangle arcHeight="12" arcWidth="12" height="52" style="-fx-fill: #FEF3C7;" width="52" />
+                            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #D97706;" text="N" />
+                        </StackPane>
+
+                        <!-- Infos medecin -->
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Dr. Nicolas Lambert" />
+                            <Label style="-fx-font-size: 13px; -fx-text-fill: #6B7280;" text="Orthopedie  -  Universite Paris-VII" />
+                            <HBox spacing="30">
+                                <HBox spacing="6">
+                                    <Label style="-fx-font-size: 13px; -fx-text-fill: #6B7280;" text="Email :" />
+                                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="nicolas@doctor.fr" />
+                                </HBox>
+                                <HBox spacing="6">
+                                    <Label style="-fx-font-size: 13px; -fx-text-fill: #6B7280;" text="Experience :" />
+                                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="12 ans" />
+                                </HBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Boutons action -->
+                        <HBox alignment="CENTER_RIGHT" spacing="12">
+                            <Button style="-fx-background-color: #16A34A; -fx-text-fill: white;                                            -fx-font-size: 13px; -fx-font-weight: bold;                                            -fx-background-radius: 10; -fx-padding: 11 24 11 24;" text="Valider" />
+                            <Button style="-fx-background-color: white; -fx-text-fill: #EF4444;                                            -fx-font-size: 13px; -fx-font-weight: bold;                                            -fx-background-radius: 10; -fx-padding: 11 24 11 24;                                            -fx-border-color: #FCA5A5; -fx-border-radius: 10; -fx-border-width: 1.5;" text="Refuser" />
+                        </HBox>
+
+                    </HBox>
+                </VBox>
+
+                <!-- ── Carte Dr. Sarah Ouali ── -->
+                <VBox spacing="0" style="-fx-background-color: white; -fx-background-radius: 14;                              -fx-border-color: #E5E7EB; -fx-border-radius: 14; -fx-border-width: 1;                              -fx-effect: dropshadow(gaussian, #d8dde6, 6, 0, 0, 2);">
+                    <HBox alignment="CENTER_LEFT" spacing="18" style="-fx-padding: 26 26 26 26;">
+
+                        <!-- Avatar S (jaune) -->
+                        <StackPane>
+                            <Rectangle arcHeight="12" arcWidth="12" height="52" style="-fx-fill: #FEF3C7;" width="52" />
+                            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #D97706;" text="S" />
+                        </StackPane>
+
+                        <!-- Infos medecin -->
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Dr. Sarah Ouali" />
+                            <Label style="-fx-font-size: 13px; -fx-text-fill: #6B7280;" text="Pediatrie  -  Universite Lyon-I" />
+                            <HBox spacing="30">
+                                <HBox spacing="6">
+                                    <Label style="-fx-font-size: 13px; -fx-text-fill: #6B7280;" text="Email :" />
+                                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="sarah@doctor.fr" />
+                                </HBox>
+                                <HBox spacing="6">
+                                    <Label style="-fx-font-size: 13px; -fx-text-fill: #6B7280;" text="Experience :" />
+                                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="7 ans" />
+                                </HBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Boutons action -->
+                        <HBox alignment="CENTER_RIGHT" spacing="12">
+                            <Button style="-fx-background-color: #16A34A; -fx-text-fill: white;                                            -fx-font-size: 13px; -fx-font-weight: bold;                                            -fx-background-radius: 10; -fx-padding: 11 24 11 24;" text="Valider" />
+                            <Button style="-fx-background-color: white; -fx-text-fill: #EF4444;                                            -fx-font-size: 13px; -fx-font-weight: bold;                                            -fx-background-radius: 10; -fx-padding: 11 24 11 24;                                            -fx-border-color: #FCA5A5; -fx-border-radius: 10; -fx-border-width: 1.5;" text="Refuser" />
+                        </HBox>
+
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

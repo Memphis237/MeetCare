@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane prefHeight="760" prefWidth="1280"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.MessagePatientController"
+            style="-fx-background-color: #F0F4FA;">
+
+    <left>
+        <fx:include source="sidebarPatient.fxml" />
+    </left>
+
+    <center>
+        <HBox style="-fx-background-color: #F0F4FA;">
+
+            <VBox prefWidth="300" spacing="0"
+                  style="-fx-background-color: white; -fx-border-color: #E0E8F0; -fx-border-width: 0 1 0 0;">
+
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 20 16 16 16;">
+                    <Label text="Messages" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label text="+" style="-fx-font-size: 14px; -fx-text-fill: #8BA8CC; -fx-background-color: #F2F6FA; -fx-background-radius: 6; -fx-padding: 6 8 6 8;" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 12 12 12;">
+                    <TextField promptText="Rechercher..." style="-fx-background-color: #F2F6FA; -fx-background-radius: 8; -fx-border-color: #E0E8F0; -fx-border-radius: 8; -fx-padding: 8 10 8 10; -fx-font-size: 12px;" HBox.hgrow="ALWAYS" />
+                    <Label text="?" style="-fx-font-size: 13px; -fx-text-fill: #8BA8CC; -fx-background-color: #F2F6FA; -fx-background-radius: 6; -fx-padding: 6 8 6 8;" />
+                </HBox>
+
+                <Separator />
+
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                            style="-fx-background: transparent; -fx-background-color: transparent;">
+                    <VBox spacing="0">
+
+                        <HBox alignment="CENTER_LEFT" spacing="10"
+                              style="-fx-padding: 14 14 14 14; -fx-border-color: #EEF3FA; -fx-border-width: 0 0 1 0;">
+                            <StackPane>
+                                <Circle radius="22" style="-fx-fill: #C0D8EE;" />
+                                <Label text="DM" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" />
+                            </StackPane>
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="Dr. Martin Dupont" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" />
+                                <Label text="Hors ligne" style="-fx-font-size: 11px; -fx-text-fill: #AAAAAA;" />
+                            </VBox>
+                        </HBox>
+
+                        <HBox alignment="CENTER_LEFT" spacing="10"
+                              onMouseClicked="#handleMessages"
+                              style="-fx-padding: 14 14 14 14; -fx-background-color: #E8F1FB; -fx-border-color: #D0E4F5; -fx-border-width: 0 0 1 0; -fx-cursor: hand;">
+                            <StackPane>
+                                <Circle fx:id="assistantAvatarCircle" radius="22" style="-fx-fill: #C8E6C9;" />
+                                <Label fx:id="assistantAvatarLabel" text="AI" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #3DAA70;" />
+                            </StackPane>
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="Assistant IA" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" />
+                                <Label fx:id="assistantStatusLabel" text="En ligne" style="-fx-font-size: 11px; -fx-text-fill: #3DAA70;" />
+                            </VBox>
+                        </HBox>
+
+                        <HBox alignment="CENTER_LEFT" spacing="10"
+                              style="-fx-padding: 14 14 14 14; -fx-border-color: #EEF3FA; -fx-border-width: 0 0 1 0;">
+                            <StackPane>
+                                <Circle radius="22" style="-fx-fill: #D8D0F0;" />
+                                <Label text="PB" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B5CE7;" />
+                            </StackPane>
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="Dr. Paul Bernard" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" />
+                                <Label text="Hors ligne" style="-fx-font-size: 11px; -fx-text-fill: #AAAAAA;" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <VBox spacing="0" HBox.hgrow="ALWAYS" style="-fx-background-color: #F0F4FA;">
+
+                <HBox alignment="CENTER_LEFT" spacing="12"
+                      style="-fx-padding: 16 20 16 20; -fx-background-color: white; -fx-border-color: #E0E8F0; -fx-border-width: 0 0 1 0;">
+                    <StackPane>
+                        <Circle fx:id="assistantHeaderCircle" radius="22" style="-fx-fill: #CBE3F8;" />
+                        <Label fx:id="assistantHeaderLabel" text="AI" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" />
+                    </StackPane>
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label fx:id="chatTitleLabel" text="Assistant IA" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" />
+                        <Label fx:id="chatSubtitleLabel" text="Conversation persistante" style="-fx-font-size: 11px; -fx-text-fill: #3DAA70;" />
+                    </VBox>
+                    <Label text="..." style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #6B8CAD; -fx-background-color: white; -fx-background-radius: 6; -fx-padding: 6 10 6 10;" />
+                    <Label onMouseClicked="#handleLogout" text="->" style="-fx-font-size: 16px; -fx-text-fill: #E05A2B; -fx-cursor: hand;" />
+                </HBox>
+
+                <ScrollPane fitToWidth="true" fx:id="messagesScrollPane"
+                            style="-fx-background: transparent; -fx-background-color: transparent;"
+                            VBox.vgrow="ALWAYS">
+                    <VBox fx:id="messagesContainer" spacing="16" style="-fx-padding: 20 24 20 24;" />
+                </ScrollPane>
+
+                <HBox alignment="CENTER_LEFT" spacing="10"
+                      style="-fx-padding: 14 18 14 18; -fx-background-color: white; -fx-border-color: #E0E8F0; -fx-border-width: 1 0 0 0;">
+                    <TextField fx:id="messageInput" onAction="#handleSendMessage"
+                               promptText="Tapez votre message..."
+                               style="-fx-background-color: #F2F6FA; -fx-background-radius: 22; -fx-border-color: #E0E8F0; -fx-border-radius: 22; -fx-padding: 10 16 10 16; -fx-font-size: 13px;"
+                               HBox.hgrow="ALWAYS" />
+                    <Label text="🙂" style="-fx-font-size: 13px; -fx-text-fill: #8BA8CC; -fx-background-color: #F2F6FA; -fx-background-radius: 22; -fx-padding: 8 12 8 12;" />
+                    <Button fx:id="sendButton" onAction="#handleSendMessageViaClick" text=">"
+                            style="-fx-background-color: #2B7FD4; -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-background-radius: 22; -fx-padding: 8 16 8 16;" />
+                </HBox>
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

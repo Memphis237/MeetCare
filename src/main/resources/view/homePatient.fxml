@@ -66,7 +66,7 @@
                         <Label text="en attente" style="-fx-font-size: 12px; -fx-text-fill: #64748b;"/>
                     </VBox>
 
-                    <VBox spacing="8" styleClass="card" GridPane.columnIndex="3">
+                    <VBox onMouseClicked="#handleOpenMessages" spacing="8" styleClass="card" GridPane.columnIndex="3" style="-fx-cursor: hand;">
                         <Label text="Messages" style="-fx-font-size: 14px; -fx-text-fill: #64748b;"/>
                         <Label fx:id="messagesCountLabel" text="0" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
                         <Label text="non lus" style="-fx-font-size: 12px; -fx-text-fill: #64748b;"/>
@@ -131,11 +131,11 @@
                         </HBox>
                     </StackPane>
 
-                    <StackPane onMouseClicked="#handleOpenDocuments" style="-fx-background-color: #dcfce7; -fx-background-radius: 16; -fx-cursor: hand; -fx-padding: 24;" GridPane.columnIndex="2">
+                    <StackPane onMouseClicked="#handleOpenAssistant" style="-fx-background-color: #dcfce7; -fx-background-radius: 16; -fx-cursor: hand; -fx-padding: 24;" GridPane.columnIndex="2">
                         <HBox alignment="CENTER_LEFT" spacing="18">
                             <VBox spacing="4">
-                                <Label text="Voir mes" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
-                                <Label text="documents" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                                <Label text="Assistant" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                                <Label text="IA" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
                             </VBox>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Label text="+" style="-fx-font-size: 30px; -fx-text-fill: #16a34a; -fx-font-weight: bold;"/>

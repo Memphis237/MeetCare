@@ -26,26 +26,36 @@ public final class AvatarUtil {
             return;
         }
 
-        Users freshUser = refreshUser(user);
-        String avatarPath = freshUser == null ? null : freshUser.getAvatar();
-        if (!isBlank(avatarPath)) {
-            File avatarFile = resolveAvatarFile(avatarPath);
-            if (avatarFile.exists()) {
-                Image image = loadImage(avatarFile);
-                if (image != null && !image.isError()) {
-                    circle.setFill(new ImagePattern(image));
-                    initialsLabel.setVisible(false);
-                    initialsLabel.setManaged(false);
-                    return;
+        try {
+            Users freshUser = refreshUser(user);
+            String avatarPath = freshUser == null ? null : freshUser.getAvatar();
+            if (!isBlank(avatarPath)) {
+                File avatarFile = resolveAvatarFile(avatarPath);
+                if (avatarFile.exists()) {
+                    Image image = loadImage(avatarFile);
+                    if (image != null && !image.isError()) {
+                        circle.setFill(new ImagePattern(image));
+                        initialsLabel.setVisible(false);
+                        initialsLabel.setManaged(false);
+                        return;
+                    }
                 }
             }
-        }
 
-        circle.setFill(Paint.valueOf(DEFAULT_FILL));
-        initialsLabel.setVisible(true);
-        initialsLabel.setManaged(true);
-        initialsLabel.setText(buildInitials(freshUser));
-        initialsLabel.setTextFill(Paint.valueOf(DEFAULT_TEXT_FILL));
+            circle.setFill(Paint.valueOf(DEFAULT_FILL));
+            initialsLabel.setVisible(true);
+            initialsLabel.setManaged(true);
+            initialsLabel.setText(buildInitials(freshUser));
+            initialsLabel.setTextFill(Paint.valueOf(DEFAULT_TEXT_FILL));
+        } catch (RuntimeException ex) {
+            circle.setFill(Paint.valueOf(DEFAULT_FILL));
+            initialsLabel.setVisible(true);
+            initialsLabel.setManaged(true);
+            initialsLabel.setText(buildInitials(user));
+            initialsLabel.setTextFill(Paint.valueOf(DEFAULT_TEXT_FILL));
+            System.err.println("Impossible de charger l'avatar, affichage des initiales par defaut.");
+            ex.printStackTrace();
+        }
     }
 
     public static Users refreshUser(Users user) {

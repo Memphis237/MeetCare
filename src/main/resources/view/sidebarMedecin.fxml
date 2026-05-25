@@ -37,6 +37,7 @@
                     <Button text="Documents" maxWidth="Infinity" styleClass="doctor-menu-button" onAction="#handleDocuments"/>
                     <Button text="Facturation" maxWidth="Infinity" styleClass="doctor-menu-button" onAction="#handleFacturation"/>
                     <Button text="Messages" maxWidth="Infinity" styleClass="doctor-menu-button" onAction="#handleMessages"/>
+                    <Button text="Assistant IA" maxWidth="Infinity" styleClass="doctor-menu-button" onAction="#handleAssistantIA"/>
                     <Button text="Statistiques" maxWidth="Infinity" styleClass="doctor-menu-button" onAction="#handleStatistics"/>
                     <Button text="Profil public" maxWidth="Infinity" styleClass="doctor-menu-button" onAction="#handleProfil"/>
                     <Button text="Parametres" maxWidth="Infinity" styleClass="doctor-menu-button" onAction="#handleSettings"/>

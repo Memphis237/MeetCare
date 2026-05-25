@@ -34,7 +34,12 @@ public class SidebarMedecinController {
 
     @FXML
     private void handleMessages(ActionEvent event) {
-        NavigationUtil.navigateTo(event, "/view/messagesMedecin.fxml", 1100, 700, "MeetCare - Messages medecin");
+        NavigationUtil.openMedecinMessages(event);
+    }
+
+    @FXML
+    private void handleAssistantIA(ActionEvent event) {
+        NavigationUtil.openMedecinMessages(event);
     }
 
     @FXML

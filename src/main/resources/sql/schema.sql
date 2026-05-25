@@ -66,6 +66,14 @@ CREATE TABLE IF NOT EXISTS conversations (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS conversation_participants (
+    id_conversations INT NOT NULL,
+    id_users INT NOT NULL,
+    PRIMARY KEY (id_conversations, id_users),
+    FOREIGN KEY (id_conversations) REFERENCES conversations(id_conversations) ON DELETE CASCADE,
+    FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS notifications (
     id_notifications INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255),

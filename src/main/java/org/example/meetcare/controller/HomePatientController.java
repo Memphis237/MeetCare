@@ -144,12 +144,12 @@ public class HomePatientController {
 
     @FXML
     private void handleOpenMessages(MouseEvent event) {
-        NavigationUtil.navigateTo(event, "/view/messagesPatient.fxml", 1100, 700, "MeetCare - Messages");
+        NavigationUtil.openPatientMessages(event);
     }
 
     @FXML
     private void handleOpenAssistant(MouseEvent event) {
-        NavigationUtil.navigateTo(event, "/view/assistantPatient.fxml", 1100, 700, "MeetCare - Assistant IA");
+        NavigationUtil.openPatientMessages(event);
     }
 
     @FXML
