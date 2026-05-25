@@ -12,7 +12,7 @@
     </left>
 
     <center>
-        <fx:include source="patientDetails.fxml" />
+        <fx:include source="dashboardMedecin.fxml" />
     </center>
 
 </BorderPane>

@@ -9,12 +9,6 @@ import javafx.scene.input.MouseEvent;
 import java.io.IOException;
 
 import org.example.meetcare.utils.LogoutUtil;
-import org.example.meetcare.utils.NavigationUtil;
-import org.example.meetcare.dao.UsersDao;
-import org.example.meetcare.model.Role;
-import org.example.meetcare.model.Users;
-import org.example.meetcare.utils.AppSession;
-import org.example.meetcare.utils.AvatarUtil;
 
 public class HomeMedecinController {
 

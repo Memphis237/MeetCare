@@ -55,7 +55,7 @@ public class SidebarMedecinController {
 
     @FXML
     private void handleNavHome() {
-        switchView("/view/patientDetails.fxml"); // Ta vue d'accueil de base
+        switchView("/view/dashboardMedecin.fxml"); // Ta vue d'accueil de base
     }
 
     @FXML

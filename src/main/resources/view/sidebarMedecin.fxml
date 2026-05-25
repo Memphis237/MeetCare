@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="sidebarContainer" prefWidth="250.0" spacing="5.0" style="-fx-background-color: #FFFFFF; -fx-padding: 20px 15px 20px 15px; -fx-border-color: #E0E8F0; -fx-border-width: 0 1 0 0;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.SidebarMedecinController">
+   <children>
+      
+      <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-padding: 5 0 20 10;">
+         <children>
+            <VBox alignment="CENTER" style="-fx-background-color: #E8F0FE; -fx-background-radius: 8px; -fx-min-width: 35px; -fx-min-height: 35px;">
+               <children>
+                  <Label style="-fx-text-fill: #1A73E8; -fx-font-weight: bold; -fx-font-size: 16px;" text="+" />
+               </children>
+            </VBox>
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2A3547;" text="MediConnect" />
+         </children>
+      </HBox>
+      
+      <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: #F8F9FA; -fx-padding: 12px; -fx-background-radius: 10px;">
+         <children>
+            <VBox alignment="CENTER" style="-fx-background-color: #BDD7FF; -fx-background-radius: 50%; -fx-min-width: 42px; -fx-min-height: 42px;">
+               <children>
+                  <Label fx:id="lblInitialesDoc" style="-fx-text-fill: #1A73E8; -fx-font-weight: bold; -fx-font-size: 14px;" text="--" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT">
+               <children>
+                  <Label fx:id="lblNomDoc" style="-fx-font-weight: bold; -fx-text-fill: #2A3547; -fx-font-size: 14px;" text="Chargement..." />
+                  <Label fx:id="lblSpecialiteDoc" style="-fx-text-fill: #7C8BA1; -fx-font-size: 12px;" text="..." />
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets bottom="15.0" />
+         </VBox.margin>
+      </HBox>
+      
+      <Button maxWidth="Infinity" onAction="#handleNavHome" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-font-weight: normal; -fx-background-radius: 8px;" 
+              text="📅 Tableau de bord" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavAgenda" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="📆 Agenda" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavPatients" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="👥 Patients" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavDisponibilites" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="🕒 Disponibilités" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavDocuments" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="📄 Documents" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavFacturation" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="💳 Facturation" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavMessages" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="💬 Messages" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavStatistiques" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="📊 Statistiques" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavProfilPublic" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="👤 Profil public" />
+              
+      <Button maxWidth="Infinity" onAction="#handleNavParametres" 
+              style="-fx-background-color: transparent; -fx-text-fill: #7C8BA1; -fx-alignment: CENTER_LEFT; -fx-padding: 5 15 10 15; -fx-cursor: hand; -fx-background-radius: 8px;" 
+              text="⚙️ Paramètres" />
+      
+      <Region prefHeight="0.0" />
+      
+      <Separator orientation="HORIZONTAL" style="-fx-opacity: 0.5;">
+         <VBox.margin>
+            <Insets bottom="1.0" top="1.0" />
+         </VBox.margin>
+      </Separator>
+      
+      <Button maxWidth="Infinity" onMouseClicked="#handleLogout" 
+              style="-fx-background-color: transparent; -fx-text-fill: #E46A76; -fx-font-size: 14px; -fx-alignment: CENTER_LEFT; -fx-padding: 10 15 10 15; -fx-cursor: hand; -fx-font-weight: bold;" 
+              text="🚪 Déconnexion" />
+      
+   </children>
+</VBox>
