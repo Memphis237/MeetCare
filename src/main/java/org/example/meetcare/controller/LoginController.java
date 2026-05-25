@@ -40,7 +40,7 @@ public class LoginController {
             showMessage(ex.getMessage(), false);
         } catch (Exception ex) {
             ex.printStackTrace();
-            showMessage("Une erreur est survenue pendant la connexion.", false);
+            showMessage("Connexion impossible: " + rootCauseMessage(ex), false);
         }
     }
 

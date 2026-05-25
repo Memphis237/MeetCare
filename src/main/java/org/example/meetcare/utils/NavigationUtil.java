@@ -1,16 +1,14 @@
 package org.example.meetcare.utils;
 
+import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.event.Event;
-import javafx.scene.Node;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class NavigationUtil {
-    
+
     public static void navigateTo(Event event, String fxmlPath, double width, double height, String title) {
         try {
             Parent root = FXMLLoader.load(NavigationUtil.class.getResource(fxmlPath));
@@ -21,8 +19,10 @@ public class NavigationUtil {
             stage.setTitle(title);
             stage.centerOnScreen();
             stage.show();
-        } catch (IOException ex) {
-            throw new IllegalStateException("Impossible d'ouvrir la page demandée.", ex);
+        } catch (Exception ex) {
+            System.err.println("Erreur lors de l'ouverture de la page " + fxmlPath + ":");
+            ex.printStackTrace();
+            throw new IllegalStateException("Impossible d'ouvrir la page demandee.", ex);
         }
     }
 }

@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.meetcare.utils.DatabaseConnection;
+import org.example.meetcare.utils.EnvLoader;
 
 import java.io.IOException;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+        EnvLoader.load();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 850, 600);
         scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
