@@ -1,0 +1,172 @@
+/* Palette de couleurs */
+.root {
+    -fx-accent-blue: #0052FF;
+    -fx-bg-gray: #F4F7FE;
+    -fx-sidebar-white: #FFFFFF;
+    -fx-text-dark: #1B2559;
+    -fx-text-gray: #A3AED0;
+}
+
+/* Fond principal */
+.main-container {
+    -fx-background-color: -fx-bg-gray;
+}
+
+/* Style de la barre laterale */
+.sidebar {
+    -fx-background-color: -fx-sidebar-white;
+    -fx-padding: 30 0 30 0;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-text-gray;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.nav-button:hover {
+    -fx-text-fill: -fx-accent-blue;
+}
+
+.nav-button-active {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-accent-blue;
+    -fx-border-color: -fx-accent-blue;
+    -fx-border-width: 0 0 0 4;
+}
+
+/* Auth screens */
+.auth-field {
+    -fx-background-color: #f7f9fc;
+    -fx-background-radius: 12;
+    -fx-border-color: #dbe5f0;
+    -fx-border-radius: 12;
+    -fx-padding: 10 14;
+}
+
+.auth-field:focused {
+    -fx-border-color: #2f6fd4;
+    -fx-background-color: white;
+}
+
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, #2f6fd4, #4b8bf5);
+    -fx-background-radius: 12;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 12 18;
+}
+
+.btn-primary:hover {
+    -fx-opacity: 0.92;
+}
+
+.auth-link {
+    -fx-text-fill: #2f6fd4;
+    -fx-border-color: transparent;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.form-label {
+    -fx-text-fill: #1b2559;
+    -fx-font-weight: bold;
+}
+
+.msg-label {
+    -fx-font-size: 13px;
+}
+
+
+/* Barre latérale (Sidebar) */
+.sidebar {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 20px;
+}
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #5A6A85;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #E8F0FE;
+    -fx-text-fill: #1A73E8;
+}
+
+.sidebar-button-active {
+    -fx-background-color: #E2EEFC;
+    -fx-text-fill: #1A73E8;
+    -fx-font-weight: bold;
+}
+
+/* Cartes de statistiques (KPI Cards) */
+.card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
+}
+
+.card-title {
+    -fx-text-fill: #2A3547;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.card-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+/* Couleurs spécifiques des stats */
+.text-blue { -fx-text-fill: #1A73E8; }
+.text-green { -fx-text-fill: #13DEB9; }
+.text-orange { -fx-text-fill: #FA896B; }
+
+/* Créneaux horaires */
+.slot-available {
+    -fx-background-color: #E6FFFA;
+    -fx-border-color: #13DEB9;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.slot-reserved {
+    -fx-background-color: #EBF3FE;
+    -fx-border-color: #5D87FF;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+.badge-available {
+    -fx-background-color: #13DEB9;
+    -fx-text-fill: white;
+    -fx-padding: 2px 8px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 11px;
+}
+
+.badge-reserved {
+    -fx-background-color: #5D87FF;
+    -fx-text-fill: white;
+    -fx-padding: 2px 8px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 11px;
+}
+.date-picker-popup {
+    -fx-box-shadow: none;
+    -fx-effect: null;
+    -fx-background-color: transparent;
+}

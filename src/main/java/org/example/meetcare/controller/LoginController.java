@@ -59,7 +59,7 @@ public class LoginController {
         }
 
         if (role == Role.MEDECIN) {
-            navigate(event, "/view/homeMedecin.fxml", 1100, 700, "MeetCare - Espace médecin");
+            navigate(event, "/view/patientList.fxml", 1100, 700, "MeetCare - Espace médecin");
             return;
         }
 

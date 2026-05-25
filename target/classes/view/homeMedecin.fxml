@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane minHeight="700.0" minWidth="1100.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.HomeMedecinController" stylesheets="/css/style.css">
+    
+    <left>
+        <fx:include source="sidebarMedecin.fxml" />
+    </left>
+
+    <center>
+        <fx:include source="patientDetails.fxml" />
+    </center>
+
+</BorderPane>

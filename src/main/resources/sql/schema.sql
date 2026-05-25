@@ -128,6 +128,36 @@ CREATE TABLE medical_records (
     FOREIGN KEY (id_doctors) REFERENCES doctors(id_doctors) ON DELETE CASCADE,
     FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
 );
+-- =========================================================================
+-- AJOUT DE LA TABLE DES CRÉNEAUX DE DISPONIBILITÉ (POUR L'INTERFACE FIXE)
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS availabilities (
+    id_availabilities INT AUTO_INCREMENT PRIMARY KEY,
+    availability_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    is_available BOOLEAN DEFAULT TRUE,
+    id_doctors INT NOT NULL,
+    FOREIGN KEY (id_doctors) REFERENCES doctors(id_doctors) ON DELETE CASCADE
+);
+
+-- =========================================================================
+-- INSERTION DES JEUX DE DONNÉES DE TEST (POUR VOS STATISTIQUES À 100%)
+-- =========================================================================
+
+-- Ajout de créneaux fictifs pour la Dre Sarah Martin (id_doctors = 1) 
+-- afin de remplir instantanément l'interface au premier lancement
+INSERT INTO availabilities 
+(availability_date, start_time, end_time, is_available, id_doctors)
+VALUES
+('2026-05-16', '09:00:00', '09:30:00', TRUE, 1),
+('2026-05-16', '09:30:00', '10:00:00', FALSE, 1), -- Créneau pris / occupé
+('2026-05-16', '10:00:00', '10:30:00', TRUE, 1),
+('2026-05-16', '10:30:00', '11:00:00', TRUE, 1),
+('2026-05-16', '11:00:00', '11:30:00', TRUE, 1),
+('2026-05-16', '14:00:00', '14:30:00', FALSE, 1), -- Créneau pris / occupé
+('2026-05-16', '14:30:00', '15:00:00', TRUE, 1);
 
 -- =========================================
 -- AJOUT DES COLONNES MANQUANTES

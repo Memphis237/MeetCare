@@ -15,11 +15,10 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #EBF3FB;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.HomePatientController">
+<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #EBF3FB;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" stylesheet="/css/style.css" fx:controller="org.example.meetcare.controller.HomePatientController">
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--  SIDEBAR GAUCHE                                                  -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!--  SIDEBAR GAUCHE -->
     <left>
         <VBox prefWidth="230" spacing="0" style="-fx-background-color: #FFFFFF; -fx-border-color: #D9E8F5; -fx-border-width: 0 1 0 0;">
 

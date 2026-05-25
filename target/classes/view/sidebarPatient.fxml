@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefWidth="260" spacing="12"
+      style="-fx-background-color: white; -fx-border-color: #e5e7eb;">
+
+    <padding>
+        <Insets top="18" right="14" bottom="14" left="14"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <Label text="MeetCare" style="-fx-text-fill: #2563eb; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="☰" style="-fx-font-size: 22px;"/>
+    </HBox>
+
+    <Separator/>
+
+    <Button text="⌂   Accueil" maxWidth="Infinity" styleClass="menu-button"/>
+    <Button text="🔍   Rechercher" maxWidth="Infinity" styleClass="menu-button"/>
+    <Button text="📅   Mes rendez-vous" maxWidth="Infinity" styleClass="menu-button-active"/>
+    <Button text="📄   Documents" maxWidth="Infinity" styleClass="menu-button"/>
+    <Button text="💳   Factures" maxWidth="Infinity" styleClass="menu-button"/>
+    <Button text="💬   Messages" maxWidth="Infinity" styleClass="menu-button"/>
+    <Button text="🤖   Assistant IA" maxWidth="Infinity" styleClass="menu-button"/>
+    <Button text="🔔   Notifications" maxWidth="Infinity" styleClass="menu-button"/>
+    <Button text="⚙   Paramètres" maxWidth="Infinity" styleClass="menu-button"/>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <Separator/>
+    <Button text="↪   Déconnexion" maxWidth="Infinity"
+            style="-fx-background-color: transparent; -fx-text-fill: red; -fx-font-size: 14px; -fx-alignment: CENTER_LEFT;"/>
+</VBox>
