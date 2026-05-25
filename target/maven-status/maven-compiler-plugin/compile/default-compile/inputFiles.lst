@@ -14,15 +14,18 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SettingsPat
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SidebarPatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\ChatbotMessageDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\DoctorDao.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\InvoiceDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\UsersDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\exception\DatabaseException.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\Main.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Appointment.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\ChatbotMessage.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Doctor.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Invoice.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Role.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Users.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\service\GroqChatService.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\service\InvoiceService.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\service\RegisterService.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\service\UserProfileService.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\AppointmentStore.java
@@ -30,6 +33,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\AppSession.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\AvatarUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\DatabaseConnection.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\EnvLoader.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\InvoiceStatus.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\LogoutUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\NavigationUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\PasswordUtil.java

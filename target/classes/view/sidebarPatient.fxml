@@ -48,7 +48,7 @@
 
         <!-- Accueil (actif) -->
         <HBox alignment="CENTER_LEFT" onMouseClicked="#handleHome" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8; -fx-cursor: hand;">
-            <Label style="-fx-font-size: 16px; -fx-text-fill: #2B7FD4;" text="⌂" />
+            <Label style="-fx-font-size: 16px; -fx-text-fill: #2B7FD4;" text="🏠" />
             <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="Accueil" />
         </HBox>
 
@@ -114,8 +114,7 @@
 
     <!-- Déconnexion -->
     <HBox alignment="CENTER_LEFT" onMouseClicked="#handleLogout" spacing="12" style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
-        <Label style="-fx-font-size: 16px; -fx-text-fill: #6B8CAD;" text="→" />
-        <Label style="-fx-font-size: 13px; -fx-text-fill: #6B8CAD;" text="Déconnexion" />
+        <Label style="-fx-font-size: 13px; -fx-text-fill: red;" text="Déconnexion" />
     </HBox>
 
 </VBox>

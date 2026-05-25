@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mediconnect.controller.ValidationsController">
+
+    <!-- ═══════════════════ SIDEBAR SOMBRE ═══════════════════ -->
+    <left>
+        <fx:include source="sidebarMedecin.fxml" />
+    </left>
+
+    <!-- ═══════════════════ CONTENU PRINCIPAL ═══════════════════ -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox prefHeight="700.0" prefWidth="854.0" spacing="20" style="-fx-padding: 36 36 36 36; -fx-background-color: #F0F2F5;">
+
+                <!-- Titre -->
+                <VBox spacing="6">
+                    <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Validation du compte" />
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #6B7280;" text="Documents requis pour l'activation de votre profil" />
+                </VBox>
+
+                <!-- ── Carte Dr. Nicolas Lambert ── -->
+                <VBox spacing="0" style="-fx-background-color: white; -fx-background-radius: 14;                              -fx-border-color: #E5E7EB; -fx-border-radius: 14; -fx-border-width: 1;                              -fx-effect: dropshadow(gaussian, #d8dde6, 6, 0, 0, 2);" />
+
+                <!-- ── Carte Dr. Sarah Ouali ── -->
+                <VBox spacing="0" style="-fx-background-color: white; -fx-background-radius: 14;                              -fx-border-color: #E5E7EB; -fx-border-radius: 14; -fx-border-width: 1;                              -fx-effect: dropshadow(gaussian, #d8dde6, 6, 0, 0, 2);" />
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

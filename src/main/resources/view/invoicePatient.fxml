@@ -6,141 +6,61 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #F2F2F2;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.InvoicePatientController">
+<BorderPane prefHeight="700" prefWidth="1100"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.InvoicePatientController"
+            style="-fx-background-color: #F2F2F2;">
 
-    <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
     <left>
         <fx:include source="sidebarPatient.fxml" />
     </left>
 
-    <!-- ═══════════════════ CONTENU PRINCIPAL ═══════════════════ -->
     <center>
         <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
             <VBox spacing="22" style="-fx-padding: 28 28 28 28; -fx-background-color: #EBF3FB;">
 
-                <!-- Titre -->
                 <VBox spacing="4">
                     <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="Factures" />
                     <Label style="-fx-font-size: 13px; -fx-text-fill: #888888;" text="Gerez vos paiements" />
                 </VBox>
 
-                <!-- ── 3 cartes recap ── -->
                 <HBox spacing="16">
-
-                    <!-- Total en attente -->
-                    <HBox alignment="CENTER_LEFT" spacing="16" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 24 22 24;                                  -fx-effect: dropshadow(gaussian, #d0d0d0, 8, 0, 0, 2);" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="16" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 24 22 24; -fx-effect: dropshadow(gaussian, #d0d0d0, 8, 0, 0, 2);" HBox.hgrow="ALWAYS">
                         <VBox spacing="6" HBox.hgrow="ALWAYS">
                             <Label style="-fx-font-size: 13px; -fx-text-fill: #666666;" text="Total en attente" />
-                            <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #E05A2B;" text="75.00 €" />
+                            <Label fx:id="totalPendingAmountLabel" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #E05A2B;" text="0.00 €" />
                         </VBox>
-                        <StackPane>
-                            <Circle radius="28" style="-fx-fill: #EFEFEF;" />
-                            <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="💳" textFill="#4a6b8a" />
-                        </StackPane>
                     </HBox>
 
-                    <!-- Factures en attente -->
-                    <HBox alignment="CENTER_LEFT" spacing="16" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 24 22 24;                                  -fx-effect: dropshadow(gaussian, #d0d0d0, 8, 0, 0, 2);" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="16" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 24 22 24; -fx-effect: dropshadow(gaussian, #d0d0d0, 8, 0, 0, 2);" HBox.hgrow="ALWAYS">
                         <VBox spacing="6" HBox.hgrow="ALWAYS">
                             <Label style="-fx-font-size: 13px; -fx-text-fill: #666666;" text="Factures en attente" />
-                            <Label style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="2" />
+                            <Label fx:id="pendingInvoicesCountLabel" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="0" />
                         </VBox>
-                        <StackPane>
-                            <Circle radius="28" style="-fx-fill: #DCE9F5;" />
-                            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #4a6b8a;" text="💳" />
-                        </StackPane>
                     </HBox>
 
-                    <!-- Factures payees -->
-                    <HBox alignment="CENTER_LEFT" spacing="16" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 24 22 24;                                  -fx-effect: dropshadow(gaussian, #d0d0d0, 8, 0, 0, 2);" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="16" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 24 22 24; -fx-effect: dropshadow(gaussian, #d0d0d0, 8, 0, 0, 2);" HBox.hgrow="ALWAYS">
                         <VBox spacing="6" HBox.hgrow="ALWAYS">
                             <Label style="-fx-font-size: 13px; -fx-text-fill: #666666;" text="Factures payees" />
-                            <Label style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #3DAA70;" text="2" />
+                            <Label fx:id="paidInvoicesCountLabel" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #3DAA70;" text="0" />
                         </VBox>
-                        <StackPane>
-                            <Circle radius="28" style="-fx-fill: #D4EDDA;" />
-                            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #3DAA70;" text="💳" />
-                        </StackPane>
                     </HBox>
-
                 </HBox>
 
-                <!-- ── Section : Factures en attente ── -->
                 <VBox spacing="10">
                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="Factures en attente" />
-
-                    <!-- Facture 1 : Dr. Marc Dubois -->
-                    <HBox alignment="CENTER_LEFT" spacing="14" style="-fx-background-color: #FFF3EC; -fx-background-radius: 12; -fx-padding: 18 20 18 20;                                  -fx-border-color: #F5D5C0; -fx-border-radius: 12; -fx-border-width: 1;">
-                        <!-- Icone -->
-                        <StackPane>
-                            <Circle radius="22" style="-fx-fill: #F5D5C0;" />
-                            <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #E05A2B;" text="\$" />
-                        </StackPane>
-                        <!-- Infos -->
-                        <VBox spacing="3" HBox.hgrow="ALWAYS">
-                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="Dr. Marc Dubois" />
-                            <Label style="-fx-font-size: 12px; -fx-text-fill: #888888;" text="Generaliste" />
-                            <Label style="-fx-font-size: 11px; -fx-text-fill: #AAAAAA;" text="28/04/2026   Consultation generale" />
-                        </VBox>
-                        <!-- Montant + badge -->
-                        <VBox alignment="CENTER_RIGHT" spacing="4">
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #E05A2B;" text="25 EUR" />
-                            <Label style="-fx-font-size: 11px; -fx-text-fill: #E05A2B;                                           -fx-background-color: #FAE0D0; -fx-background-radius: 5;                                           -fx-padding: 2 8 2 8;" text=" En attente " />
-                        </VBox>
-                        <!-- Boutons -->
-                        <Button style="-fx-background-color: white; -fx-text-fill: #444444;                                        -fx-font-size: 12px; -fx-background-radius: 8;                                        -fx-border-color: #CCCCCC; -fx-border-radius: 8; -fx-padding: 8 14 8 14;" text="Telecharger" />
-                        <Button style="-fx-background-color: #E05A2B; -fx-text-fill: white;                                        -fx-font-size: 12px; -fx-font-weight: bold;                                        -fx-background-radius: 8; -fx-padding: 8 18 8 18;" text="Payer" />
-                    </HBox>
-
-                    <!-- Facture 2 : Dr. Julie Bernard -->
-                    <HBox alignment="CENTER_LEFT" spacing="14" style="-fx-background-color: #FFF3EC; -fx-background-radius: 12; -fx-padding: 18 20 18 20;                                  -fx-border-color: #F5D5C0; -fx-border-radius: 12; -fx-border-width: 1;">
-                        <StackPane>
-                            <Circle radius="22" style="-fx-fill: #F5D5C0;" />
-                            <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #E05A2B;" text="\$" />
-                        </StackPane>
-                        <VBox spacing="3" HBox.hgrow="ALWAYS">
-                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="Dr. Julie Bernard" />
-                            <Label style="-fx-font-size: 12px; -fx-text-fill: #888888;" text="Dermatologue" />
-                            <Label style="-fx-font-size: 11px; -fx-text-fill: #AAAAAA;" text="20/04/2026   Consultation dermatologique" />
-                        </VBox>
-                        <VBox alignment="CENTER_RIGHT" spacing="4">
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #E05A2B;" text="50 EUR" />
-                            <Label style="-fx-font-size: 11px; -fx-text-fill: #E05A2B;                                           -fx-background-color: #FAE0D0; -fx-background-radius: 5;                                           -fx-padding: 2 8 2 8;" text=" En attente " />
-                        </VBox>
-                        <Button style="-fx-background-color: white; -fx-text-fill: #444444;                                        -fx-font-size: 12px; -fx-background-radius: 8;                                        -fx-border-color: #CCCCCC; -fx-border-radius: 8; -fx-padding: 8 14 8 14;" text="Telecharger" />
-                        <Button style="-fx-background-color: #E05A2B; -fx-text-fill: white;                                        -fx-font-size: 12px; -fx-font-weight: bold;                                        -fx-background-radius: 8; -fx-padding: 8 18 8 18;" text="Payer" />
-                    </HBox>
+                    <Separator />
+                    <VBox fx:id="pendingInvoicesContainer" spacing="12" />
                 </VBox>
 
-                <!-- ── Section : Factures payees ── -->
                 <VBox spacing="10">
                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="Factures payees" />
-
-                    <!-- Facture payee : Dr. Sarah Martin -->
-                    <HBox alignment="CENTER_LEFT" spacing="14" style="-fx-background-color: #F0FAF4; -fx-background-radius: 12; -fx-padding: 18 20 18 20;                                  -fx-border-color: #B8DFC8; -fx-border-radius: 12; -fx-border-width: 1;">
-                        <StackPane>
-                            <Circle radius="22" style="-fx-fill: #C2E8D0;" />
-                            <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #3DAA70;" text="\$" />
-                        </StackPane>
-                        <VBox spacing="3" HBox.hgrow="ALWAYS">
-                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A1A1A;" text="Dr. Sarah Martin" />
-                            <Label style="-fx-font-size: 12px; -fx-text-fill: #888888;" text="Cardiologue" />
-                        </VBox>
-                        <VBox alignment="CENTER_RIGHT" spacing="4">
-                            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3DAA70;" text="30 EUR" />
-                            <Label style="-fx-font-size: 11px; -fx-text-fill: #3DAA70;                                           -fx-background-color: #C8EDD8; -fx-background-radius: 5;                                           -fx-padding: 2 8 2 8;" text=" Payee " />
-                        </VBox>
-                        <Button style="-fx-background-color: white; -fx-text-fill: #444444;                                        -fx-font-size: 12px; -fx-background-radius: 8;                                        -fx-border-color: #CCCCCC; -fx-border-radius: 8; -fx-padding: 8 14 8 14;" text="Telecharger" />
-                    </HBox>
-
+                    <Separator />
+                    <VBox fx:id="paidInvoicesContainer" spacing="12" />
                 </VBox>
-
             </VBox>
         </ScrollPane>
     </center>

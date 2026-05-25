@@ -129,6 +129,27 @@ public class UsersDao {
         }
     }
 
+    public java.util.List<Users> findAllPatients() {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, is_online, last_seen, `date`
+                FROM users
+                WHERE role = 'USER'
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        try (PreparedStatement statement = getConnection().prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                users.add(mapUser(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors du chargement des patients.", e);
+        }
+        return users;
+    }
+
     public void updateProfile(Users user) {
         String sql = """
                 UPDATE users
