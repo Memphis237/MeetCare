@@ -1,9 +1,11 @@
 package org.example.meetcare.controller;
 
 import javafx.fxml.FXML;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import org.example.meetcare.dao.UsersDao;
@@ -34,8 +36,39 @@ public class SidebarPatientController {
     private Label messagesBadgeLabel;
 
     @FXML
+    private HBox homeItem;
+
+    @FXML
+    private HBox searchItem;
+
+    @FXML
+    private HBox appointmentsItem;
+
+    @FXML
+    private HBox documentsItem;
+
+    @FXML
+    private HBox invoicesItem;
+
+    @FXML
+    private HBox messagesItem;
+
+    @FXML
+    private HBox assistantItem;
+
+    @FXML
+    private HBox notificationsItem;
+
+    @FXML
+    private HBox settingsItem;
+
+    @FXML
+    private HBox logoutItem;
+
+    @FXML
     private void initialize() {
         refreshSidebar(null);
+        Platform.runLater(() -> applyActiveRoute(AppSession.getSidebarRoute()));
     }
 
     public void refreshSidebar(Users fallbackUser) {
@@ -58,6 +91,23 @@ public class SidebarPatientController {
         messagesBadgeContainer.setVisible(hasUnread);
         messagesBadgeContainer.setManaged(hasUnread);
         messagesBadgeLabel.setText(hasUnread ? (count > 99 ? "99+" : String.valueOf(count)) : "");
+    }
+
+    public void applyActiveRoute(String route) {
+        setInactive(homeItem, searchItem, appointmentsItem, documentsItem, invoicesItem, messagesItem, assistantItem, notificationsItem, settingsItem, logoutItem);
+
+        HBox activeItem = switch (route == null ? "home" : route) {
+            case "search" -> searchItem;
+            case "appointments" -> appointmentsItem;
+            case "documents" -> documentsItem;
+            case "invoices" -> invoicesItem;
+            case "messages" -> messagesItem;
+            case "assistant" -> assistantItem;
+            case "settings" -> settingsItem;
+            default -> homeItem;
+        };
+
+        setActive(activeItem);
     }
 
     @FXML
@@ -142,5 +192,21 @@ public class SidebarPatientController {
             case MEDECIN -> "Medecin";
             default -> "Patient";
         };
+    }
+
+    private void setInactive(HBox... items) {
+        for (HBox item : items) {
+            if (item == null) {
+                continue;
+            }
+            item.setStyle("-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;");
+        }
+    }
+
+    private void setActive(HBox item) {
+        if (item == null) {
+            return;
+        }
+        item.setStyle("-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8; -fx-cursor: hand;");
     }
 }

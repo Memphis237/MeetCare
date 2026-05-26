@@ -1,6 +1,7 @@
 package org.example.meetcare.dao;
 
 import org.example.meetcare.exception.DatabaseException;
+import org.example.meetcare.model.AccountStatus;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.DatabaseConnection;
@@ -47,8 +48,8 @@ public class UsersDao {
 
     public int insert(Users user) {
         String sql = """
-                INSERT INTO users (username, prenom, email, password, phone, avatar, role, address, city, code_postal, country, is_online, last_seen)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO users (username, prenom, email, password, phone, avatar, role, account_status, address, city, code_postal, country, is_online, last_seen)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
         try (PreparedStatement statement = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.getUsername());
@@ -58,15 +59,16 @@ public class UsersDao {
             statement.setString(5, user.getPhone());
             statement.setString(6, user.getAvatar());
             statement.setString(7, user.getRole() == null ? Role.USER.name() : user.getRole().name());
-            statement.setString(8, user.getAddress());
-            statement.setString(9, user.getCity());
-            statement.setString(10, user.getCodePostal());
-            statement.setString(11, user.getCountry());
-            statement.setBoolean(12, user.isOnline());
+            statement.setString(8, user.getAccountStatus() == null ? "PENDING" : user.getAccountStatus().name());
+            statement.setString(9, user.getAddress());
+            statement.setString(10, user.getCity());
+            statement.setString(11, user.getCodePostal());
+            statement.setString(12, user.getCountry());
+            statement.setBoolean(13, user.isOnline());
             if (user.getLastSeen() != null) {
-                statement.setTimestamp(13, Timestamp.valueOf(user.getLastSeen()));
+                statement.setTimestamp(14, Timestamp.valueOf(user.getLastSeen()));
             } else {
-                statement.setTimestamp(13, null);
+                statement.setTimestamp(14, null);
             }
 
             int updatedRows = statement.executeUpdate();
@@ -88,7 +90,7 @@ public class UsersDao {
     public Optional<Users> findByIdentifier(String identifier) {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE username = ? OR email = ?
                 LIMIT 1
@@ -111,7 +113,7 @@ public class UsersDao {
     public Optional<Users> findById(int userId) {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE id_users = ?
                 LIMIT 1
@@ -132,7 +134,7 @@ public class UsersDao {
     public java.util.List<Users> findAllPatients() {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE role = 'USER'
                 ORDER BY prenom, username
@@ -157,7 +159,7 @@ public class UsersDao {
     public java.util.List<Users> findAllByRole(Role role) {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE role = ?
                 ORDER BY prenom, username
@@ -180,7 +182,7 @@ public class UsersDao {
     public java.util.List<Users> findAllUsers() {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 ORDER BY prenom, username
                 """;
@@ -200,7 +202,7 @@ public class UsersDao {
     public java.util.List<Users> searchByRole(Role role, String query) {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE role = ?
                   AND (
@@ -233,7 +235,7 @@ public class UsersDao {
     public java.util.List<Users> searchAll(String query) {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE LOWER(username) LIKE ?
                    OR LOWER(prenom) LIKE ?
@@ -325,6 +327,17 @@ public class UsersDao {
         }
     }
 
+    public void updateAccountStatus(int userId, String accountStatus) {
+        String sql = "UPDATE users SET account_status = ? WHERE id_users = ?";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, accountStatus);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la mise a jour du statut du compte.", e);
+        }
+    }
+
     private Users mapUser(ResultSet resultSet) throws SQLException {
         Users user = new Users();
         user.setIdUsers(resultSet.getInt("id_users"));
@@ -339,6 +352,7 @@ public class UsersDao {
         user.setCity(resultSet.getString("city"));
         user.setCodePostal(resultSet.getString("code_postal"));
         user.setCountry(resultSet.getString("country"));
+        user.setAccountStatus(AccountStatus.fromDatabaseValue(resultSet.getString("account_status")));
         user.setOnline(resultSet.getBoolean("is_online"));
 
         Timestamp lastSeen = resultSet.getTimestamp("last_seen");

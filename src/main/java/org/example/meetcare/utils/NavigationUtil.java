@@ -16,6 +16,7 @@ public class NavigationUtil {
 
     public static void navigateTo(Event event, String fxmlPath, double width, double height, String title) {
         try {
+            AppSession.setSidebarRoute(routeFromNavigation(fxmlPath, title));
             Parent root = FXMLLoader.load(NavigationUtil.class.getResource(fxmlPath));
             Scene scene = new Scene(root, width, height);
             scene.getStylesheets().add(NavigationUtil.class.getResource("/css/style.css").toExternalForm());
@@ -32,30 +33,37 @@ public class NavigationUtil {
     }
 
     public static void openPatientHome(Event event) {
+        AppSession.setSidebarRoute("home");
         navigateTo(event, "/view/homePatient.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Accueil");
     }
 
     public static void openPatientSearch(Event event) {
+        AppSession.setSidebarRoute("search");
         navigateTo(event, "/view/searchDoctor.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Recherche");
     }
 
     public static void openPatientAppointments(Event event) {
+        AppSession.setSidebarRoute("appointments");
         navigateTo(event, "/view/myAppointments.fxml", PATIENT_WIDTH, 720, "MeetCare - Mes rendez-vous");
     }
 
     public static void openPatientDocuments(Event event) {
+        AppSession.setSidebarRoute("documents");
         navigateTo(event, "/view/documentsPatient.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Documents");
     }
 
     public static void openPatientInvoices(Event event) {
+        AppSession.setSidebarRoute("invoices");
         navigateTo(event, "/view/invoicePatient.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Factures");
     }
 
     public static void openPatientMessages(Event event) {
+        AppSession.setSidebarRoute("messages");
         navigateTo(event, "/view/messagePatient.fxml", 1280, 760, "MeetCare - Messages");
     }
 
     public static void openPatientAssistantMessages(Event event) {
+        AppSession.setSidebarRoute("assistant");
         navigateToWithPostLoad(event, "/view/messagePatient.fxml", 1280, 760, "MeetCare - Messages", controller -> {
             if (controller instanceof AbstractMessagingController messagingController) {
                 messagingController.openAssistantConversationFromNavigation();
@@ -64,50 +72,62 @@ public class NavigationUtil {
     }
 
     public static void openPatientSettings(Event event) {
+        AppSession.setSidebarRoute("settings");
         navigateTo(event, "/view/settingsPatient.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
     }
 
     public static void openAdminHome(Event event) {
+        AppSession.setSidebarRoute("home");
         navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Dashboard");
     }
 
     public static void openAdminSearch(Event event) {
+        AppSession.setSidebarRoute("search");
         navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Recherche");
     }
 
     public static void openAdminAppointments(Event event) {
+        AppSession.setSidebarRoute("appointments");
         navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Rendez-vous");
     }
 
     public static void openAdminDocuments(Event event) {
+        AppSession.setSidebarRoute("documents");
         navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Documents");
     }
 
     public static void openAdminInvoices(Event event) {
+        AppSession.setSidebarRoute("invoices");
         navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Factures");
     }
 
     public static void openAdminStats(Event event) {
+        AppSession.setSidebarRoute("stats");
         navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Statistiques");
     }
 
     public static void openAdminValidation(Event event) {
+        AppSession.setSidebarRoute("validation");
         navigateTo(event, "/view/validationAdmin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Validation");
     }
 
     public static void openAdminSettings(Event event) {
+        AppSession.setSidebarRoute("settings");
         navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
     }
 
     public static void openMedecinHome(Event event) {
+        AppSession.setSidebarRoute("home");
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Tableau de bord");
     }
 
     public static void openMedecinAgenda(Event event) {
+        AppSession.setSidebarRoute("appointments");
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Agenda");
     }
 
     public static void openMedecinValidation(Event event) {
+        AppSession.setSidebarRoute("validation");
         navigateTo(event, "/view/validationMedecin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Patients");
     }
 
@@ -116,22 +136,27 @@ public class NavigationUtil {
     }
 
     public static void openMedecinAvailability(Event event) {
+        AppSession.setSidebarRoute("availability");
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Disponibilites");
     }
 
     public static void openMedecinDocuments(Event event) {
+        AppSession.setSidebarRoute("documents");
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Documents");
     }
 
     public static void openMedecinInvoices(Event event) {
+        AppSession.setSidebarRoute("invoices");
         navigateTo(event, "/view/invoiceMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Facturation");
     }
 
     public static void openMedecinMessages(Event event) {
+        AppSession.setSidebarRoute("messages");
         navigateTo(event, "/view/messageMedecin.fxml", 1280, 760, "MeetCare - Messagerie");
     }
 
     public static void openMedecinAssistantMessages(Event event) {
+        AppSession.setSidebarRoute("assistant");
         navigateToWithPostLoad(event, "/view/messageMedecin.fxml", 1280, 760, "MeetCare - Messagerie", controller -> {
             if (controller instanceof AbstractMessagingController messagingController) {
                 messagingController.openAssistantConversationFromNavigation();
@@ -140,15 +165,58 @@ public class NavigationUtil {
     }
 
     public static void openMedecinStats(Event event) {
+        AppSession.setSidebarRoute("stats");
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Statistiques");
     }
 
     public static void openMedecinPublicProfile(Event event) {
+        AppSession.setSidebarRoute("publicProfile");
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Profil public");
     }
 
     public static void openMedecinSettings(Event event) {
+        AppSession.setSidebarRoute("settings");
         navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
+    }
+
+    private static String routeFromNavigation(String fxmlPath, String title) {
+        String titleValue = title == null ? "" : title.toLowerCase();
+        String pathValue = fxmlPath == null ? "" : fxmlPath.toLowerCase();
+
+        if (pathValue.contains("message")) {
+            return titleValue.contains("messagerie") ? "messages" : "messages";
+        }
+        if (pathValue.contains("settings")) {
+            return "settings";
+        }
+        if (pathValue.contains("validation")) {
+            return "validation";
+        }
+        if (pathValue.contains("invoice")) {
+            return "invoices";
+        }
+        if (pathValue.contains("documents")) {
+            return "documents";
+        }
+        if (pathValue.contains("appointment") || pathValue.contains("myappointments")) {
+            return "appointments";
+        }
+        if (titleValue.contains("recherche")) {
+            return "search";
+        }
+        if (titleValue.contains("statistiques")) {
+            return "stats";
+        }
+        if (titleValue.contains("profil public")) {
+            return "publicProfile";
+        }
+        if (titleValue.contains("disponibilites")) {
+            return "availability";
+        }
+        if (titleValue.contains("accueil") || titleValue.contains("tableau de bord") || titleValue.contains("dashboard")) {
+            return "home";
+        }
+        return "home";
     }
 
     private static void navigateToWithPostLoad(Event event, String fxmlPath, double width, double height, String title, java.util.function.Consumer<Object> afterLoad) {

@@ -5,11 +5,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.example.meetcare.dao.UsersDao;
+import org.example.meetcare.model.AccountStatus;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.service.RegisterService;
@@ -33,6 +35,14 @@ public class LoginController {
         try {
             Users user = authService.login(username.getText(), password.getText());
             Users freshUser = usersDao.findById(user.getIdUsers()).orElse(user);
+
+            if (freshUser.getRole() == Role.MEDECIN
+                    && freshUser.getAccountStatus() != AccountStatus.PENDING
+                    && freshUser.getAccountStatus() != AccountStatus.VERIFIED) {
+                showAccountBlockedMessage(freshUser.getAccountStatus());
+                return;
+            }
+
             AppSession.setCurrentUser(freshUser);
             usersDao.updateOnlineStatus(freshUser.getIdUsers(), true);
             navigateAfterLogin(event, freshUser);
@@ -58,7 +68,7 @@ public class LoginController {
         }
 
         if (role == Role.MEDECIN) {
-            navigate(event, "/view/invoiceMedecin.fxml", 1100, 700, "MeetCare - Espace medecin");
+            navigate(event, "/view/validationMedecin.fxml", 1100, 700, "MeetCare - Espace medecin");
             return;
         }
 
@@ -100,5 +110,15 @@ public class LoginController {
         messageLabel.setStyle(success
                 ? "-fx-text-fill: #1b8f4b; -fx-font-size: 13px;"
                 : "-fx-text-fill: #d64545; -fx-font-size: 13px;");
+    }
+
+    private void showAccountBlockedMessage(AccountStatus accountStatus) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Compte medecin");
+        alert.setHeaderText(null);
+        alert.setContentText(accountStatus == AccountStatus.REJECTED
+                ? "Votre compte medecin a ete refuse. Contactez l'administrateur."
+                : "Votre compte medecin est suspendu.");
+        alert.showAndWait();
     }
 }

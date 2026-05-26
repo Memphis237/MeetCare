@@ -15,17 +15,19 @@ public class Users {
     private String city;
     private String codePostal;
     private String country;
+    private AccountStatus accountStatus;
     private boolean online;
     private LocalDateTime lastSeen;
     private LocalDateTime date;
 
     public Users() {
         this.role = Role.USER;
+        this.accountStatus = AccountStatus.PENDING;
     }
 
     public Users(int idUsers, String username, String prenom, String email, String password, String phone,
                  String avatar, Role role, String address, String city, String codePostal, String country,
-                 boolean online, LocalDateTime lastSeen, LocalDateTime date) {
+                 AccountStatus accountStatus, boolean online, LocalDateTime lastSeen, LocalDateTime date) {
         this.idUsers = idUsers;
         this.username = username;
         this.prenom = prenom;
@@ -38,6 +40,7 @@ public class Users {
         this.city = city;
         this.codePostal = codePostal;
         this.country = country;
+        this.accountStatus = accountStatus;
         this.online = online;
         this.lastSeen = lastSeen;
         this.date = date;
@@ -137,6 +140,22 @@ public class Users {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public AccountStatus getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(AccountStatus accountStatus) {
+        this.accountStatus = accountStatus;
+    }
+
+    public boolean isDoctorPending() {
+        return role == Role.MEDECIN && accountStatus == AccountStatus.PENDING;
+    }
+
+    public boolean isVerifiedDoctor() {
+        return role == Role.MEDECIN && accountStatus == AccountStatus.VERIFIED;
     }
 
     public boolean isOnline() {

@@ -1,5 +1,243 @@
 package org.example.meetcare.controller;
 
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import org.example.meetcare.dao.DoctorDao;
+import org.example.meetcare.dao.DoctorDocumentDao;
+import org.example.meetcare.dao.UsersDao;
+import org.example.meetcare.model.DoctorDocumentEntry;
+import org.example.meetcare.model.Users;
+import org.example.meetcare.utils.AppSession;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ValidationAdminController {
-    
+    @FXML
+    private Label pendingCountLabel;
+
+    @FXML
+    private VBox cardsContainer;
+
+    private final DoctorDocumentDao doctorDocumentDao = new DoctorDocumentDao();
+    private final DoctorDao doctorDao = new DoctorDao();
+    private final UsersDao usersDao = new UsersDao();
+
+    @FXML
+    private void initialize() {
+        loadPendingDoctors();
+    }
+
+    @FXML
+    private void handleRefresh(ActionEvent event) {
+        loadPendingDoctors();
+    }
+
+    private void loadPendingDoctors() {
+        if (cardsContainer == null) {
+            return;
+        }
+
+        List<DoctorDocumentEntry> entries = doctorDocumentDao.findPendingDocumentsForAdmin();
+        Map<Integer, List<DoctorDocumentEntry>> groupedByDoctor = new LinkedHashMap<>();
+        for (DoctorDocumentEntry entry : entries) {
+            groupedByDoctor.computeIfAbsent(entry.getDoctorId(), key -> new ArrayList<>()).add(entry);
+        }
+
+        cardsContainer.getChildren().clear();
+        updatePendingCount(groupedByDoctor.size());
+
+        if (groupedByDoctor.isEmpty()) {
+            Label empty = new Label("Aucune demande de validation en attente.");
+            empty.setStyle("-fx-text-fill: #6B7280; -fx-font-size: 13px;");
+            cardsContainer.getChildren().add(empty);
+            return;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        for (Map.Entry<Integer, List<DoctorDocumentEntry>> doctorEntry : groupedByDoctor.entrySet()) {
+            int doctorId = doctorEntry.getKey();
+            List<DoctorDocumentEntry> documents = doctorEntry.getValue();
+            DoctorDocumentEntry first = documents.get(0);
+
+            VBox card = new VBox(14);
+            card.setStyle("-fx-background-color: white; -fx-background-radius: 18; -fx-padding: 20; -fx-border-color: #E5E7EB; -fx-border-radius: 18; -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.08), 12, 0, 0, 2);");
+
+            HBox header = new HBox(14);
+            Rectangle avatarBackground = new Rectangle(54, 54);
+            avatarBackground.setArcHeight(16);
+            avatarBackground.setArcWidth(16);
+            avatarBackground.setStyle("-fx-fill: linear-gradient(to bottom right, #DBEAFE, #BFDBFE);");
+
+            Label initials = new Label(initialsOf(first.getUsername()));
+            initials.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1D4ED8;");
+            VBox avatarBox = new VBox();
+            avatarBox.setMinSize(54, 54);
+            avatarBox.setMaxSize(54, 54);
+            avatarBox.setAlignment(javafx.geometry.Pos.CENTER);
+            avatarBox.getChildren().addAll(avatarBackground, initials);
+
+            VBox info = new VBox(4);
+            Label name = new Label(displayName(first));
+            name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #111827;");
+
+            Label email = new Label(first.getEmail() == null ? "" : first.getEmail());
+            email.setStyle("-fx-font-size: 12px; -fx-text-fill: #6B7280;");
+
+            Label documentsCount = new Label(documents.size() + " document(s) envoye(s)");
+            documentsCount.setStyle("-fx-font-size: 12px; -fx-text-fill: #2563EB; -fx-font-weight: bold;");
+
+            info.getChildren().addAll(name, email, documentsCount);
+            HBox.setHgrow(info, Priority.ALWAYS);
+
+            Label status = new Label("EN ATTENTE");
+            status.setStyle("-fx-background-color: #FEF3C7; -fx-text-fill: #B45309; -fx-font-weight: bold; -fx-background-radius: 999; -fx-padding: 6 12 6 12;");
+
+            header.getChildren().addAll(avatarBox, info, status);
+
+            VBox docList = new VBox(8);
+            for (DoctorDocumentEntry document : documents) {
+                docList.getChildren().add(buildDocumentRow(document, formatter));
+            }
+
+            HBox actions = new HBox(12);
+            Button approve = new Button("Valider");
+            approve.setStyle("-fx-background-color: #16A34A; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18;");
+            approve.setOnAction(event -> handleApprove(first.getDoctorId(), first.getUserId()));
+
+            Button reject = new Button("Refuser");
+            reject.setStyle("-fx-background-color: white; -fx-text-fill: #DC2626; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18; -fx-border-color: #FCA5A5; -fx-border-radius: 10; -fx-border-width: 1.4;");
+            reject.setOnAction(event -> handleReject(first.getDoctorId(), first.getUserId()));
+
+            actions.getChildren().addAll(approve, reject);
+
+            card.getChildren().addAll(header, new Separator(), docList, actions);
+            cardsContainer.getChildren().add(card);
+        }
+    }
+
+    private HBox buildDocumentRow(DoctorDocumentEntry document, DateTimeFormatter formatter) {
+        HBox row = new HBox(10);
+        row.setStyle("-fx-background-color: #F9FAFB; -fx-background-radius: 12; -fx-padding: 12; -fx-border-color: #EEF2F7; -fx-border-radius: 12;");
+
+        Rectangle chip = new Rectangle(12, 12);
+        chip.setArcHeight(4);
+        chip.setArcWidth(4);
+        chip.setStyle("-fx-fill: #60A5FA;");
+
+        VBox text = new VBox(2);
+        Label title = new Label(document.getDocumentType() + " - " + document.getFileName());
+        title.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #111827;");
+
+        Label meta = new Label("Ajoute le " + (document.getUploadedAt() == null ? "-" : formatter.format(document.getUploadedAt())));
+        meta.setStyle("-fx-font-size: 11px; -fx-text-fill: #6B7280;");
+
+        Label status = new Label(document.getVerificationStatus());
+        status.setStyle(documentStatusStyle(document.getVerificationStatus()));
+
+        text.getChildren().addAll(title, meta);
+        HBox.setHgrow(text, Priority.ALWAYS);
+        row.getChildren().addAll(chip, text, status);
+        return row;
+    }
+
+    private void handleApprove(int doctorId, int userId) {
+        Users admin = AppSession.getCurrentUser();
+        if (admin == null) {
+            showAlert(Alert.AlertType.WARNING, "Session invalide", "Aucun administrateur connecte.");
+            return;
+        }
+
+        usersDao.updateAccountStatus(userId, "VERIFIED");
+        doctorDocumentDao.setVerificationStatusForDoctor(doctorId, "APPROVED");
+        doctorDao.saveVerificationDecision(doctorId, admin.getIdUsers(), "APPROVED", "Compte valide par l'admin.");
+        showAlert(Alert.AlertType.INFORMATION, "Validation effectuee", "Le compte medecin a ete valide.");
+        loadPendingDoctors();
+    }
+
+    private void handleReject(int doctorId, int userId) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Refus du compte");
+        dialog.setHeaderText("Indiquez la raison du refus");
+        dialog.setContentText("Motif:");
+        dialog.getEditor().setPromptText("Ex: diplome manquant, document illisible...");
+
+        dialog.showAndWait().ifPresent(reason -> {
+            String trimmed = reason == null ? "" : reason.trim();
+            if (trimmed.isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Motif requis", "Veuillez saisir une raison de refus.");
+                return;
+            }
+
+            Users admin = AppSession.getCurrentUser();
+            if (admin == null) {
+                showAlert(Alert.AlertType.WARNING, "Session invalide", "Aucun administrateur connecte.");
+                return;
+            }
+
+            usersDao.updateAccountStatus(userId, "REJECTED");
+            doctorDocumentDao.setVerificationStatusForDoctor(doctorId, "REJECTED");
+            doctorDao.saveVerificationDecision(doctorId, admin.getIdUsers(), "REJECTED", trimmed);
+            showAlert(Alert.AlertType.INFORMATION, "Demande refusee", "Le compte medecin a ete refuse.");
+            loadPendingDoctors();
+        });
+    }
+
+    private void updatePendingCount(int count) {
+        if (pendingCountLabel != null) {
+            pendingCountLabel.setText(count + " en attente");
+        }
+    }
+
+    private String documentStatusStyle(String status) {
+        if ("APPROVED".equalsIgnoreCase(status)) {
+            return "-fx-background-color: #E8F8EF; -fx-text-fill: #15803D; -fx-background-radius: 999; -fx-font-weight: bold; -fx-padding: 5 10 5 10;";
+        }
+        if ("REJECTED".equalsIgnoreCase(status)) {
+            return "-fx-background-color: #FEE2E2; -fx-text-fill: #B91C1C; -fx-background-radius: 999; -fx-font-weight: bold; -fx-padding: 5 10 5 10;";
+        }
+        return "-fx-background-color: #FEF3C7; -fx-text-fill: #B45309; -fx-background-radius: 999; -fx-font-weight: bold; -fx-padding: 5 10 5 10;";
+    }
+
+    private String displayName(DoctorDocumentEntry entry) {
+        String username = entry.getUsername() == null ? "" : entry.getUsername().trim();
+        String email = entry.getEmail() == null ? "" : entry.getEmail().trim();
+        if (!username.isEmpty()) {
+            return username;
+        }
+        return email.isEmpty() ? "Medecin" : email;
+    }
+
+    private String initialsOf(String value) {
+        if (value == null || value.isBlank()) {
+            return "D";
+        }
+        String[] parts = value.trim().split("\\s+");
+        if (parts.length == 1) {
+            return parts[0].substring(0, 1).toUpperCase();
+        }
+        return (parts[0].substring(0, 1) + parts[parts.length - 1].substring(0, 1)).toUpperCase();
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 }

@@ -47,37 +47,37 @@
     <VBox spacing="2" style="-fx-padding: 10 10 10 10;">
 
         <!-- Accueil (actif) -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleHome" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="homeItem" alignment="CENTER_LEFT" onMouseClicked="#handleHome" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 16px; -fx-text-fill: #2B7FD4;" text="🏠" />
             <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="Accueil" />
         </HBox>
 
         <!-- Rechercher -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleSearchDoctor" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="searchItem" alignment="CENTER_LEFT" onMouseClicked="#handleSearchDoctor" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔍" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rechercher" />
         </HBox>
 
         <!-- Mes rendez-vous -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleAppointments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="appointmentsItem" alignment="CENTER_LEFT" onMouseClicked="#handleAppointments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📅" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Mes rendez-vous" />
         </HBox>
 
         <!-- Documents -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleDocuments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="documentsItem" alignment="CENTER_LEFT" onMouseClicked="#handleDocuments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📄" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Documents" />
         </HBox>
 
         <!-- Factures -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleInvoices" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="invoicesItem" alignment="CENTER_LEFT" onMouseClicked="#handleInvoices" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="💲" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Factures" />
         </HBox>
 
         <!-- Messages -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleMessages" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="messagesItem" alignment="CENTER_LEFT" onMouseClicked="#handleMessages" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="💬" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Messages" />
             <Region HBox.hgrow="ALWAYS" />
@@ -88,13 +88,13 @@
         </HBox>
 
         <!-- Assistant IA -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleAssistant" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="assistantItem" alignment="CENTER_LEFT" onMouseClicked="#handleAssistant" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🤖" />
             <Label onMouseClicked="#handleAssistant" style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A; -fx-cursor: hand;" text="Assistant IA" />
         </HBox>
 
         <!-- Notifications avec badge -->
-        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="notificationsItem" alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔔" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Notifications" />
             <Region HBox.hgrow="ALWAYS" />
@@ -105,7 +105,7 @@
         </HBox>
 
         <!-- Paramètres -->
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleSettings" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="settingsItem" alignment="CENTER_LEFT" onMouseClicked="#handleSettings" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="⚙" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Paramètres" />
         </HBox>
@@ -118,7 +118,7 @@
     <Separator style="-fx-background-color: #D9E8F5;" />
 
     <!-- Déconnexion -->
-    <HBox alignment="CENTER_LEFT" onMouseClicked="#handleLogout" spacing="12" style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
+    <HBox fx:id="logoutItem" alignment="CENTER_LEFT" onMouseClicked="#handleLogout" spacing="12" style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
         <Label style="-fx-font-size: 13px; -fx-text-fill: red;" text="Déconnexion" />
     </HBox>
 
