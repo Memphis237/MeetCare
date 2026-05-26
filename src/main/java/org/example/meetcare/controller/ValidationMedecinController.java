@@ -4,18 +4,15 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
+import org.example.meetcare.exception.DatabaseException;
 import org.example.meetcare.dao.DoctorDocumentDao;
-import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.AccountStatus;
 import org.example.meetcare.model.DoctorDocumentEntry;
 import org.example.meetcare.model.Users;
@@ -45,14 +42,25 @@ public class ValidationMedecinController {
     private VBox documentsContainer;
 
     private final DoctorDocumentDao doctorDocumentDao = new DoctorDocumentDao();
-    private final UsersDao usersDao = new UsersDao();
     private final List<File> selectedFiles = new ArrayList<>();
 
     @FXML
     private void initialize() {
         if (documentTypeChoiceBox != null) {
-            documentTypeChoiceBox.setItems(FXCollections.observableArrayList("DIPLOMA", "LICENSE", "ID_CARD"));
-            documentTypeChoiceBox.setValue("DIPLOMA");
+            documentTypeChoiceBox.setItems(FXCollections.observableArrayList(
+                    "RIB",
+                    "CARTE_VITALE",
+                    "TITRE_SEJOUR",
+                    "PASSEPORT",
+                    "VISA",
+                    "JUSTIFICATIF_DOMICILE",
+                    "ASSURANCE_HABITATION",
+                    "PHOTO_PRO",
+                    "DIPLOMA",
+                    "LICENSE",
+                    "ID_CARD"
+            ));
+            documentTypeChoiceBox.setValue("CARTE_VITALE");
         }
 
         refreshView();
@@ -103,6 +111,10 @@ public class ValidationMedecinController {
             updateSelectedFilesLabel();
             refreshView();
             showAlert(Alert.AlertType.INFORMATION, "Documents envoyes", "Vos fichiers ont ete envoyes pour validation.");
+        } catch (DatabaseException ex) {
+            showAlert(Alert.AlertType.ERROR, "Erreur base de donnees",
+                    "La table doctor_documents de votre base actuelle n'a probablement pas encore ete migree avec les nouveaux types de documents. "
+                            + "Applique l'ALTER TABLE du schema puis recommence. Details: " + rootCauseMessage(ex));
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'envoyer les fichiers: " + ex.getMessage());
         }
@@ -238,5 +250,17 @@ public class ValidationMedecinController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private String rootCauseMessage(Throwable throwable) {
+        Throwable current = throwable;
+        while (current.getCause() != null && current.getCause() != current) {
+            current = current.getCause();
+        }
+        String message = current.getMessage();
+        if (message == null || message.isBlank()) {
+            return current.getClass().getSimpleName();
+        }
+        return message;
     }
 }

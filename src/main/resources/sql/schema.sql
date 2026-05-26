@@ -161,7 +161,7 @@ CREATE TABLE medical_records (
 
 CREATE TABLE doctor_documents (
     id_doctor_documents INT AUTO_INCREMENT PRIMARY KEY,
-    document_type ENUM('DIPLOMA','LICENSE','ID_CARD'),
+    document_type ENUM('DIPLOMA','LICENSE','ID_CARD','RIB','CARTE_VITALE','TITRE_SEJOUR','PASSEPORT','VISA','JUSTIFICATIF_DOMICILE','ASSURANCE_HABITATION','PHOTO_PRO'),
     file_name VARCHAR(255),
     file_path VARCHAR(255),
     verification_status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',

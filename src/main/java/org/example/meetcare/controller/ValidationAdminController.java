@@ -22,11 +22,25 @@ import org.example.meetcare.utils.AppSession;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ValidationAdminController {
+    private static final Set<String> REQUIRED_SINGLE_DOCUMENTS = Set.of(
+            "CARTE_VITALE",
+            "JUSTIFICATIF_DOMICILE",
+            "ASSURANCE_HABITATION"
+    );
+    private static final Set<String> REQUIRED_ONE_OF_DOCUMENTS = Set.of(
+            "TITRE_SEJOUR",
+            "PASSEPORT",
+            "VISA"
+    );
+
     @FXML
     private Label pendingCountLabel;
 
@@ -114,9 +128,20 @@ public class ValidationAdminController {
                 docList.getChildren().add(buildDocumentRow(document, formatter));
             }
 
+            List<String> missingDocuments = missingRequiredDocuments(documents);
+            Label requirementLabel = new Label(buildRequirementLabel(missingDocuments));
+            requirementLabel.setWrapText(true);
+            requirementLabel.setStyle(missingDocuments.isEmpty()
+                    ? "-fx-background-color: #E8F8EF; -fx-text-fill: #15803D; -fx-background-radius: 12; -fx-padding: 10 12 10 12; -fx-font-size: 12px;"
+                    : "-fx-background-color: #FEF3C7; -fx-text-fill: #B45309; -fx-background-radius: 12; -fx-padding: 10 12 10 12; -fx-font-size: 12px;");
+
             HBox actions = new HBox(12);
             Button approve = new Button("Valider");
-            approve.setStyle("-fx-background-color: #16A34A; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18;");
+            boolean canApprove = missingDocuments.isEmpty();
+            approve.setDisable(!canApprove);
+            approve.setStyle(canApprove
+                    ? "-fx-background-color: #16A34A; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18;"
+                    : "-fx-background-color: #D1D5DB; -fx-text-fill: #6B7280; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18;");
             approve.setOnAction(event -> handleApprove(first.getDoctorId(), first.getUserId()));
 
             Button reject = new Button("Refuser");
@@ -125,7 +150,7 @@ public class ValidationAdminController {
 
             actions.getChildren().addAll(approve, reject);
 
-            card.getChildren().addAll(header, new Separator(), docList, actions);
+            card.getChildren().addAll(header, new Separator(), docList, requirementLabel, actions);
             cardsContainer.getChildren().add(card);
         }
     }
@@ -159,6 +184,23 @@ public class ValidationAdminController {
         Users admin = AppSession.getCurrentUser();
         if (admin == null) {
             showAlert(Alert.AlertType.WARNING, "Session invalide", "Aucun administrateur connecte.");
+            return;
+        }
+
+        List<DoctorDocumentEntry> documents = doctorDocumentDao.findPendingDocumentsForAdmin();
+        boolean canApprove = documents.stream()
+                .filter(entry -> entry.getDoctorId() == doctorId)
+                .map(DoctorDocumentEntry::getDocumentType)
+                .collect(java.util.stream.Collectors.toSet())
+                .containsAll(Set.of("CARTE_VITALE", "JUSTIFICATIF_DOMICILE", "ASSURANCE_HABITATION"))
+                && documents.stream()
+                .filter(entry -> entry.getDoctorId() == doctorId)
+                .map(DoctorDocumentEntry::getDocumentType)
+                .anyMatch(type -> REQUIRED_ONE_OF_DOCUMENTS.contains(normalize(type)));
+
+        if (!canApprove) {
+            showAlert(Alert.AlertType.WARNING, "Documents incomplets", "Le dossier ne contient pas encore les pieces obligatoires.");
+            loadPendingDoctors();
             return;
         }
 
@@ -239,5 +281,37 @@ public class ValidationAdminController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private List<String> missingRequiredDocuments(List<DoctorDocumentEntry> documents) {
+        Set<String> types = new HashSet<>();
+        for (DoctorDocumentEntry document : documents) {
+            types.add(normalize(document.getDocumentType()));
+        }
+
+        List<String> missing = new ArrayList<>();
+        for (String required : REQUIRED_SINGLE_DOCUMENTS) {
+            if (!types.contains(required)) {
+                missing.add(required);
+            }
+        }
+
+        boolean hasIdentityDocument = REQUIRED_ONE_OF_DOCUMENTS.stream().anyMatch(types::contains);
+        if (!hasIdentityDocument) {
+            missing.add("TITRE_SEJOUR / PASSEPORT / VISA");
+        }
+
+        return missing;
+    }
+
+    private String buildRequirementLabel(List<String> missingDocuments) {
+        if (missingDocuments.isEmpty()) {
+            return "Dossier complet: validation autorisee.";
+        }
+        return "Pieces obligatoires manquantes: " + String.join(", ", missingDocuments);
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.trim().toUpperCase();
     }
 }
