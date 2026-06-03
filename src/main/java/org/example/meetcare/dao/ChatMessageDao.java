@@ -14,6 +14,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
+import java.util.Comparator;
 
 public class ChatMessageDao {
     public ChatMessageDao() {
@@ -221,6 +225,20 @@ public class ChatMessageDao {
         return attachments;
     }
 
+    public void deleteMessageAndAttachments(int messageId) {
+        List<ChatMessageAttachment> attachments = findAttachments(messageId);
+        deletePhysicalAttachmentFiles(attachments);
+
+        String sql = "DELETE FROM messages WHERE id_messages = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, messageId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Impossible de supprimer le message.", e);
+        }
+    }
+
     public void ensureSchema() {
         String createMessages = """
                 CREATE TABLE IF NOT EXISTS messages (
@@ -270,6 +288,40 @@ public class ChatMessageDao {
             message.setSentAt(timestamp.toLocalDateTime());
         }
         return message;
+    }
+
+    private void deletePhysicalAttachmentFiles(List<ChatMessageAttachment> attachments) {
+        for (ChatMessageAttachment attachment : attachments) {
+            if (attachment == null || attachment.getFilePath() == null || attachment.getFilePath().isBlank()) {
+                continue;
+            }
+
+            Path filePath = Path.of(attachment.getFilePath());
+            try {
+                Files.deleteIfExists(filePath);
+                Path parent = filePath.getParent();
+                if (parent != null) {
+                    cleanupEmptyParents(parent);
+                }
+            } catch (IOException ignored) {
+                // If disk cleanup fails, the database deletion still succeeds.
+            }
+        }
+    }
+
+    private void cleanupEmptyParents(Path directory) throws IOException {
+        Path current = directory;
+        while (current != null && current.startsWith(Path.of(System.getProperty("user.dir"), "uploads", "chat"))) {
+            boolean empty;
+            try (var stream = Files.list(current)) {
+                empty = !stream.findAny().isPresent();
+            }
+            if (!empty) {
+                break;
+            }
+            Files.deleteIfExists(current);
+            current = current.getParent();
+        }
     }
 
     private Connection getConnection() {

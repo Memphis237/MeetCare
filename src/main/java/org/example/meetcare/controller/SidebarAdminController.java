@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import org.example.meetcare.dao.DoctorDocumentDao;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
@@ -27,6 +29,14 @@ public class SidebarAdminController {
     private Label roleLabel;
 
     @FXML
+    private StackPane validationBadgeContainer;
+
+    @FXML
+    private Label validationBadgeLabel;
+
+    private final DoctorDocumentDao doctorDocumentDao = new DoctorDocumentDao();
+
+    @FXML
     private void initialize() {
         refreshSidebar(null);
     }
@@ -40,6 +50,7 @@ public class SidebarAdminController {
         patientNameLabel.setText(buildDisplayName(user));
         roleLabel.setText(roleToLabel(user.getRole()));
         AvatarUtil.applyAvatar(avatarCircle, avatarInitialsLabel, user);
+        updateValidationBadge();
     }
 
     @FXML
@@ -124,5 +135,17 @@ public class SidebarAdminController {
             case MEDECIN -> "Medecin";
             default -> "Patient";
         };
+    }
+
+    private void updateValidationBadge() {
+        if (validationBadgeContainer == null || validationBadgeLabel == null) {
+            return;
+        }
+
+        int count = doctorDocumentDao.countPendingDoctorsForAdmin();
+        boolean show = count > 0;
+        validationBadgeContainer.setVisible(show);
+        validationBadgeContainer.setManaged(show);
+        validationBadgeLabel.setText(count > 99 ? "99+" : String.valueOf(count));
     }
 }

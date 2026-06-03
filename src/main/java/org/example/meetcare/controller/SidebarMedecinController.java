@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import org.example.meetcare.dao.UsersDao;
+import org.example.meetcare.dao.DoctorDocumentDao;
 import org.example.meetcare.model.AccountStatus;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
@@ -37,6 +38,12 @@ public class SidebarMedecinController {
 
     @FXML
     private Label messagesBadgeLabel;
+
+    @FXML
+    private StackPane validationBadgeContainer;
+
+    @FXML
+    private Label validationBadgeLabel;
 
     @FXML
     private HBox homeItem;
@@ -71,6 +78,8 @@ public class SidebarMedecinController {
     @FXML
     private HBox logoutItem;
 
+    private final DoctorDocumentDao doctorDocumentDao = new DoctorDocumentDao();
+
     @FXML
     private void initialize() {
         refreshSidebar(null);
@@ -87,6 +96,7 @@ public class SidebarMedecinController {
         roleLabel.setText(roleToLabel(user));
         AvatarUtil.applyAvatar(avatarCircle, avatarInitialsLabel, user);
         applyRestrictedState(user.isDoctorPending());
+        updateValidationBadge(user);
     }
 
     public void setMessageBadgeCount(int count) {
@@ -131,6 +141,18 @@ public class SidebarMedecinController {
         if (settingsItem != null) {
             settingsItem.setOpacity(1.0);
         }
+    }
+
+    private void updateValidationBadge(Users user) {
+        if (validationBadgeContainer == null || validationBadgeLabel == null || user == null) {
+            return;
+        }
+
+        int count = doctorDocumentDao.countRejectedDocumentsForDoctorUserId(user.getIdUsers());
+        boolean show = count > 0;
+        validationBadgeContainer.setVisible(show);
+        validationBadgeContainer.setManaged(show);
+        validationBadgeLabel.setText(count > 99 ? "99+" : String.valueOf(count));
     }
 
     @FXML

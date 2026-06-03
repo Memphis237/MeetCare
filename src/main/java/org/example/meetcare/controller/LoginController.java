@@ -37,8 +37,7 @@ public class LoginController {
             Users freshUser = usersDao.findById(user.getIdUsers()).orElse(user);
 
             if (freshUser.getRole() == Role.MEDECIN
-                    && freshUser.getAccountStatus() != AccountStatus.PENDING
-                    && freshUser.getAccountStatus() != AccountStatus.VERIFIED) {
+                    && freshUser.getAccountStatus() == AccountStatus.SUSPENDED) {
                 showAccountBlockedMessage(freshUser.getAccountStatus());
                 return;
             }

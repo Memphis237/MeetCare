@@ -157,6 +157,33 @@ public class DoctorDao {
         }
     }
 
+    public java.util.Optional<String> findLatestRejectionReasonByUserId(int userId) {
+        String sql = """
+                SELECT dv.comment
+                FROM doctor_verifications dv
+                JOIN doctors d ON d.id_doctors = dv.id_doctors
+                WHERE d.id_users = ?
+                  AND dv.decision = 'REJECTED'
+                ORDER BY dv.created_at DESC, dv.id_verification DESC
+                LIMIT 1
+                """;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String comment = rs.getString("comment");
+                    if (comment != null && !comment.isBlank()) {
+                        return java.util.Optional.of(comment.trim());
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            return java.util.Optional.empty();
+        }
+        return java.util.Optional.empty();
+    }
+
     public void markPublicProfileCompleted(int doctorId) {
         String sql = "UPDATE doctors SET public_profile_completed = TRUE WHERE id_doctors = ?";
         try (Connection conn = DatabaseConnection.getConnection();

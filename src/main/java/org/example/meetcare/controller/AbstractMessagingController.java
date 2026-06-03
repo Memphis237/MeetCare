@@ -639,7 +639,12 @@ public abstract class AbstractMessagingController {
         statusLabel.setStyle(message.isRead()
                 ? "-fx-font-size: 11px; -fx-text-fill: #2B7FD4; -fx-font-weight: bold;"
                 : "-fx-font-size: 11px; -fx-text-fill: #94A3B8; -fx-font-weight: bold;");
-        footer.getChildren().addAll(timeLabel, statusLabel);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button deleteButton = new Button("🗑");
+        deleteButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #F97316; -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 0 0 0 4;");
+        deleteButton.setOnAction(event -> handleDeleteMessage(message));
+        footer.getChildren().addAll(timeLabel, statusLabel, spacer, deleteButton);
         bubble.getChildren().add(footer);
 
         wrapper.getChildren().add(bubble);
@@ -751,9 +756,15 @@ public abstract class AbstractMessagingController {
         } catch (Exception ex) {
             box.getChildren().add(new Label(attachment.getFileName()));
         }
+        HBox footer = new HBox(8);
+        footer.setAlignment(Pos.CENTER_LEFT);
         Label fileLabel = new Label(attachment.getFileName());
         fileLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #5B6B7A;");
-        box.getChildren().add(fileLabel);
+        Button downloadButton = new Button("⬇");
+        downloadButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #2B7FD4; -fx-font-size: 12px; -fx-cursor: hand; -fx-padding: 0;");
+        downloadButton.setOnAction(event -> handleDownloadAttachment(attachment));
+        footer.getChildren().addAll(fileLabel, downloadButton);
+        box.getChildren().add(footer);
         return box;
     }
 
@@ -764,7 +775,8 @@ public abstract class AbstractMessagingController {
                 ? "-fx-background-color: rgba(255,255,255,0.14); -fx-background-radius: 10; -fx-padding: 8 10 8 10;"
                 : "-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 8 10 8 10;");
 
-        Label icon = new Label("📎");
+        Label icon = new Label(iconForAttachment(attachment));
+        icon.setStyle("-fx-font-size: 16px;");
         Label name = new Label(attachment.getFileName());
         name.setWrapText(true);
         name.setStyle("-fx-font-size: 11px; " + (outgoing ? "-fx-text-fill: white;" : "-fx-text-fill: #1A2C42;"));
@@ -772,7 +784,12 @@ public abstract class AbstractMessagingController {
         meta.setStyle("-fx-font-size: 10px; " + (outgoing ? "-fx-text-fill: #D8E4F0;" : "-fx-text-fill: #94A3B8;"));
 
         VBox texts = new VBox(2, name, meta);
-        box.getChildren().addAll(icon, texts);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button downloadButton = new Button("⬇");
+        downloadButton.setStyle("-fx-background-color: transparent; -fx-text-fill: " + (outgoing ? "#FFFFFF" : "#2B7FD4") + "; -fx-font-size: 12px; -fx-cursor: hand; -fx-padding: 0;");
+        downloadButton.setOnAction(event -> handleDownloadAttachment(attachment));
+        box.getChildren().addAll(icon, texts, spacer, downloadButton);
         return box;
     }
 
@@ -815,6 +832,58 @@ public abstract class AbstractMessagingController {
         messageInput.setDisable(disabled);
         sendButton.setDisable(disabled);
         attachButton.setDisable(disabled);
+    }
+
+    protected void handleDeleteMessage(ChatMessage message) {
+        if (currentUser == null || currentConversation == null || message == null) {
+            return;
+        }
+        if (message.getSenderId() != currentUser.getIdUsers()) {
+            showInfo("Tu ne peux supprimer que tes propres messages.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Supprimer le message");
+        confirm.setHeaderText(null);
+        confirm.setContentText("Supprimer ce message et ses pieces jointes ?");
+        confirm.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                messageDao.deleteMessageAndAttachments(message.getIdMessage());
+                renderConversationMessages(currentConversation.getIdConversation());
+                loadConversations();
+            }
+        });
+    }
+
+    protected void handleDownloadAttachment(ChatMessageAttachment attachment) {
+        if (attachment == null || attachment.getFilePath() == null || attachment.getFilePath().isBlank()) {
+            showInfo("Piece jointe introuvable.");
+            return;
+        }
+
+        File source = new File(attachment.getFilePath());
+        if (!source.exists()) {
+            showInfo("Le fichier a telecharger est introuvable.");
+            return;
+        }
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Enregistrer la piece jointe");
+        chooser.setInitialFileName(attachment.getFileName() == null ? source.getName() : attachment.getFileName());
+        File target = chooser.showSaveDialog(messageInput == null || messageInput.getScene() == null
+                ? null
+                : (Stage) messageInput.getScene().getWindow());
+        if (target == null) {
+            return;
+        }
+
+        try {
+            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            showInfo("Piece jointe telechargee dans: " + target.getAbsolutePath());
+        } catch (IOException ex) {
+            showInfo("Impossible de telecharger la piece jointe: " + rootCauseMessage(ex));
+        }
     }
 
     protected void updateSidebarUnreadBadge(int unreadCount) {
@@ -1008,11 +1077,26 @@ public abstract class AbstractMessagingController {
 
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Joindre des fichiers");
+        FileChooser.ExtensionFilter supportedFiles = new FileChooser.ExtensionFilter(
+                "Fichiers supportes",
+                "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.bmp",
+                "*.pdf", "*.doc", "*.docx", "*.txt", "*.rtf", "*.odt",
+                "*.ppt", "*.pptx", "*.odp",
+                "*.xls", "*.xlsx", "*.csv", "*.ods",
+                "*.js", "*.php", "*.html", "*.htm", "*.css", "*.java", "*.py", "*.json", "*.xml", "*.sql",
+                "*.mp4", "*.mov", "*.avi", "*.mkv", "*.webm", "*.wmv"
+        );
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp"),
-                new FileChooser.ExtensionFilter("PDF", "*.pdf"),
+                supportedFiles,
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.bmp"),
+                new FileChooser.ExtensionFilter("Documents", "*.pdf", "*.doc", "*.docx", "*.txt", "*.rtf", "*.odt"),
+                new FileChooser.ExtensionFilter("Presentations", "*.ppt", "*.pptx", "*.odp"),
+                new FileChooser.ExtensionFilter("Tableurs", "*.xls", "*.xlsx", "*.csv", "*.ods"),
+                new FileChooser.ExtensionFilter("Code", "*.js", "*.php", "*.html", "*.htm", "*.css", "*.java", "*.py", "*.json", "*.xml", "*.sql"),
+                new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.mov", "*.avi", "*.mkv", "*.webm", "*.wmv"),
                 new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
         );
+        chooser.setSelectedExtensionFilter(supportedFiles);
 
         Stage stage = (Stage) messageInput.getScene().getWindow();
         List<File> files = chooser.showOpenMultipleDialog(stage);
@@ -1125,6 +1209,87 @@ public abstract class AbstractMessagingController {
         if (lower.endsWith(".pdf")) {
             return "application/pdf";
         }
+        if (lower.endsWith(".doc")) {
+            return "application/msword";
+        }
+        if (lower.endsWith(".docx")) {
+            return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        }
+        if (lower.endsWith(".ppt")) {
+            return "application/vnd.ms-powerpoint";
+        }
+        if (lower.endsWith(".pptx")) {
+            return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        }
+        if (lower.endsWith(".xls")) {
+            return "application/vnd.ms-excel";
+        }
+        if (lower.endsWith(".xlsx")) {
+            return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        }
+        if (lower.endsWith(".txt")) {
+            return "text/plain";
+        }
+        if (lower.endsWith(".rtf")) {
+            return "application/rtf";
+        }
+        if (lower.endsWith(".odt")) {
+            return "application/vnd.oasis.opendocument.text";
+        }
+        if (lower.endsWith(".odp")) {
+            return "application/vnd.oasis.opendocument.presentation";
+        }
+        if (lower.endsWith(".ods")) {
+            return "application/vnd.oasis.opendocument.spreadsheet";
+        }
+        if (lower.endsWith(".csv")) {
+            return "text/csv";
+        }
+        if (lower.endsWith(".js")) {
+            return "application/javascript";
+        }
+        if (lower.endsWith(".php")) {
+            return "application/x-httpd-php";
+        }
+        if (lower.endsWith(".html") || lower.endsWith(".htm")) {
+            return "text/html";
+        }
+        if (lower.endsWith(".css")) {
+            return "text/css";
+        }
+        if (lower.endsWith(".java")) {
+            return "text/x-java-source";
+        }
+        if (lower.endsWith(".py")) {
+            return "text/x-python";
+        }
+        if (lower.endsWith(".json")) {
+            return "application/json";
+        }
+        if (lower.endsWith(".xml")) {
+            return "application/xml";
+        }
+        if (lower.endsWith(".sql")) {
+            return "application/sql";
+        }
+        if (lower.endsWith(".mp4")) {
+            return "video/mp4";
+        }
+        if (lower.endsWith(".mov")) {
+            return "video/quicktime";
+        }
+        if (lower.endsWith(".avi")) {
+            return "video/x-msvideo";
+        }
+        if (lower.endsWith(".mkv")) {
+            return "video/x-matroska";
+        }
+        if (lower.endsWith(".webm")) {
+            return "video/webm";
+        }
+        if (lower.endsWith(".wmv")) {
+            return "video/x-ms-wmv";
+        }
         if (lower.endsWith(".png")) {
             return "image/png";
         }
@@ -1138,6 +1303,37 @@ public abstract class AbstractMessagingController {
             return "image/webp";
         }
         return "application/octet-stream";
+    }
+
+    private String iconForAttachment(ChatMessageAttachment attachment) {
+        String fileType = attachment.getFileType() == null ? "" : attachment.getFileType().toLowerCase();
+        String fileName = attachment.getFileName() == null ? "" : attachment.getFileName().toLowerCase();
+        String value = fileType + " " + fileName;
+        if (value.contains("image/")) {
+            return "🖼";
+        }
+        if (value.contains("pdf")) {
+            return "📕";
+        }
+        if (value.contains("word") || value.contains(".doc")) {
+            return "📘";
+        }
+        if (value.contains("presentation") || value.contains(".ppt")) {
+            return "📙";
+        }
+        if (value.contains("excel") || value.contains(".xls") || value.contains(".csv")) {
+            return "📗";
+        }
+        if (value.contains("video/") || value.contains(".mp4") || value.contains(".mov") || value.contains(".mkv")) {
+            return "🎬";
+        }
+        if (value.contains("text/") || value.contains(".txt") || value.contains(".md")) {
+            return "📄";
+        }
+        if (value.contains(".js") || value.contains(".php") || value.contains(".java") || value.contains(".py") || value.contains(".css") || value.contains(".html") || value.contains(".json") || value.contains(".xml") || value.contains(".sql")) {
+            return "💻";
+        }
+        return "📎";
     }
 
     protected String buildFingerprint(List<ChatMessage> messages) {

@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -12,11 +13,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import org.example.meetcare.exception.DatabaseException;
+import org.example.meetcare.dao.DoctorDao;
 import org.example.meetcare.dao.DoctorDocumentDao;
 import org.example.meetcare.model.AccountStatus;
 import org.example.meetcare.model.DoctorDocumentEntry;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AppSession;
+import org.example.meetcare.dao.UsersDao;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +36,9 @@ public class ValidationMedecinController {
     private Label accountStatusLabel;
 
     @FXML
+    private Label rejectionReasonLabel;
+
+    @FXML
     private Label selectedFilesLabel;
 
     @FXML
@@ -41,7 +47,12 @@ public class ValidationMedecinController {
     @FXML
     private VBox documentsContainer;
 
+    @FXML
+    private SidebarMedecinController sidebarMedecinController;
+
     private final DoctorDocumentDao doctorDocumentDao = new DoctorDocumentDao();
+    private final DoctorDao doctorDao = new DoctorDao();
+    private final UsersDao usersDao = new UsersDao();
     private final List<File> selectedFiles = new ArrayList<>();
 
     @FXML
@@ -107,6 +118,10 @@ public class ValidationMedecinController {
                 File storedFile = copyToDoctorFolder(currentUser.getIdUsers(), file);
                 doctorDocumentDao.saveUploadedDocument(currentUser.getIdUsers(), storedFile, documentType);
             }
+            if (currentUser.getAccountStatus() == AccountStatus.REJECTED) {
+                usersDao.updateAccountStatus(currentUser.getIdUsers(), AccountStatus.PENDING.name());
+                AppSession.setCurrentUser(usersDao.findById(currentUser.getIdUsers()).orElse(currentUser));
+            }
             selectedFiles.clear();
             updateSelectedFilesLabel();
             refreshView();
@@ -132,7 +147,33 @@ public class ValidationMedecinController {
             accountStatusLabel.setStyle(statusStyle(status));
         }
 
+        updateRejectionReason(currentUser);
+
         loadDocuments(currentUser.getIdUsers());
+        refreshSidebar(currentUser);
+    }
+
+    private void updateRejectionReason(Users currentUser) {
+        if (rejectionReasonLabel == null) {
+            return;
+        }
+
+        if (currentUser == null) {
+            rejectionReasonLabel.setVisible(false);
+            rejectionReasonLabel.setManaged(false);
+            return;
+        }
+
+        java.util.Optional<String> reason = doctorDao.findLatestRejectionReasonByUserId(currentUser.getIdUsers());
+        if (reason.isEmpty()) {
+            rejectionReasonLabel.setVisible(false);
+            rejectionReasonLabel.setManaged(false);
+            return;
+        }
+
+        rejectionReasonLabel.setText("Motif du refus: " + reason.get());
+        rejectionReasonLabel.setVisible(true);
+        rejectionReasonLabel.setManaged(true);
     }
 
     private void loadDocuments(int userId) {
@@ -182,10 +223,62 @@ public class ValidationMedecinController {
             status.setAlignment(javafx.geometry.Pos.CENTER);
             status.setPadding(new javafx.geometry.Insets(6, 10, 6, 10));
 
+            Button resend = new Button("Reenvoyer");
+            resend.setVisible("REJECTED".equalsIgnoreCase(document.getVerificationStatus()));
+            resend.setManaged(resend.isVisible());
+            resend.setStyle("-fx-background-color: #EFF6FF; -fx-text-fill: #1D4ED8; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 14 8 14;");
+            resend.setOnAction(event -> handleResendRejectedDocument(document));
+
+            VBox statusBox = new VBox(8, status, resend);
+            statusBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+
             HBox.setHgrow(info, Priority.ALWAYS);
-            topRow.getChildren().addAll(icon, info, status);
+            topRow.getChildren().addAll(icon, info, statusBox);
             card.getChildren().add(topRow);
             documentsContainer.getChildren().add(card);
+        }
+    }
+
+    private void handleResendRejectedDocument(DoctorDocumentEntry document) {
+        Users currentUser = AppSession.getCurrentUser();
+        if (currentUser == null) {
+            showAlert(Alert.AlertType.WARNING, "Session invalide", "Aucun utilisateur connecte.");
+            return;
+        }
+
+        javafx.stage.FileChooser chooser = new javafx.stage.FileChooser();
+        chooser.setTitle("Renvoi du document refuse");
+        chooser.getExtensionFilters().addAll(
+                new javafx.stage.FileChooser.ExtensionFilter("Tous les fichiers", "*.*"),
+                new javafx.stage.FileChooser.ExtensionFilter("Documents PDF", "*.pdf"),
+                new javafx.stage.FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.webp")
+        );
+
+        List<File> files = chooser.showOpenMultipleDialog(documentsContainer == null
+                ? null
+                : (Stage) documentsContainer.getScene().getWindow());
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+
+        try {
+            for (File file : files) {
+                File storedFile = copyToDoctorFolder(currentUser.getIdUsers(), file);
+                doctorDocumentDao.saveUploadedDocument(currentUser.getIdUsers(), storedFile, document.getDocumentType());
+            }
+
+            if (currentUser.getAccountStatus() == AccountStatus.REJECTED) {
+                usersDao.updateAccountStatus(currentUser.getIdUsers(), AccountStatus.PENDING.name());
+                AppSession.setCurrentUser(usersDao.findById(currentUser.getIdUsers()).orElse(currentUser));
+            }
+
+            refreshView();
+            showAlert(Alert.AlertType.INFORMATION, "Document renvoye", "Le document a ete transmis a nouveau pour validation.");
+        } catch (DatabaseException ex) {
+            showAlert(Alert.AlertType.ERROR, "Erreur base de donnees",
+                    "Impossible de renvoyer le document. Details: " + rootCauseMessage(ex));
+        } catch (Exception ex) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de renvoyer le document: " + ex.getMessage());
         }
     }
 
@@ -262,5 +355,11 @@ public class ValidationMedecinController {
             return current.getClass().getSimpleName();
         }
         return message;
+    }
+
+    private void refreshSidebar(Users user) {
+        if (sidebarMedecinController != null) {
+            sidebarMedecinController.refreshSidebar(user);
+        }
     }
 }

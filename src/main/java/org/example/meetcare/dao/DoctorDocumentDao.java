@@ -80,8 +80,13 @@ public class DoctorDocumentDao {
                 JOIN doctors d ON d.id_doctors = dd.id_doctors
                 JOIN users u ON u.id_users = d.id_users
                 WHERE u.role = 'MEDECIN'
-                  AND u.account_status = 'PENDING'
-                ORDER BY dd.uploaded_at DESC, dd.id_doctor_documents DESC
+                  AND EXISTS (
+                        SELECT 1
+                        FROM doctor_documents pending_dd
+                        WHERE pending_dd.id_doctors = dd.id_doctors
+                          AND pending_dd.verification_status = 'PENDING'
+                  )
+                ORDER BY u.username, dd.uploaded_at DESC, dd.id_doctor_documents DESC
                 """;
         List<DoctorDocumentEntry> entries = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
@@ -106,6 +111,65 @@ public class DoctorDocumentDao {
         } catch (SQLException e) {
             throw new DatabaseException("Impossible de mettre a jour le statut des documents.", e);
         }
+    }
+
+    public void setVerificationStatusForDocuments(List<Integer> documentIds, String status) {
+        if (documentIds == null || documentIds.isEmpty()) {
+            return;
+        }
+
+        String placeholders = String.join(",", java.util.Collections.nCopies(documentIds.size(), "?"));
+        String sql = "UPDATE doctor_documents SET verification_status = ? WHERE id_doctor_documents IN (" + placeholders + ")";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, status);
+            for (int i = 0; i < documentIds.size(); i++) {
+                stmt.setInt(i + 2, documentIds.get(i));
+            }
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Impossible de mettre a jour le statut des documents selectionnes.", e);
+        }
+    }
+
+    public int countPendingDoctorsForAdmin() {
+        String sql = """
+                SELECT COUNT(DISTINCT dd.id_doctors) AS pending_count
+                FROM doctor_documents dd
+                WHERE dd.verification_status = 'PENDING'
+                """;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("pending_count");
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Impossible de compter les dossiers a valider.", e);
+        }
+        return 0;
+    }
+
+    public int countRejectedDocumentsForDoctorUserId(int userId) {
+        String sql = """
+                SELECT COUNT(*) AS rejected_count
+                FROM doctor_documents dd
+                JOIN doctors d ON d.id_doctors = dd.id_doctors
+                WHERE d.id_users = ?
+                  AND dd.verification_status = 'REJECTED'
+                """;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("rejected_count");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Impossible de compter les documents refuses.", e);
+        }
+        return 0;
     }
 
     private DoctorDocumentEntry map(ResultSet rs) throws SQLException {

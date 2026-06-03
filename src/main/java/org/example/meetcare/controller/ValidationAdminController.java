@@ -3,28 +3,33 @@ package org.example.meetcare.controller;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Window;
 import org.example.meetcare.dao.DoctorDao;
 import org.example.meetcare.dao.DoctorDocumentDao;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.DoctorDocumentEntry;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AppSession;
+import org.example.meetcare.utils.DocumentPreviewUtil;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,9 +52,13 @@ public class ValidationAdminController {
     @FXML
     private VBox cardsContainer;
 
+    @FXML
+    private SidebarAdminController sidebarAdminController;
+
     private final DoctorDocumentDao doctorDocumentDao = new DoctorDocumentDao();
     private final DoctorDao doctorDao = new DoctorDao();
     private final UsersDao usersDao = new UsersDao();
+    private final Map<Integer, CheckBox> selectionBoxesByDocumentId = new HashMap<>();
 
     @FXML
     private void initialize() {
@@ -73,7 +82,9 @@ public class ValidationAdminController {
         }
 
         cardsContainer.getChildren().clear();
+        selectionBoxesByDocumentId.clear();
         updatePendingCount(groupedByDoctor.size());
+        refreshSidebar();
 
         if (groupedByDoctor.isEmpty()) {
             Label empty = new Label("Aucune demande de validation en attente.");
@@ -132,21 +143,17 @@ public class ValidationAdminController {
             Label requirementLabel = new Label(buildRequirementLabel(missingDocuments));
             requirementLabel.setWrapText(true);
             requirementLabel.setStyle(missingDocuments.isEmpty()
-                    ? "-fx-background-color: #E8F8EF; -fx-text-fill: #15803D; -fx-background-radius: 12; -fx-padding: 10 12 10 12; -fx-font-size: 12px;"
-                    : "-fx-background-color: #FEF3C7; -fx-text-fill: #B45309; -fx-background-radius: 12; -fx-padding: 10 12 10 12; -fx-font-size: 12px;");
+                        ? "-fx-background-color: #E8F8EF; -fx-text-fill: #15803D; -fx-background-radius: 12; -fx-padding: 10 12 10 12; -fx-font-size: 12px;"
+                        : "-fx-background-color: #FEF3C7; -fx-text-fill: #B45309; -fx-background-radius: 12; -fx-padding: 10 12 10 12; -fx-font-size: 12px;");
 
             HBox actions = new HBox(12);
-            Button approve = new Button("Valider");
-            boolean canApprove = missingDocuments.isEmpty();
-            approve.setDisable(!canApprove);
-            approve.setStyle(canApprove
-                    ? "-fx-background-color: #16A34A; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18;"
-                    : "-fx-background-color: #D1D5DB; -fx-text-fill: #6B7280; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18;");
-            approve.setOnAction(event -> handleApprove(first.getDoctorId(), first.getUserId()));
+            Button approve = new Button("Valider la sélection");
+            approve.setStyle("-fx-background-color: #16A34A; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18;");
+            approve.setOnAction(event -> handleApprove(first.getDoctorId(), first.getUserId(), documents));
 
-            Button reject = new Button("Refuser");
+            Button reject = new Button("Refuser la sélection");
             reject.setStyle("-fx-background-color: white; -fx-text-fill: #DC2626; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18; -fx-border-color: #FCA5A5; -fx-border-radius: 10; -fx-border-width: 1.4;");
-            reject.setOnAction(event -> handleReject(first.getDoctorId(), first.getUserId()));
+            reject.setOnAction(event -> handleReject(first.getDoctorId(), first.getUserId(), documents));
 
             actions.getChildren().addAll(approve, reject);
 
@@ -159,10 +166,11 @@ public class ValidationAdminController {
         HBox row = new HBox(10);
         row.setStyle("-fx-background-color: #F9FAFB; -fx-background-radius: 12; -fx-padding: 12; -fx-border-color: #EEF2F7; -fx-border-radius: 12;");
 
-        Rectangle chip = new Rectangle(12, 12);
-        chip.setArcHeight(4);
-        chip.setArcWidth(4);
-        chip.setStyle("-fx-fill: #60A5FA;");
+        CheckBox selector = new CheckBox();
+        selector.setStyle("-fx-cursor: hand;");
+        selectionBoxesByDocumentId.put(document.getIdDoctorDocument(), selector);
+
+        Node chip = createDocumentMarker(document.getDocumentType());
 
         VBox text = new VBox(2);
         Label title = new Label(document.getDocumentType() + " - " + document.getFileName());
@@ -174,47 +182,53 @@ public class ValidationAdminController {
         Label status = new Label(document.getVerificationStatus());
         status.setStyle(documentStatusStyle(document.getVerificationStatus()));
 
+        Button preview = new Button("Prévisualiser");
+        preview.setStyle("-fx-background-color: #EFF6FF; -fx-text-fill: #1D4ED8; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 14 8 14;");
+        preview.setOnAction(event -> DocumentPreviewUtil.showPreview(getWindow(event), document.getFilePath(), document.getFileName()));
+
+        VBox right = new VBox(8, status, preview);
+        right.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+
         text.getChildren().addAll(title, meta);
         HBox.setHgrow(text, Priority.ALWAYS);
-        row.getChildren().addAll(chip, text, status);
+        row.getChildren().addAll(selector, chip, text, right);
         return row;
     }
 
-    private void handleApprove(int doctorId, int userId) {
+    private void handleApprove(int doctorId, int userId, List<DoctorDocumentEntry> documents) {
         Users admin = AppSession.getCurrentUser();
         if (admin == null) {
             showAlert(Alert.AlertType.WARNING, "Session invalide", "Aucun administrateur connecte.");
             return;
         }
 
-        List<DoctorDocumentEntry> documents = doctorDocumentDao.findPendingDocumentsForAdmin();
-        boolean canApprove = documents.stream()
-                .filter(entry -> entry.getDoctorId() == doctorId)
-                .map(DoctorDocumentEntry::getDocumentType)
-                .collect(java.util.stream.Collectors.toSet())
-                .containsAll(Set.of("CARTE_VITALE", "JUSTIFICATIF_DOMICILE", "ASSURANCE_HABITATION"))
-                && documents.stream()
-                .filter(entry -> entry.getDoctorId() == doctorId)
-                .map(DoctorDocumentEntry::getDocumentType)
-                .anyMatch(type -> REQUIRED_ONE_OF_DOCUMENTS.contains(normalize(type)));
-
-        if (!canApprove) {
-            showAlert(Alert.AlertType.WARNING, "Documents incomplets", "Le dossier ne contient pas encore les pieces obligatoires.");
+        List<DoctorDocumentEntry> selectedDocuments = selectedDocumentsFor(documents);
+        if (selectedDocuments.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Selection requise", "Veuillez selectionner au moins un document a valider.");
             loadPendingDoctors();
             return;
         }
 
-        usersDao.updateAccountStatus(userId, "VERIFIED");
-        doctorDocumentDao.setVerificationStatusForDoctor(doctorId, "APPROVED");
-        doctorDao.saveVerificationDecision(doctorId, admin.getIdUsers(), "APPROVED", "Compte valide par l'admin.");
-        showAlert(Alert.AlertType.INFORMATION, "Validation effectuee", "Le compte medecin a ete valide.");
+        List<Integer> selectedIds = selectedDocuments.stream().map(DoctorDocumentEntry::getIdDoctorDocument).toList();
+        doctorDocumentDao.setVerificationStatusForDocuments(selectedIds, "APPROVED");
+        doctorDao.saveVerificationDecision(doctorId, admin.getIdUsers(), "APPROVED",
+                "Documents valides: " + documentSummary(selectedDocuments));
+
+        if (isDossierFullyApproved(userId)) {
+            usersDao.updateAccountStatus(userId, "VERIFIED");
+            showAlert(Alert.AlertType.INFORMATION, "Validation effectuee", "Les documents selectionnes ont ete valides et le dossier est complet.");
+        } else {
+            usersDao.updateAccountStatus(userId, "PENDING");
+            showAlert(Alert.AlertType.INFORMATION, "Validation effectuee", "Les documents selectionnes ont ete valides.");
+        }
         loadPendingDoctors();
+        refreshSidebar();
     }
 
-    private void handleReject(int doctorId, int userId) {
+    private void handleReject(int doctorId, int userId, List<DoctorDocumentEntry> documents) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Refus du compte");
-        dialog.setHeaderText("Indiquez la raison du refus");
+        dialog.setHeaderText("Indiquez la raison du refus pour les documents selectionnes");
         dialog.setContentText("Motif:");
         dialog.getEditor().setPromptText("Ex: diplome manquant, document illisible...");
 
@@ -231,17 +245,32 @@ public class ValidationAdminController {
                 return;
             }
 
-            usersDao.updateAccountStatus(userId, "REJECTED");
-            doctorDocumentDao.setVerificationStatusForDoctor(doctorId, "REJECTED");
-            doctorDao.saveVerificationDecision(doctorId, admin.getIdUsers(), "REJECTED", trimmed);
-            showAlert(Alert.AlertType.INFORMATION, "Demande refusee", "Le compte medecin a ete refuse.");
+            List<DoctorDocumentEntry> selectedDocuments = selectedDocumentsFor(documents);
+            if (selectedDocuments.isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Selection requise", "Veuillez selectionner au moins un document a refuser.");
+                return;
+            }
+
+            List<Integer> selectedIds = selectedDocuments.stream().map(DoctorDocumentEntry::getIdDoctorDocument).toList();
+            doctorDocumentDao.setVerificationStatusForDocuments(selectedIds, "REJECTED");
+            doctorDao.saveVerificationDecision(doctorId, admin.getIdUsers(), "REJECTED",
+                    trimmed + " | Documents refuses: " + documentSummary(selectedDocuments));
+            usersDao.updateAccountStatus(userId, "PENDING");
+            showAlert(Alert.AlertType.INFORMATION, "Documents refuses", "Les documents selectionnes ont ete refuses. Le medecin peut les renvoyer.");
             loadPendingDoctors();
+            refreshSidebar();
         });
     }
 
     private void updatePendingCount(int count) {
         if (pendingCountLabel != null) {
             pendingCountLabel.setText(count + " en attente");
+        }
+    }
+
+    private void refreshSidebar() {
+        if (sidebarAdminController != null) {
+            sidebarAdminController.refreshSidebar(AppSession.getCurrentUser());
         }
     }
 
@@ -283,10 +312,73 @@ public class ValidationAdminController {
         alert.showAndWait();
     }
 
+    private List<DoctorDocumentEntry> selectedDocumentsFor(List<DoctorDocumentEntry> documents) {
+        List<DoctorDocumentEntry> selected = new ArrayList<>();
+        for (DoctorDocumentEntry document : documents) {
+            CheckBox selector = selectionBoxesByDocumentId.get(document.getIdDoctorDocument());
+            if (selector != null && selector.isSelected()) {
+                selected.add(document);
+            }
+        }
+        return selected;
+    }
+
+    private String documentSummary(List<DoctorDocumentEntry> documents) {
+        return documents.stream()
+                .map(document -> document.getDocumentType() + " - " + document.getFileName())
+                .reduce((left, right) -> left + ", " + right)
+                .orElse("aucun document");
+    }
+
+    private Node createDocumentMarker(String documentType) {
+        if (!isMandatoryDocument(documentType)) {
+            Region spacer = new Region();
+            spacer.setMinWidth(12);
+            spacer.setPrefWidth(12);
+            spacer.setMaxWidth(12);
+            return spacer;
+        }
+
+        Rectangle chip = new Rectangle(12, 12);
+        chip.setArcHeight(4);
+        chip.setArcWidth(4);
+        chip.setStyle("-fx-fill: #60A5FA;");
+        return chip;
+    }
+
+    private boolean isMandatoryDocument(String documentType) {
+        String normalized = normalize(documentType);
+        return REQUIRED_SINGLE_DOCUMENTS.contains(normalized) || REQUIRED_ONE_OF_DOCUMENTS.contains(normalized);
+    }
+
+    private boolean isDossierFullyApproved(int userId) {
+        List<DoctorDocumentEntry> allDocuments = doctorDocumentDao.findByDoctorUserId(userId);
+        Set<String> approvedTypes = new HashSet<>();
+        for (DoctorDocumentEntry document : allDocuments) {
+            if ("APPROVED".equalsIgnoreCase(document.getVerificationStatus())) {
+                approvedTypes.add(normalize(document.getDocumentType()));
+            }
+        }
+
+        for (String required : REQUIRED_SINGLE_DOCUMENTS) {
+            if (!approvedTypes.contains(required)) {
+                return false;
+            }
+        }
+
+        return REQUIRED_ONE_OF_DOCUMENTS.stream().anyMatch(approvedTypes::contains);
+    }
+
+    private Window getWindow(ActionEvent event) {
+        return ((Node) event.getSource()).getScene().getWindow();
+    }
+
     private List<String> missingRequiredDocuments(List<DoctorDocumentEntry> documents) {
         Set<String> types = new HashSet<>();
         for (DoctorDocumentEntry document : documents) {
-            types.add(normalize(document.getDocumentType()));
+            if ("APPROVED".equalsIgnoreCase(document.getVerificationStatus())) {
+                types.add(normalize(document.getDocumentType()));
+            }
         }
 
         List<String> missing = new ArrayList<>();

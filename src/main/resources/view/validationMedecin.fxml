@@ -12,7 +12,7 @@
 <BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.ValidationMedecinController">
 
     <left>
-        <fx:include source="sidebarMedecin.fxml" />
+        <fx:include fx:id="sidebarMedecin" source="sidebarMedecin.fxml" />
     </left>
 
     <center>
@@ -29,6 +29,10 @@
                         <VBox spacing="6" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #E5E7EB; -fx-border-radius: 16;">
                             <Label text="Statut du compte" style="-fx-font-size: 12px; -fx-text-fill: #6B7280;" />
                             <Label fx:id="accountStatusLabel" text="PENDING" style="-fx-background-color: #FEF3C7; -fx-text-fill: #B45309; -fx-background-radius: 999; -fx-font-weight: bold; -fx-padding: 6 12 6 12;" />
+                        </VBox>
+                        <VBox spacing="6" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #E5E7EB; -fx-border-radius: 16;" HBox.hgrow="ALWAYS">
+                            <Label text="Motif du refus" style="-fx-font-size: 12px; -fx-text-fill: #6B7280;" />
+                            <Label fx:id="rejectionReasonLabel" text="Aucun motif." wrapText="true" visible="false" managed="false" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #991B1B;" />
                         </VBox>
                         <VBox spacing="6" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #E5E7EB; -fx-border-radius: 16;">
                             <Label text="Documents transmis" style="-fx-font-size: 12px; -fx-text-fill: #6B7280;" />
