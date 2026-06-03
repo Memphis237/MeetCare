@@ -10,19 +10,24 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Window;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.Invoice;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.service.InvoiceService;
 import org.example.meetcare.utils.AppSession;
 import org.example.meetcare.utils.AvatarUtil;
+import org.example.meetcare.utils.InvoiceDocumentUtil;
 import org.example.meetcare.utils.InvoiceStatus;
 import org.example.meetcare.utils.LogoutUtil;
 
@@ -40,6 +45,7 @@ public class InvoiceMedecinController {
 
     private final InvoiceService invoiceService = new InvoiceService();
     private final UsersDao usersDao = new UsersDao();
+    private final InvoiceDocumentUtil invoiceDocumentUtil = new InvoiceDocumentUtil();
 
     @FXML
     private Circle avatarCircle;
@@ -84,13 +90,16 @@ public class InvoiceMedecinController {
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Creer une facture");
-        dialog.setHeaderText("Selectionner un patient et saisir le montant");
-        if (createInvoiceButton != null && createInvoiceButton.getScene() != null) {
-            dialog.initOwner(createInvoiceButton.getScene().getWindow());
+        dialog.setHeaderText(null);
+        Window owner = getOwnerWindow();
+        if (owner != null) {
+            dialog.initOwner(owner);
         }
 
-        ButtonType createButtonType = new ButtonType("Creer", ButtonBar.ButtonData.OK_DONE);
+        ButtonType createButtonType = new ButtonType("Generer la facture", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(createButtonType, ButtonType.CANCEL);
+        dialog.getDialogPane().setPrefWidth(700);
+        dialog.getDialogPane().setStyle("-fx-background-color: #F3F6FB;");
 
         ComboBox<Users> patientBox = new ComboBox<>(FXCollections.observableArrayList(patients));
         patientBox.setPromptText("Selectionner un patient");
@@ -106,23 +115,53 @@ public class InvoiceMedecinController {
             }
         });
         patientBox.getSelectionModel().selectFirst();
+        patientBox.setMaxWidth(Double.MAX_VALUE);
 
         TextField amountField = new TextField();
         amountField.setPromptText("Ex: 25.00");
+        amountField.setMaxWidth(Double.MAX_VALUE);
 
-        TextField descriptionField = new TextField();
-        descriptionField.setPromptText("Ex: Consultation generale");
+        TextArea descriptionField = new TextArea();
+        descriptionField.setPromptText("Ex: Consultation generale, suivi, acte medical...");
+        descriptionField.setPrefRowCount(4);
+        descriptionField.setWrapText(true);
+        descriptionField.setMaxWidth(Double.MAX_VALUE);
+
+        Label headerTitle = new Label("Creation de facture");
+        headerTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;");
+        Label headerSubtitle = new Label("Renseignez les informations qui alimenteront le template PDF.");
+        headerSubtitle.setStyle("-fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.92);");
+
+        VBox headerBox = new VBox(4, headerTitle, headerSubtitle);
+        headerBox.setStyle("-fx-background-color: linear-gradient(to right, #8B5CF6, #4F46E5);"
+                + "-fx-background-radius: 16; -fx-padding: 18 20 18 20;");
 
         GridPane gridPane = new GridPane();
-        gridPane.setHgap(12);
-        gridPane.setVgap(12);
-        gridPane.add(new Label("Patient"), 0, 0);
+        gridPane.setHgap(14);
+        gridPane.setVgap(14);
+        gridPane.setStyle("-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 20;");
+
+        ColumnConstraints leftColumn = new ColumnConstraints();
+        leftColumn.setMinWidth(140);
+        ColumnConstraints rightColumn = new ColumnConstraints();
+        rightColumn.setHgrow(Priority.ALWAYS);
+        rightColumn.setFillWidth(true);
+        gridPane.getColumnConstraints().addAll(leftColumn, rightColumn);
+
+        gridPane.add(createDialogLabel("Patient"), 0, 0);
         gridPane.add(patientBox, 1, 0);
-        gridPane.add(new Label("Montant"), 0, 1);
+        gridPane.add(createDialogLabel("Montant"), 0, 1);
         gridPane.add(amountField, 1, 1);
-        gridPane.add(new Label("Description"), 0, 2);
+        gridPane.add(createDialogLabel("Description"), 0, 2);
         gridPane.add(descriptionField, 1, 2);
-        dialog.getDialogPane().setContent(gridPane);
+
+        Label helperLabel = new Label("Le document sera rendu en HTML/CSS puis exporte en PDF.");
+        helperLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #6B7280;");
+        gridPane.add(helperLabel, 1, 3);
+
+        VBox formWrapper = new VBox(16, headerBox, gridPane);
+        formWrapper.setStyle("-fx-padding: 6;");
+        dialog.getDialogPane().setContent(formWrapper);
 
         try {
             Optional<ButtonType> dialogResult = dialog.showAndWait();
@@ -216,7 +255,7 @@ public class InvoiceMedecinController {
         Label dateLabel = new Label(invoice.getCreatedAt() == null ? "" : DATE_FORMATTER.format(invoice.getCreatedAt().toLocalDate()));
         dateLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #AAAAAA;");
         info.getChildren().addAll(patientLabel, descriptionLabel, dateLabel);
-        HBox.setHgrow(info, javafx.scene.layout.Priority.ALWAYS);
+        HBox.setHgrow(info, Priority.ALWAYS);
 
         VBox amountBox = new VBox(5);
         amountBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
@@ -229,12 +268,14 @@ public class InvoiceMedecinController {
                 : "-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #3DAA70; -fx-background-color: #D4EDDA; -fx-background-radius: 5; -fx-padding: 3 8 3 8;");
         amountBox.getChildren().addAll(amountLabel, statusLabel);
 
-        Button downloadButton = new Button("Telecharger");
-        downloadButton.setStyle("-fx-background-color: white; -fx-text-fill: #444444; -fx-font-size: 12px; "
-                + "-fx-background-radius: 8; -fx-border-color: #CCCCCC; -fx-border-radius: 8; -fx-padding: 8 16 8 16;");
-        downloadButton.setOnAction(event -> showAlert(Alert.AlertType.INFORMATION, "Telechargement", "La generation PDF n'est pas encore branchee."));
+        HBox actions = new HBox(8);
+        actions.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+        actions.getChildren().addAll(
+                invoiceDocumentUtil.createPreviewButton(invoice),
+                invoiceDocumentUtil.createDownloadButton(invoice)
+        );
 
-        card.getChildren().addAll(icon, info, amountBox, downloadButton);
+        card.getChildren().addAll(icon, info, amountBox, actions);
         return card;
     }
 
@@ -280,7 +321,7 @@ public class InvoiceMedecinController {
         BigDecimal value = amount == null ? BigDecimal.ZERO : amount.setScale(2, RoundingMode.HALF_UP);
         DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.FRANCE);
         DecimalFormat format = new DecimalFormat("0.00", symbols);
-        return format.format(value) + " €";
+        return format.format(value) + " \u20AC";
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
@@ -288,10 +329,27 @@ public class InvoiceMedecinController {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        if (createInvoiceButton != null && createInvoiceButton.getScene() != null) {
-            alert.initOwner(createInvoiceButton.getScene().getWindow());
+        Window owner = getOwnerWindow();
+        if (owner != null) {
+            alert.initOwner(owner);
         }
         alert.showAndWait();
+    }
+
+    private Label createDialogLabel(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1F2937;");
+        return label;
+    }
+
+    private Window getOwnerWindow() {
+        if (createInvoiceButton != null && createInvoiceButton.getScene() != null) {
+            return createInvoiceButton.getScene().getWindow();
+        }
+        if (avatarCircle != null && avatarCircle.getScene() != null) {
+            return avatarCircle.getScene().getWindow();
+        }
+        return null;
     }
 
     private Users refreshCurrentUser() {

@@ -12,12 +12,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import javafx.stage.Window;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.Invoice;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.service.InvoiceService;
 import org.example.meetcare.utils.AppSession;
 import org.example.meetcare.utils.AvatarUtil;
+import org.example.meetcare.utils.InvoiceDocumentUtil;
 import org.example.meetcare.utils.InvoiceStatus;
 import org.example.meetcare.utils.LogoutUtil;
 
@@ -33,10 +35,11 @@ import java.util.Optional;
 
 public class InvoicePatientController {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final List<String> PAYMENT_METHODS = List.of("Carte bancaire", "Espèces", "Virement bancaire");
+    private static final List<String> PAYMENT_METHODS = List.of("Carte bancaire", "Especes", "Virement bancaire");
 
     private final InvoiceService invoiceService = new InvoiceService();
     private final UsersDao usersDao = new UsersDao();
+    private final InvoiceDocumentUtil invoiceDocumentUtil = new InvoiceDocumentUtil();
 
     @FXML
     private Circle avatarCircle;
@@ -113,7 +116,7 @@ public class InvoicePatientController {
         }
 
         if (paidInvoices.isEmpty()) {
-            paidInvoicesContainer.getChildren().add(createEmptyState("Aucune facture payée."));
+            paidInvoicesContainer.getChildren().add(createEmptyState("Aucune facture payee."));
         } else {
             for (Invoice invoice : paidInvoices) {
                 paidInvoicesContainer.getChildren().add(createInvoiceCard(invoice, false));
@@ -158,19 +161,24 @@ public class InvoicePatientController {
                 : "-fx-font-size: 11px; -fx-text-fill: #3DAA70; -fx-background-color: #C8EDD8; -fx-background-radius: 5; -fx-padding: 2 8 2 8;");
         amountBox.getChildren().addAll(amountLabel, statusLabel);
 
-        Button downloadButton = new Button("Telecharger");
-        downloadButton.setStyle("-fx-background-color: white; -fx-text-fill: #444444; -fx-font-size: 12px; -fx-background-radius: 8; -fx-border-color: #CCCCCC; -fx-border-radius: 8; -fx-padding: 8 14 8 14;");
-        downloadButton.setOnAction(event -> showAlert(Alert.AlertType.INFORMATION, "Téléchargement", "La génération PDF n'est pas encore branchée."));
-
-        card.getChildren().addAll(icon, info, amountBox, downloadButton);
+        VBox actionColumn = new VBox(8);
+        actionColumn.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+        HBox actionButtons = new HBox(8);
+        actionButtons.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+        actionButtons.getChildren().addAll(
+                invoiceDocumentUtil.createPreviewButton(invoice),
+                invoiceDocumentUtil.createDownloadButton(invoice)
+        );
+        actionColumn.getChildren().add(actionButtons);
 
         if (pending) {
             Button payButton = new Button("Payer");
             payButton.setStyle("-fx-background-color: #E05A2B; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 18 8 18;");
             payButton.setOnAction(event -> handlePayInvoice(invoice));
-            card.getChildren().add(payButton);
+            actionColumn.getChildren().add(payButton);
         }
 
+        card.getChildren().addAll(icon, info, amountBox, actionColumn);
         return card;
     }
 
@@ -188,8 +196,9 @@ public class InvoicePatientController {
         dialog.setTitle("Paiement");
         dialog.setHeaderText("Paiement de la facture de " + invoice.getDoctorName());
         dialog.setContentText("Choisissez le mode de paiement");
-        if (avatarCircle != null && avatarCircle.getScene() != null) {
-            dialog.initOwner(avatarCircle.getScene().getWindow());
+        Window owner = getOwnerWindow();
+        if (owner != null) {
+            dialog.initOwner(owner);
         }
 
         Optional<String> result = dialog.showAndWait();
@@ -200,7 +209,7 @@ public class InvoicePatientController {
         try {
             invoiceService.payInvoice(invoice.getId(), result.get());
             refreshView();
-            showAlert(Alert.AlertType.INFORMATION, "Paiement validé", "La facture a été marquée comme payée.");
+            showAlert(Alert.AlertType.INFORMATION, "Paiement valide", "La facture a ete marquee comme payee.");
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Erreur", rootCauseMessage(ex));
         }
@@ -210,7 +219,7 @@ public class InvoicePatientController {
         BigDecimal value = amount == null ? BigDecimal.ZERO : amount.setScale(2, RoundingMode.HALF_UP);
         DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.FRANCE);
         DecimalFormat format = new DecimalFormat("0.00", symbols);
-        return format.format(value) + " €";
+        return format.format(value) + " \u20AC";
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
@@ -218,10 +227,18 @@ public class InvoicePatientController {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        if (avatarCircle != null && avatarCircle.getScene() != null) {
-            alert.initOwner(avatarCircle.getScene().getWindow());
+        Window owner = getOwnerWindow();
+        if (owner != null) {
+            alert.initOwner(owner);
         }
         alert.showAndWait();
+    }
+
+    private Window getOwnerWindow() {
+        if (avatarCircle != null && avatarCircle.getScene() != null) {
+            return avatarCircle.getScene().getWindow();
+        }
+        return null;
     }
 
     private Users refreshCurrentUser() {
