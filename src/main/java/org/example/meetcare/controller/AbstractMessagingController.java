@@ -198,7 +198,8 @@ public abstract class AbstractMessagingController {
         try {
             Optional<Users> selectedUser = showUserSelectionDialog();
             selectedUser.ifPresent(user -> {
-                int conversationId = conversationDao.ensureConversationBetween(currentUser.getIdUsers(), user.getIdUsers());
+                int conversationId = conversationDao.ensureConversationBetween(currentUser.getIdUsers(),
+                        user.getIdUsers());
                 currentConversation = new ChatConversation();
                 currentConversation.setIdConversation(conversationId);
                 currentOtherUser = user;
@@ -257,8 +258,7 @@ public abstract class AbstractMessagingController {
         assistantHistory.clear();
         assistantHistory.addAll(chatbotMessageDao.findMessagesByConversationAndUser(
                 assistantConversationId,
-                currentUser.getIdUsers()
-        ));
+                currentUser.getIdUsers()));
 
         messagesContainer.getChildren().clear();
         if (assistantHistory.isEmpty()) {
@@ -282,7 +282,8 @@ public abstract class AbstractMessagingController {
         }
 
         String query = conversationSearchField == null ? "" : conversationSearchField.getText();
-        List<ChatConversation> conversations = conversationDao.findConversationsForUser(currentUser.getIdUsers(), null, query);
+        List<ChatConversation> conversations = conversationDao.findConversationsForUser(currentUser.getIdUsers(), null,
+                query);
         conversationsContainer.getChildren().clear();
         if (conversationsCountLabel != null) {
             conversationsCountLabel.setText("");
@@ -344,7 +345,8 @@ public abstract class AbstractMessagingController {
         messagesContainer.getChildren().clear();
 
         if (messages.isEmpty()) {
-            messagesContainer.getChildren().add(createEmptyMessageState("Écris un premier message pour démarrer la discussion."));
+            messagesContainer.getChildren()
+                    .add(createEmptyMessageState("Écris un premier message pour démarrer la discussion."));
             scrollToBottom();
             return;
         }
@@ -389,10 +391,10 @@ public abstract class AbstractMessagingController {
                 currentConversation.getIdConversation(),
                 currentUser.getIdUsers(),
                 content.isBlank() ? null : content,
-                selectedFiles.isEmpty() ? "TEXT" : "MIXED"
-        );
+                selectedFiles.isEmpty() ? "TEXT" : "MIXED");
 
-        List<ChatMessageAttachment> attachments = persistSelectedFiles(savedMessage.getIdMessage(), currentConversation.getIdConversation());
+        List<ChatMessageAttachment> attachments = persistSelectedFiles(savedMessage.getIdMessage(),
+                currentConversation.getIdConversation());
         messageDao.saveAttachments(savedMessage.getIdMessage(), attachments);
         selectedFiles.clear();
         attachmentStatusLabel.setText("Aucune pièce jointe");
@@ -418,8 +420,7 @@ public abstract class AbstractMessagingController {
                         currentUser.getIdUsers(),
                         content,
                         response,
-                        groqChatService.getModelName()
-                );
+                        groqChatService.getModelName());
             }
         };
 
@@ -446,8 +447,7 @@ public abstract class AbstractMessagingController {
         if (assistantMode) {
             List<ChatbotMessage> snapshot = chatbotMessageDao.findMessagesByConversationAndUser(
                     assistantConversationId,
-                    currentUser.getIdUsers()
-            );
+                    currentUser.getIdUsers());
             String fingerprint = buildAssistantFingerprint(snapshot);
             if (!fingerprint.equals(lastRenderedFingerprint)) {
                 assistantHistory.clear();
@@ -504,7 +504,8 @@ public abstract class AbstractMessagingController {
             chatSubtitleLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #8A96A8;");
         }
 
-        boolean typing = currentConversation != null && conversationDao.isOtherUserTyping(currentConversation.getIdConversation(), currentUser.getIdUsers());
+        boolean typing = currentConversation != null
+                && conversationDao.isOtherUserTyping(currentConversation.getIdConversation(), currentUser.getIdUsers());
         typingLabel.setText(typing ? "En train d'écrire..." : "");
         typingLabel.setStyle("-fx-text-fill: #2B7FD4; -fx-font-size: 11px;");
         chatStatusLabel.setText("");
@@ -512,7 +513,8 @@ public abstract class AbstractMessagingController {
 
     protected HBox createConversationRow(ChatConversation conversation) {
         Users user = conversation.getOtherUser();
-        boolean selected = currentConversation != null && currentConversation.getIdConversation() == conversation.getIdConversation();
+        boolean selected = currentConversation != null
+                && currentConversation.getIdConversation() == conversation.getIdConversation();
 
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER_LEFT);
@@ -620,32 +622,51 @@ public abstract class AbstractMessagingController {
 
         VBox bubble = new VBox(4);
         bubble.setMaxWidth(430);
-
         Label messageLabel = new Label(message.getContent() == null ? "" : message.getContent());
         messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(360);
         messageLabel.setStyle("-fx-background-color: #2B7FD4; -fx-text-fill: white; -fx-font-size: 13px; "
-                + "-fx-background-radius: 14 14 4 14; -fx-padding: 12 16 12 16;");
-        bubble.getChildren().add(messageLabel);
+                + "-fx-background-radius: 14 14 4 14; -fx-padding: 12 16 12 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6, 0, 0, 2);");
 
-        if (!message.getAttachments().isEmpty()) {
-            bubble.getChildren().add(createAttachmentBox(message.getAttachments(), true));
-        }
-
-        HBox footer = new HBox(6);
-        footer.setAlignment(Pos.CENTER_RIGHT);
         Label timeLabel = new Label(formatTime(message.getSentAt()));
         timeLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #94A3B8;");
         Label statusLabel = new Label(message.isRead() ? "✓✓" : "✓");
         statusLabel.setStyle(message.isRead()
                 ? "-fx-font-size: 11px; -fx-text-fill: #2B7FD4; -fx-font-weight: bold;"
                 : "-fx-font-size: 11px; -fx-text-fill: #94A3B8; -fx-font-weight: bold;");
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // delete button hidden by default, shown on hover of the bubble
         Button deleteButton = new Button("🗑");
-        deleteButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #F97316; -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 0 0 0 4;");
+        deleteButton.setVisible(false);
+        deleteButton.setManaged(false);
+        deleteButton.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: #F97316; -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 0 0 0 4;");
         deleteButton.setOnAction(event -> handleDeleteMessage(message));
-        footer.getChildren().addAll(timeLabel, statusLabel, spacer, deleteButton);
-        bubble.getChildren().add(footer);
+
+        // message row: message content + time + status on the same line (flex)
+        HBox messageRow = new HBox(8);
+        messageRow.setAlignment(Pos.CENTER_RIGHT);
+        messageRow.getChildren().addAll(messageLabel, spacer, timeLabel, statusLabel, deleteButton);
+        HBox.setHgrow(messageLabel, Priority.ALWAYS);
+
+        bubble.getChildren().add(messageRow);
+
+        if (!message.getAttachments().isEmpty()) {
+            bubble.getChildren().add(createAttachmentBox(message.getAttachments(), true));
+        }
+
+        // show delete button only when hovering the bubble
+        bubble.setOnMouseEntered(e -> {
+            deleteButton.setVisible(true);
+            deleteButton.setManaged(true);
+        });
+        bubble.setOnMouseExited(e -> {
+            deleteButton.setVisible(false);
+            deleteButton.setManaged(false);
+        });
 
         wrapper.getChildren().add(bubble);
         return wrapper;
@@ -745,7 +766,8 @@ public abstract class AbstractMessagingController {
 
     protected Node createImageAttachmentNode(ChatMessageAttachment attachment) {
         VBox box = new VBox(6);
-        box.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 8;");
+        box.setStyle(
+                "-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 8; -fx-border-color: #E6EEF6; -fx-border-width: 1; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 6, 0, 0, 2);");
         try {
             Image image = new Image(Path.of(attachment.getFilePath()).toUri().toString(), 240, 0, true, true);
             ImageView imageView = new ImageView(image);
@@ -759,11 +781,16 @@ public abstract class AbstractMessagingController {
         HBox footer = new HBox(8);
         footer.setAlignment(Pos.CENTER_LEFT);
         Label fileLabel = new Label(attachment.getFileName());
-        fileLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #5B6B7A;");
+        fileLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #263445;");
+        Label meta = new Label(formatSize(attachment.getFileSize()));
+        meta.setStyle("-fx-font-size: 11px; -fx-text-fill: #6B8CAD;");
+        Region footerSpacer = new Region();
+        HBox.setHgrow(footerSpacer, Priority.ALWAYS);
         Button downloadButton = new Button("⬇");
-        downloadButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #2B7FD4; -fx-font-size: 12px; -fx-cursor: hand; -fx-padding: 0;");
+        downloadButton.setStyle(
+                "-fx-background-color: transparent; -fx-text-fill: #2B7FD4; -fx-font-size: 14px; -fx-cursor: hand; -fx-padding: 0;");
         downloadButton.setOnAction(event -> handleDownloadAttachment(attachment));
-        footer.getChildren().addAll(fileLabel, downloadButton);
+        footer.getChildren().addAll(fileLabel, meta, footerSpacer, downloadButton);
         box.getChildren().add(footer);
         return box;
     }
@@ -772,24 +799,33 @@ public abstract class AbstractMessagingController {
         HBox box = new HBox(8);
         box.setAlignment(Pos.CENTER_LEFT);
         box.setStyle(outgoing
-                ? "-fx-background-color: rgba(255,255,255,0.14); -fx-background-radius: 10; -fx-padding: 8 10 8 10;"
-                : "-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 8 10 8 10;");
+                ? "-fx-background-color: rgba(43,127,212,0.12); -fx-background-radius: 10; -fx-padding: 8 10 8 10; -fx-border-color: rgba(43,127,212,0.16); -fx-border-width: 1;"
+                : "-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 8 10 8 10; -fx-border-color: #E6EEF6; -fx-border-width: 1;");
 
+        // icon with subtle background
+        StackPane iconBg = new StackPane();
+        iconBg.setStyle("-fx-background-color: " + (outgoing ? "rgba(255,255,255,0.02)" : "#F1F7FC")
+                + "; -fx-background-radius: 6; -fx-padding: 6;");
         Label icon = new Label(iconForAttachment(attachment));
-        icon.setStyle("-fx-font-size: 16px;");
+        icon.setStyle("-fx-font-size: 16px; -fx-text-fill: #2B7FD4;");
+        iconBg.getChildren().add(icon);
+
         Label name = new Label(attachment.getFileName());
         name.setWrapText(true);
-        name.setStyle("-fx-font-size: 11px; " + (outgoing ? "-fx-text-fill: white;" : "-fx-text-fill: #1A2C42;"));
+        name.setMaxWidth(260);
+        name.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: " + (outgoing ? "#123344" : "#1A2C42")
+                + ";");
         Label meta = new Label(formatSize(attachment.getFileSize()));
-        meta.setStyle("-fx-font-size: 10px; " + (outgoing ? "-fx-text-fill: #D8E4F0;" : "-fx-text-fill: #94A3B8;"));
+        meta.setStyle("-fx-font-size: 11px; -fx-text-fill: #6B8CAD;");
 
         VBox texts = new VBox(2, name, meta);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         Button downloadButton = new Button("⬇");
-        downloadButton.setStyle("-fx-background-color: transparent; -fx-text-fill: " + (outgoing ? "#FFFFFF" : "#2B7FD4") + "; -fx-font-size: 12px; -fx-cursor: hand; -fx-padding: 0;");
+        downloadButton.setStyle("-fx-background-color: transparent; -fx-text-fill: "
+                + (outgoing ? "#123344" : "#2B7FD4") + "; -fx-font-size: 14px; -fx-cursor: hand; -fx-padding: 0;");
         downloadButton.setOnAction(event -> handleDownloadAttachment(attachment));
-        box.getChildren().addAll(icon, texts, spacer, downloadButton);
+        box.getChildren().addAll(iconBg, texts, spacer, downloadButton);
         return box;
     }
 
@@ -816,7 +852,8 @@ public abstract class AbstractMessagingController {
         typingLabel.setText("");
         assistantHeaderLabel.setText("?");
         assistantHeaderCircle.setFill(Color.web("#CBE3F8"));
-        messagesContainer.getChildren().setAll(createEmptyMessageState("Choisis une discussion ou crée-en une avec le bouton +."));
+        messagesContainer.getChildren()
+                .setAll(createEmptyMessageState("Choisis une discussion ou crée-en une avec le bouton +."));
     }
 
     protected void showDisconnectedState() {
@@ -824,7 +861,8 @@ public abstract class AbstractMessagingController {
         chatSubtitleLabel.setText("Connecte-toi pour utiliser la messagerie");
         chatStatusLabel.setText("Hors ligne");
         typingLabel.setText("");
-        messagesContainer.getChildren().setAll(createEmptyMessageState("Tu dois être connecté pour accéder aux conversations."));
+        messagesContainer.getChildren()
+                .setAll(createEmptyMessageState("Tu dois être connecté pour accéder aux conversations."));
         setInputsDisabled(true);
     }
 
@@ -1022,8 +1060,7 @@ public abstract class AbstractMessagingController {
             List<Users> filtered = conversationDao.findSelectableUsersForChat(
                     currentUser.getIdUsers(),
                     null,
-                    newValue
-            );
+                    newValue);
             visibleUsers.setAll(filtered);
         });
 
@@ -1035,7 +1072,8 @@ public abstract class AbstractMessagingController {
         }
         dialog.initModality(Modality.WINDOW_MODAL);
 
-        dialog.setResultConverter(buttonType -> buttonType == startButton ? userListView.getSelectionModel().getSelectedItem() : null);
+        dialog.setResultConverter(
+                buttonType -> buttonType == startButton ? userListView.getSelectionModel().getSelectedItem() : null);
         return dialog.showAndWait();
     }
 
@@ -1045,7 +1083,8 @@ public abstract class AbstractMessagingController {
             return attachments;
         }
 
-        Path baseDir = Path.of(System.getProperty("user.dir"), "uploads", "chat", String.valueOf(conversationId), String.valueOf(messageId));
+        Path baseDir = Path.of(System.getProperty("user.dir"), "uploads", "chat", String.valueOf(conversationId),
+                String.valueOf(messageId));
         try {
             Files.createDirectories(baseDir);
             for (File file : selectedFiles) {
@@ -1084,18 +1123,17 @@ public abstract class AbstractMessagingController {
                 "*.ppt", "*.pptx", "*.odp",
                 "*.xls", "*.xlsx", "*.csv", "*.ods",
                 "*.js", "*.php", "*.html", "*.htm", "*.css", "*.java", "*.py", "*.json", "*.xml", "*.sql",
-                "*.mp4", "*.mov", "*.avi", "*.mkv", "*.webm", "*.wmv"
-        );
+                "*.mp4", "*.mov", "*.avi", "*.mkv", "*.webm", "*.wmv");
         chooser.getExtensionFilters().addAll(
                 supportedFiles,
                 new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.bmp"),
                 new FileChooser.ExtensionFilter("Documents", "*.pdf", "*.doc", "*.docx", "*.txt", "*.rtf", "*.odt"),
                 new FileChooser.ExtensionFilter("Presentations", "*.ppt", "*.pptx", "*.odp"),
                 new FileChooser.ExtensionFilter("Tableurs", "*.xls", "*.xlsx", "*.csv", "*.ods"),
-                new FileChooser.ExtensionFilter("Code", "*.js", "*.php", "*.html", "*.htm", "*.css", "*.java", "*.py", "*.json", "*.xml", "*.sql"),
+                new FileChooser.ExtensionFilter("Code", "*.js", "*.php", "*.html", "*.htm", "*.css", "*.java", "*.py",
+                        "*.json", "*.xml", "*.sql"),
                 new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.mov", "*.avi", "*.mkv", "*.webm", "*.wmv"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
-        );
+                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
         chooser.setSelectedExtensionFilter(supportedFiles);
 
         Stage stage = (Stage) messageInput.getScene().getWindow();
@@ -1330,7 +1368,9 @@ public abstract class AbstractMessagingController {
         if (value.contains("text/") || value.contains(".txt") || value.contains(".md")) {
             return "📄";
         }
-        if (value.contains(".js") || value.contains(".php") || value.contains(".java") || value.contains(".py") || value.contains(".css") || value.contains(".html") || value.contains(".json") || value.contains(".xml") || value.contains(".sql")) {
+        if (value.contains(".js") || value.contains(".php") || value.contains(".java") || value.contains(".py")
+                || value.contains(".css") || value.contains(".html") || value.contains(".json")
+                || value.contains(".xml") || value.contains(".sql")) {
             return "💻";
         }
         return "📎";
