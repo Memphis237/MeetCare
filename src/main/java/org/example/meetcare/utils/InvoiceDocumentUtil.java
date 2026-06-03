@@ -1,12 +1,12 @@
 package org.example.meetcare.utils;
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
-import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -58,7 +58,7 @@ public class InvoiceDocumentUtil {
 
             dialog.showAndWait();
         } catch (Exception ex) {
-            showError(owner, "Apercu indisponible", "Impossible d'ouvrir l'aperçu.\n" + rootCauseMessage(ex));
+            showError(owner, "Apercu indisponible", "Impossible d'ouvrir l'apercu.\n" + rootCauseMessage(ex));
             ex.printStackTrace();
         }
     }
@@ -125,17 +125,27 @@ public class InvoiceDocumentUtil {
     }
 
     private String buildHtml(Invoice invoice) {
+        boolean paid = InvoiceStatus.PAID.equalsIgnoreCase(invoice.getStatus());
         String invoiceNumber = buildInvoiceNumber(invoice);
         String issueDate = formatDateTime(invoice.getCreatedAt());
-        String dueDate = invoice.getPaidAt() == null ? "En attente de reglement" : formatDateTime(invoice.getPaidAt());
+        String paidDate = invoice.getPaidAt() == null ? "Non renseignee" : formatStampDateTime(invoice.getPaidAt());
         String doctorName = escapeHtml(valueOrDefault(invoice.getDoctorName(), "Medecin"));
         String doctorSpeciality = escapeHtml(valueOrDefault(invoice.getDoctorSpeciality(), "Specialite non renseignee"));
         String patientName = escapeHtml(valueOrDefault(invoice.getPatientName(), "Patient"));
         String description = escapeHtml(valueOrDefault(invoice.getDescription(), "Consultation"));
-        String amount = formatMoney(invoice.getAmount());
-        String statusLabel = "PAID".equalsIgnoreCase(invoice.getStatus()) ? "Payee" : "En attente";
-        String paymentMethod = escapeHtml(valueOrDefault(invoice.getPaymentMethod(), "Non renseigne"));
-        String paidAt = invoice.getPaidAt() == null ? "Non payee" : formatDateTime(invoice.getPaidAt());
+
+        BigDecimal totalAmount = invoice.getAmount() == null ? BigDecimal.ZERO : invoice.getAmount();
+        BigDecimal baseAmount = totalAmount.divide(BigDecimal.valueOf(1.20), 2, RoundingMode.HALF_UP);
+        BigDecimal vatAmount = totalAmount.subtract(baseAmount).setScale(2, RoundingMode.HALF_UP);
+
+        String amount = formatMoney(totalAmount);
+        String baseAmountText = formatMoney(baseAmount);
+        String vatAmountText = formatMoney(vatAmount);
+        String statusLabel = paid ? "PAYÉ" : "EN ATTENTE";
+        String stampLine1 = paid ? "Le : " + paidDate : "En attente de paiement";
+        String stampLine2 = paid
+                ? "Mode : " + valueOrDefault(invoice.getPaymentMethod(), "Non renseigne")
+                : "Mode : -";
 
         String html = """
                 <!DOCTYPE html>
@@ -145,207 +155,375 @@ public class InvoiceDocumentUtil {
                     <style>
                         @page {
                             size: A4;
-                            margin: 22mm 18mm;
+                            margin: 14mm 14mm;
                         }
 
                         html, body {
                             margin: 0;
                             padding: 0;
-                            background: #f3f6fb;
+                            background: #ffffff;
                             color: #111827;
                             font-family: Arial, Helvetica, sans-serif;
                         }
 
-                        .sheet {
+                        .page-bar {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 6px;
+                            background: #7c3aed;
+                        }
+
+                        .invoice {
+                            position: relative;
                             background: #ffffff;
-                            border-top: 10px solid #8b5cf6;
-                            padding: 34px;
+                            min-height: 269mm;
+                            padding: 24px 26px 56mm 26px;
+                            box-sizing: border-box;
                         }
 
-                        .top {
-                            width: 100%%;
+                        .topline {
+                            width: 100%;
                             border-collapse: collapse;
-                            margin-bottom: 28px;
+                            margin-bottom: 30px;
                         }
 
-                        .top td {
+                        .topline td {
                             vertical-align: top;
                         }
 
                         .brand {
-                            font-size: 30px;
+                            font-size: 31px;
                             font-weight: 700;
-                            letter-spacing: 0.5px;
-                            color: #111827;
+                            letter-spacing: -0.3px;
+                            color: #1f2937;
                         }
 
                         .brand span {
-                            color: #8b5cf6;
+                            color: #2f55f2;
                         }
 
-                        .subtitle {
+                        .company {
+                            margin-top: 12px;
                             font-size: 12px;
                             line-height: 1.6;
-                            color: #6b7280;
-                            margin-top: 8px;
+                            color: #5b6472;
                         }
 
-                        .badge {
-                            display: inline-block;
-                            padding: 8px 14px;
-                            border-radius: 999px;
-                            background: #eef2ff;
-                            color: #4f46e5;
-                            font-size: 12px;
-                            font-weight: 700;
-                            text-transform: uppercase;
-                            letter-spacing: 0.7px;
+                        .invoice-title {
+                            font-size: 34px;
+                            font-weight: 300;
+                            color: #cbd5e1;
+                            letter-spacing: 4px;
+                            text-align: right;
+                            margin-bottom: 22px;
                         }
 
                         .meta {
+                            text-align: right;
                             font-size: 12px;
                             line-height: 1.7;
-                            color: #374151;
-                            margin-top: 12px;
-                        }
-
-                        .section {
-                            margin-top: 18px;
-                        }
-
-                        .section-title {
-                            font-size: 12px;
-                            letter-spacing: 1px;
                             color: #6b7280;
-                            font-weight: 700;
-                            text-transform: uppercase;
-                            margin-bottom: 12px;
                         }
 
-                        .info-table,
-                        .summary-table {
+                        .meta strong {
+                            color: #4b5563;
+                            font-weight: 700;
+                        }
+
+                        .grid {
+                            display: table;
+                            width: 100%;
+                            margin-top: 10px;
+                            margin-bottom: 8px;
+                            table-layout: fixed;
+                        }
+
+                        .grid-cell {
+                            display: table-cell;
+                            width: 50%;
+                            vertical-align: top;
+                            padding-right: 18px;
+                        }
+
+                        .grid-cell.right {
+                            padding-right: 0;
+                            padding-left: 18px;
+                        }
+
+                        .block-label {
+                            font-size: 12px;
+                            font-weight: 700;
+                            color: #2f55f2;
+                            letter-spacing: 1.2px;
+                            text-transform: uppercase;
+                            margin-bottom: 8px;
+                        }
+
+                        .person-name {
+                            font-size: 18px;
+                            font-weight: 700;
+                            color: #111827;
+                            margin-bottom: 2px;
+                        }
+
+                        .person-sub {
+                            font-size: 12px;
+                            color: #374151;
+                            line-height: 1.45;
+                        }
+
+                        .stamp-row {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 2px 0 6px 0;
+                        }
+
+                        .stamp-row td {
+                            vertical-align: top;
+                        }
+
+                        .stamp-row .spacer {
+                            width: 65%;
+                        }
+
+                        .stamp {
+                            display: inline-block;
+                            padding: 12px 22px;
+                            border-radius: 8px;
+                            border: 4px solid #d1d5db;
+                            color: #d1d5db;
+                            font-size: 26px;
+                            font-weight: 700;
+                            transform: rotate(-12deg);
+                            opacity: 0.9;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
+                            background: rgba(255,255,255,0.6);
+                        }
+
+                        .stamp.paid {
+                            border-color: #16a34a;
+                            color: #16a34a;
+                            background: rgba(255,255,255,0.85);
+                        }
+
+                        .stamp.pending {
+                            border-color: #f7b8b8;
+                            color: #f7b8b8;
+                            opacity: 0.28;
+                            background: rgba(255,255,255,0.18);
+                        }
+
+                        .stamp-lines {
+                            margin-top: 6px;
+                            font-size: 12px;
+                            line-height: 1.35;
+                            font-weight: 600;
+                            text-transform: none;
+                            letter-spacing: 0;
+                        }
+
+                        .items {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 28px;
+                        }
+
+                        .items thead th {
+                            background: #eef2ff;
+                            color: #54607b;
+                            font-size: 12px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.3px;
+                            text-align: left;
+                            padding: 10px 12px;
+                        }
+
+                        .items tbody td {
+                            font-size: 13px;
+                            padding: 12px 12px;
+                            border-bottom: 1px solid #e5e7eb;
+                            vertical-align: top;
+                        }
+
+                        .items .right {
+                            text-align: right;
+                            white-space: nowrap;
+                        }
+
+                        .items .desc strong {
+                            font-weight: 700;
+                            color: #111827;
+                            display: block;
+                            margin-bottom: 2px;
+                        }
+
+                        .items .desc span {
+                            color: #64748b;
+                            font-size: 12px;
+                        }
+
+                        .summary-wrap {
+                            width: 100%;
+                            margin-top: 24px;
+                            display: table;
+                        }
+
+                        .summary-left {
+                            display: table-cell;
+                            width: 60%;
+                        }
+
+                        .summary-right {
+                            display: table-cell;
+                            width: 40%;
+                            vertical-align: top;
+                        }
+
+                        .summary {
                             width: 100%;
                             border-collapse: collapse;
                         }
 
-                        .info-table td {
-                            padding: 11px 0;
-                            border-bottom: 1px solid #e5e7eb;
-                            font-size: 13px;
-                        }
-
-                        .label {
-                            width: 34%;
-                            color: #6b7280;
-                        }
-
-                        .value {
-                            font-weight: 700;
-                            color: #111827;
-                        }
-
-                        .summary {
-                            margin-top: 26px;
-                            background: #f9fafb;
-                            border-radius: 18px;
-                            padding: 24px;
-                        }
-
-                        .summary-table td {
-                            padding: 10px 0;
+                        .summary td {
+                            padding: 9px 0;
                             font-size: 14px;
                         }
 
-                        .summary-table .amount {
+                        .summary .label {
+                            color: #6b7280;
+                        }
+
+                        .summary .value {
                             text-align: right;
-                            font-size: 26px;
-                            font-weight: 700;
+                            font-size: 14px;
                             color: #111827;
                         }
 
-                        .total-row td {
-                            border-top: 2px solid #111827;
-                            padding-top: 16px;
+                        .summary .net {
+                            font-size: 16px;
+                            font-weight: 700;
+                            color: #2f55f2;
                         }
 
                         .footer {
-                            margin-top: 28px;
+                            position: absolute;
+                            left: 26px;
+                            right: 26px;
+                            bottom: 18px;
+                            padding-top: 12px;
+                            border-top: 1px solid #edf0f6;
                             font-size: 11px;
-                            line-height: 1.7;
-                            color: #6b7280;
+                            line-height: 1.5;
+                            color: #94a3b8;
+                            text-align: center;
                         }
                     </style>
                 </head>
                 <body>
-                    <div class="sheet">
-                        <table class="top">
+                    <div class="page-bar"></div>
+                    <div class="invoice">
+                        <div class="invoice-title">FACTURE</div>
+                        <table class="topline">
                             <tr>
                                 <td>
                                     <div class="brand">Meet<span>Care</span></div>
-                                    <div class="subtitle">
-                                        Facture professionnelle generee depuis votre espace de suivi.
-                                        <br />
-                                        Template HTML/CSS optimise pour l'apercu et l'export PDF.
+                                    <div class="company">
+                                        MeetCare Medical Solutions SAS<br />
+                                        85 Avenue de la Republique<br />
+                                        75011 Paris, France<br />
+                                        SIRET : 882 341 992 00014
                                     </div>
                                 </td>
                                 <td style="text-align: right;">
-                                    <div class="badge">Facture __STATUS_LABEL__</div>
                                     <div class="meta">
-                                        Numero: __INVOICE_NUMBER__<br />
-                                        Emise le: __ISSUE_DATE__<br />
-                                        Echeance: __DUE_DATE__
+                                        <strong>REFERENCE</strong> __INVOICE_NUMBER__<br />
+                                        <strong>DATE D'EMISSION</strong> __ISSUE_DATE__<br />
+                                        <strong>CODE CLIENT</strong> __CLIENT_CODE__
                                     </div>
                                 </td>
                             </tr>
                         </table>
 
-                        <div class="section">
-                            <div class="section-title">Informations</div>
-                            <table class="info-table">
-                                <tr>
-                                    <td class="label">Medecin</td>
-                                    <td class="value">__DOCTOR_NAME__</td>
-                                </tr>
-                                <tr>
-                                    <td class="label">Specialite</td>
-                                    <td class="value">__DOCTOR_SPECIALITY__</td>
-                                </tr>
-                                <tr>
-                                    <td class="label">Patient</td>
-                                    <td class="value">__PATIENT_NAME__</td>
-                                </tr>
-                                <tr>
-                                    <td class="label">Statut</td>
-                                    <td class="value">__STATUS_LABEL__</td>
-                                </tr>
-                                <tr>
-                                    <td class="label">Paiement</td>
-                                    <td class="value">__PAYMENT_METHOD__</td>
-                                </tr>
-                                <tr>
-                                    <td class="label">Date de paiement</td>
-                                    <td class="value">__PAID_AT__</td>
-                                </tr>
-                            </table>
+                        <div class="grid">
+                            <div class="grid-cell">
+                                <div class="block-label">EMETTEUR</div>
+                                <div class="person-name">Dr. __DOCTOR_NAME__</div>
+                                <div class="person-sub">
+                                    Specialite : __DOCTOR_SPECIALITY__<br />
+                                    RPPS : 10100982736
+                                </div>
+                            </div>
+                            <div class="grid-cell right">
+                                <div class="block-label">FACTURER A</div>
+                                <div class="person-name">__PATIENT_NAME__</div>
+                                <div class="person-sub">
+                                    Patient de MeetCare<br />
+                                    Consultation medicale
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="summary">
-                            <div class="section-title" style="margin-bottom: 16px;">Details de la prestation</div>
-                            <table class="summary-table">
+                        <table class="stamp-row">
+                            <tr>
+                                <td class="spacer"></td>
+                                <td style="text-align: right;">
+                                    <div class="stamp __STAMP_CLASS__">
+                                        __STAMP_TITLE__
+                                        <div class="stamp-lines">__STAMP_LINE_1__<br />__STAMP_LINE_2__</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="items">
+                            <thead>
                                 <tr>
-                                    <td>__DESCRIPTION__</td>
-                                    <td style="text-align: right; font-weight: 700;">__AMOUNT__</td>
+                                    <th>DESCRIPTION DE LA PRESTATION</th>
+                                    <th class="right">PRIX UNITAIRE HT</th>
+                                    <th class="right">TVA</th>
+                                    <th class="right">TOTAL HT</th>
                                 </tr>
-                                <tr class="total-row">
-                                    <td>Total TTC</td>
-                                    <td class="amount">__AMOUNT__</td>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="desc">
+                                        <strong>__DESCRIPTION__</strong>
+                                        <span>Code acte : Consultation standard</span>
+                                    </td>
+                                    <td class="right">__BASE_AMOUNT__</td>
+                                    <td class="right">20%</td>
+                                    <td class="right">__BASE_AMOUNT__</td>
                                 </tr>
-                            </table>
+                            </tbody>
+                        </table>
+
+                        <div class="summary-wrap">
+                            <div class="summary-left"></div>
+                            <div class="summary-right">
+                                <table class="summary">
+                                    <tr>
+                                        <td class="label">Total Partiel HT</td>
+                                        <td class="value">__BASE_AMOUNT__</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">TVA (20%)</td>
+                                        <td class="value">__VAT_AMOUNT__</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label net">NET A PAYER</td>
+                                        <td class="value net">__AMOUNT__</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
 
                         <div class="footer">
-                            Document genere automatiquement par MeetCare.
-                            Verification des informations recommandee avant impression ou archivage.
+                            MeetCare Solutions SAS au capital de 50 000 € - RCS Paris B 882 341 992 - TVA intracommunautaire FR 12 882341992<br />
+                            En cas de retard de paiement, une indemnite forfaitaire de 40 € sera due (Art. L 441-6 du Code de Commerce).<br />
+                            Merci de votre confiance.
                         </div>
                     </div>
                 </body>
@@ -353,23 +531,32 @@ public class InvoiceDocumentUtil {
                 """;
 
         return html
-                .replace("__STATUS_LABEL__", escapeHtml(statusLabel))
+                .replace("__STAMP_CLASS__", paid ? "paid" : "pending")
+                .replace("__STAMP_TITLE__", escapeHtml(statusLabel))
+                .replace("__STAMP_LINE_1__", escapeHtml(stampLine1))
+                .replace("__STAMP_LINE_2__", escapeHtml(stampLine2))
                 .replace("__INVOICE_NUMBER__", escapeHtml(invoiceNumber))
                 .replace("__ISSUE_DATE__", escapeHtml(issueDate))
-                .replace("__DUE_DATE__", escapeHtml(dueDate))
+                .replace("__CLIENT_CODE__", escapeHtml(buildClientCode(invoice)))
                 .replace("__DOCTOR_NAME__", doctorName)
                 .replace("__DOCTOR_SPECIALITY__", doctorSpeciality)
                 .replace("__PATIENT_NAME__", patientName)
-                .replace("__PAYMENT_METHOD__", paymentMethod)
-                .replace("__PAID_AT__", escapeHtml(paidAt))
                 .replace("__DESCRIPTION__", description)
+                .replace("__BASE_AMOUNT__", baseAmountText)
+                .replace("__VAT_AMOUNT__", vatAmountText)
                 .replace("__AMOUNT__", amount);
     }
 
     private String buildInvoiceNumber(Invoice invoice) {
         int year = invoice.getCreatedAt() == null ? LocalDateTime.now().getYear() : invoice.getCreatedAt().getYear();
         int id = Math.max(invoice.getId(), 0);
-        return String.format("MC-%d-%05d", year, id);
+        return String.format("INV-%d-%05d", year, id);
+    }
+
+    private String buildClientCode(Invoice invoice) {
+        int id = Math.max(invoice.getPatientId(), 0);
+        int year = invoice.getCreatedAt() == null ? LocalDateTime.now().getYear() : invoice.getCreatedAt().getYear();
+        return String.format("CL-%d-%04d", year, id);
     }
 
     private String buildDefaultFileName(Invoice invoice) {
@@ -380,15 +567,15 @@ public class InvoiceDocumentUtil {
         BigDecimal value = amount == null ? BigDecimal.ZERO : amount.setScale(2, RoundingMode.HALF_UP);
         DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.FRANCE);
         DecimalFormat format = new DecimalFormat("0.00", symbols);
-        return format.format(value) + " \u20AC";
-    }
-
-    private String formatDate(LocalDateTime dateTime) {
-        return dateTime == null ? "Non renseignee" : DATE_FORMATTER.format(dateTime);
+        return format.format(value) + " €";
     }
 
     private String formatDateTime(LocalDateTime dateTime) {
         return dateTime == null ? "Non renseignee" : DATE_TIME_FORMATTER.format(dateTime);
+    }
+
+    private String formatStampDateTime(LocalDateTime dateTime) {
+        return dateTime == null ? "Non renseignee" : dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'à' HH:mm"));
     }
 
     private String valueOrDefault(String value, String defaultValue) {
