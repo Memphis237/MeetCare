@@ -71,8 +71,11 @@ public class MyAppointmentsController {
     }
 
     private void applyTabStyle(Button button, boolean active) {
-        button.getStyleClass().removeAll("tab-active", "tab-button");
-        button.getStyleClass().add(active ? "tab-active" : "tab-button");
+        if (active) {
+            button.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-font-size: 13px; -fx-padding: 6 10;");
+        } else {
+            button.setStyle("-fx-background-color: transparent; -fx-font-size: 13px; -fx-padding: 6 10;");
+        }
     }
 
     private List<Appointment> filterAppointments(List<Appointment> appointments, String status) {
@@ -86,13 +89,13 @@ public class MyAppointmentsController {
 
         if (appointments.isEmpty()) {
             VBox emptyState = new VBox(8);
-            emptyState.getStyleClass().add("appointment-card");
+            emptyState.setStyle("-fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #e5e7eb; -fx-border-radius: 16; -fx-padding: 14;");
 
             Label title = new Label("Aucune consultation dans cette categorie");
-            title.getStyleClass().add("doctor-name");
+            title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
             Label subtitle = new Label("Change d'onglet pour voir les autres rendez-vous.");
-            subtitle.getStyleClass().add("doctor-info");
+            subtitle.setStyle("-fx-font-size: 14px; -fx-text-fill: #4b5563;");
 
             emptyState.getChildren().addAll(title, subtitle);
             appointmentsContainer.getChildren().add(emptyState);
@@ -106,31 +109,31 @@ public class MyAppointmentsController {
 
     private HBox createAppointmentCard(Appointment appointment) {
         HBox card = new HBox(14);
-        card.getStyleClass().add("appointment-card");
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #e5e7eb; -fx-border-radius: 16; -fx-padding: 14;");
 
         Label avatar = new Label(getInitial(appointment.getDoctorName()));
-        avatar.getStyleClass().add("avatar");
+        avatar.setStyle("-fx-background-color: #dbeafe; -fx-text-fill: #2563eb; -fx-font-size: 20px; -fx-font-weight: bold; -fx-alignment: center; -fx-min-width: 60; -fx-min-height: 60; -fx-background-radius: 30;");
 
         VBox infoBox = new VBox(6);
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
         Label name = new Label(appointment.getDoctorName());
-        name.getStyleClass().add("doctor-name");
+        name.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         Label speciality = new Label(appointment.getSpeciality());
-        speciality.getStyleClass().add("doctor-speciality");
+        speciality.setStyle("-fx-font-size: 15px; -fx-text-fill: #4b5563;");
 
         Label date = new Label("Date: " + formatDate(appointment.getDate()));
-        date.getStyleClass().add("doctor-info");
+        date.setStyle("-fx-font-size: 14px; -fx-text-fill: #4b5563;");
 
         Label time = new Label("Heure: " + appointment.getTime());
-        time.getStyleClass().add("doctor-info");
+        time.setStyle("-fx-font-size: 14px; -fx-text-fill: #4b5563;");
 
         String locationText = appointment.isTeleconsultation()
                 ? "Teleconsultation disponible - " + appointment.getAddress()
                 : appointment.getAddress();
         Label location = new Label(locationText);
-        location.getStyleClass().add("doctor-info");
+        location.setStyle("-fx-font-size: 14px; -fx-text-fill: #4b5563;");
 
         Label details = new Label(appointment.getDetails());
         details.setStyle("-fx-font-size: 14px;");
@@ -139,20 +142,20 @@ public class MyAppointmentsController {
 
         VBox actions = new VBox(6);
         Label status = new Label(getDisplayStatus(appointment.getStatus()));
-        status.getStyleClass().add(getStatusStyleClass(appointment.getStatus()));
+        status.setStyle(getStatusStyle(appointment.getStatus()));
 
         actions.getChildren().add(status);
 
         if (AppointmentStore.STATUS_CONFIRMED.equals(appointment.getStatus())) {
             Button completeButton = new Button("Terminer");
-            completeButton.getStyleClass().add("secondary-button");
+            completeButton.setStyle("-fx-background-color: white; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 15px; -fx-padding: 10 20;");
             completeButton.setOnAction(event -> {
                 AppointmentStore.updateStatus(appointment.getId(), AppointmentStore.STATUS_COMPLETED);
                 refreshView();
             });
 
             Button cancelButton = new Button("Annuler");
-            cancelButton.getStyleClass().add("danger-button");
+            cancelButton.setStyle("-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 10; -fx-background-radius: 10; -fx-text-fill: red; -fx-font-size: 13px; -fx-padding: 6 10;");
             cancelButton.setOnAction(event -> {
                 AppointmentStore.updateStatus(appointment.getId(), AppointmentStore.STATUS_CANCELLED);
                 refreshView();
@@ -169,14 +172,14 @@ public class MyAppointmentsController {
         return card;
     }
 
-    private String getStatusStyleClass(String status) {
+    private String getStatusStyle(String status) {
         if (AppointmentStore.STATUS_CANCELLED.equals(status)) {
-            return "badge-orange";
+            return "-fx-background-color: #ffedd5; -fx-text-fill: #ea580c; -fx-background-radius: 10; -fx-padding: 5 12;";
         }
         if (AppointmentStore.STATUS_COMPLETED.equals(status)) {
-            return "badge-blue";
+            return "-fx-background-color: #eff6ff; -fx-text-fill: #2563eb; -fx-background-radius: 10; -fx-padding: 5 12;";
         }
-        return "badge-green";
+        return "-fx-background-color: #dcfce7; -fx-text-fill: #15803d; -fx-background-radius: 10; -fx-padding: 5 12;";
     }
 
     private String getDisplayStatus(String status) {

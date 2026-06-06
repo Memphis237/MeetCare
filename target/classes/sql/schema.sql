@@ -150,6 +150,7 @@ CREATE TABLE medical_records (
     id_medical_records INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255),
     description TEXT,
+    document_type VARCHAR(50) NOT NULL DEFAULT 'OTHER',
     file_path VARCHAR(255),
     date DATETIME DEFAULT CURRENT_TIMESTAMP,
     id_doctors INT,

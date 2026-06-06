@@ -200,6 +200,7 @@ public class SidebarPatientController {
                 continue;
             }
             item.setStyle("-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;");
+            styleLabels(item, false);
         }
     }
 
@@ -208,5 +209,28 @@ public class SidebarPatientController {
             return;
         }
         item.setStyle("-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8; -fx-cursor: hand;");
+        styleLabels(item, true);
+    }
+
+    private void styleLabels(HBox item, boolean active) {
+        item.getChildren().forEach(child -> {
+            if (child instanceof Label label) {
+                String text = label.getText() == null ? "" : label.getText();
+                if (text.equals("Déconnexion")) {
+                    label.setStyle("-fx-font-size: 13px; -fx-text-fill: red;");
+                    return;
+                }
+                boolean isPrimaryText = !"".equals(text) && !"15".equals(text);
+                if (active) {
+                    label.setStyle(isPrimaryText
+                            ? "-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;"
+                            : "-fx-font-size: 14px; -fx-text-fill: #2B7FD4;");
+                } else {
+                    label.setStyle(isPrimaryText
+                            ? "-fx-font-size: 13px; -fx-text-fill: #4A6B8A;"
+                            : "-fx-font-size: 14px; -fx-text-fill: #4A6B8A;");
+                }
+            }
+        });
     }
 }

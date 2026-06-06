@@ -58,7 +58,7 @@
                             <Label style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;" text="📅" />
                             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rendez-vous" />
                         </HBox>
-                        <Label style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="0" />
+                        <Label fx:id="documentsCountLabel" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="0" />
                         <Label style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="À venir" />
                     </VBox>
 

@@ -26,10 +26,10 @@
                     <Label text="Gerez vos consultations" style="-fx-font-size: 18px; -fx-text-fill: #64748b;"/>
                 </VBox>
 
-                <HBox spacing="10" styleClass="tabs">
-                    <Button fx:id="confirmedTabButton" text="Confirmes" styleClass="tab-active"/>
-                    <Button fx:id="completedTabButton" text="Termines (0)" styleClass="tab-button"/>
-                    <Button fx:id="cancelledTabButton" text="Annules (0)" styleClass="tab-button"/>
+                <HBox spacing="10" style="-fx-background-color: #e5e7eb; -fx-background-radius: 18; -fx-padding: 4; -fx-max-width: 360;">
+                    <Button fx:id="confirmedTabButton" text="Confirmes" style="-fx-background-color: white; -fx-background-radius: 15; -fx-font-size: 13px; -fx-padding: 6 10;"/>
+                    <Button fx:id="completedTabButton" text="Termines (0)" style="-fx-background-color: transparent; -fx-font-size: 13px; -fx-padding: 6 10;"/>
+                    <Button fx:id="cancelledTabButton" text="Annules (0)" style="-fx-background-color: transparent; -fx-font-size: 13px; -fx-padding: 6 10;"/>
                 </HBox>
 
                 <VBox fx:id="appointmentsContainer" spacing="12"/>

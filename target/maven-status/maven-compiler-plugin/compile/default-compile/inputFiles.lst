@@ -25,6 +25,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\ChatMessageDao.jav
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\DoctorDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\DoctorDocumentDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\InvoiceDao.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\MedicalRecordDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\UsersDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\exception\DatabaseException.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\Main.java
@@ -37,6 +38,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\ChatMessageAttac
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Doctor.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\DoctorDocumentEntry.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Invoice.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\MedicalRecord.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Role.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Users.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\service\GroqChatService.java
@@ -52,5 +54,6 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\EnvLoader.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\InvoiceDocumentUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\InvoiceStatus.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\LogoutUtil.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\MedicalRecordDocumentUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\NavigationUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\PasswordUtil.java

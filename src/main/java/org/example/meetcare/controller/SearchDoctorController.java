@@ -141,13 +141,13 @@ public class SearchDoctorController {
 
         if (doctorsToDisplay.isEmpty()) {
             VBox emptyState = new VBox(8);
-            emptyState.getStyleClass().add("doctor-card");
+            emptyState.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
             Label title = new Label("Aucun medecin trouve");
-            title.getStyleClass().add("doctor-name");
+            title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
             Label subtitle = new Label("Essaie une autre specialite, ville ou date.");
-            subtitle.getStyleClass().add("doctor-info");
+            subtitle.setStyle("-fx-font-size: 14px; -fx-text-fill: #4b5563;");
 
             emptyState.getChildren().addAll(title, subtitle);
             doctorResultsContainer.getChildren().add(emptyState);
@@ -161,10 +161,10 @@ public class SearchDoctorController {
 
     private HBox createDoctorCard(DoctorViewData doctor) {
         HBox card = new HBox(25);
-        card.getStyleClass().add("doctor-card");
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
         Label avatar = new Label(doctor.name().substring(4, 5).toUpperCase(Locale.ROOT));
-        avatar.getStyleClass().add("avatar");
+        avatar.setStyle("-fx-background-color: #dbeafe; -fx-text-fill: #2563eb; -fx-font-size: 20px; -fx-font-weight: bold; -fx-alignment: center; -fx-min-width: 60; -fx-min-height: 60; -fx-background-radius: 30;");
 
         VBox content = new VBox(8);
         HBox.setHgrow(content, Priority.ALWAYS);
@@ -173,10 +173,10 @@ public class SearchDoctorController {
         VBox identity = new VBox(5);
 
         Label name = new Label(doctor.name());
-        name.getStyleClass().add("doctor-name");
+        name.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         Label speciality = new Label(doctor.speciality());
-        speciality.getStyleClass().add("doctor-speciality");
+        speciality.setStyle("-fx-font-size: 15px; -fx-text-fill: #4b5563;");
 
         identity.getChildren().addAll(name, speciality);
 
@@ -184,12 +184,12 @@ public class SearchDoctorController {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label rating = new Label("Note " + doctor.rating());
-        rating.getStyleClass().add("rating");
+        rating.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         header.getChildren().addAll(identity, spacer, rating);
 
         Label address = new Label(doctor.address());
-        address.getStyleClass().add("doctor-info");
+        address.setStyle("-fx-font-size: 14px; -fx-text-fill: #4b5563;");
 
         HBox badges = new HBox(10);
         badges.getChildren().addAll(
@@ -211,10 +211,10 @@ public class SearchDoctorController {
         HBox.setHgrow(actionsSpacer, Priority.ALWAYS);
 
         Button profileButton = new Button("Voir profil");
-        profileButton.getStyleClass().add("secondary-button");
+        profileButton.setStyle("-fx-background-color: white; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 15px; -fx-padding: 10 20;");
 
         Button appointmentButton = new Button("Prendre rendez-vous");
-        appointmentButton.getStyleClass().add("primary-button");
+        appointmentButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 10; -fx-padding: 10 20;");
         appointmentButton.setOnAction(event -> handleAppointmentBooking(doctor, appointmentButton));
 
         actions.getChildren().addAll(nextSlot, actionsSpacer, profileButton, appointmentButton);
@@ -271,8 +271,18 @@ public class SearchDoctorController {
 
     private Label createBadge(String text, String styleClass) {
         Label badge = new Label(text);
-        badge.getStyleClass().add(styleClass);
+        badge.setStyle(badgeStyle(styleClass));
         return badge;
+    }
+
+    private String badgeStyle(String styleClass) {
+        if ("badge-green".equals(styleClass)) {
+            return "-fx-background-color: #dcfce7; -fx-text-fill: #15803d; -fx-border-color: #86efac; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 5 12;";
+        }
+        if ("badge-blue".equals(styleClass)) {
+            return "-fx-background-color: #eff6ff; -fx-text-fill: #2563eb; -fx-border-color: #bfdbfe; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 5 12;";
+        }
+        return "-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 5 12;";
     }
 
     private String normalize(String text) {
