@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AdminNavigationState;
 import org.example.meetcare.utils.LogoutUtil;
 import org.example.meetcare.utils.NavigationUtil;
@@ -88,6 +89,10 @@ public class SidebarAdminController {
     @FXML
     private void handleLogout(ActionEvent event) {
         LogoutUtil.logout((Node) event.getSource());
+    }
+
+    public void refreshSidebar(Users user) {
+        applyActiveState();
     }
 
     private void open(ActionEvent event, String page, String path, double width, double height, String title) {

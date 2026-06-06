@@ -19,7 +19,6 @@ import org.example.meetcare.model.Users;
 import org.example.meetcare.service.InvoiceService;
 import org.example.meetcare.utils.AppSession;
 import org.example.meetcare.utils.AvatarUtil;
-import org.example.meetcare.utils.InvoiceDocumentUtil;
 import org.example.meetcare.utils.InvoiceStatus;
 import org.example.meetcare.utils.LogoutUtil;
 
@@ -39,7 +38,6 @@ public class InvoicePatientController {
 
     private final InvoiceService invoiceService = new InvoiceService();
     private final UsersDao usersDao = new UsersDao();
-    private final InvoiceDocumentUtil invoiceDocumentUtil = new InvoiceDocumentUtil();
 
     @FXML
     private Circle avatarCircle;
@@ -166,8 +164,8 @@ public class InvoicePatientController {
         HBox actionButtons = new HBox(8);
         actionButtons.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
         actionButtons.getChildren().addAll(
-                invoiceDocumentUtil.createPreviewButton(invoice),
-                invoiceDocumentUtil.createDownloadButton(invoice)
+                createPreviewButton(invoice),
+                createDownloadButton(invoice)
         );
         actionColumn.getChildren().add(actionButtons);
 
@@ -215,6 +213,42 @@ public class InvoicePatientController {
         }
     }
 
+    private Button createPreviewButton(Invoice invoice) {
+        Button button = new Button("Apercu");
+        button.setStyle("-fx-background-color: #EEF2FF; -fx-text-fill: #4F46E5; -fx-font-size: 12px; "
+                + "-fx-font-weight: bold; -fx-background-radius: 8; -fx-border-color: #C7D2FE; "
+                + "-fx-border-radius: 8; -fx-padding: 8 14 8 14;");
+        button.setOnAction(event -> {
+            try {
+                new org.example.meetcare.utils.InvoiceDocumentUtil().showPreview(invoice, resolveWindow(event.getSource()));
+            } catch (NoClassDefFoundError error) {
+                showAlert(Alert.AlertType.WARNING, "Apercu indisponible",
+                        "Le module JavaFX Web n'est pas charge dans ce lancement.");
+            } catch (Exception ex) {
+                showAlert(Alert.AlertType.ERROR, "Apercu indisponible", rootCauseMessage(ex));
+            }
+        });
+        return button;
+    }
+
+    private Button createDownloadButton(Invoice invoice) {
+        Button button = new Button("Telecharger");
+        button.setStyle("-fx-background-color: white; -fx-text-fill: #444444; -fx-font-size: 12px; "
+                + "-fx-font-weight: bold; -fx-background-radius: 8; -fx-border-color: #CCCCCC; "
+                + "-fx-border-radius: 8; -fx-padding: 8 14 8 14;");
+        button.setOnAction(event -> {
+            try {
+                new org.example.meetcare.utils.InvoiceDocumentUtil().downloadPdf(invoice, resolveWindow(event.getSource()));
+            } catch (NoClassDefFoundError error) {
+                showAlert(Alert.AlertType.WARNING, "Telechargement indisponible",
+                        "Le module JavaFX Web n'est pas charge dans ce lancement.");
+            } catch (Exception ex) {
+                showAlert(Alert.AlertType.ERROR, "Erreur PDF", rootCauseMessage(ex));
+            }
+        });
+        return button;
+    }
+
     private String formatMoney(BigDecimal amount) {
         BigDecimal value = amount == null ? BigDecimal.ZERO : amount.setScale(2, RoundingMode.HALF_UP);
         DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.FRANCE);
@@ -239,6 +273,13 @@ public class InvoicePatientController {
             return avatarCircle.getScene().getWindow();
         }
         return null;
+    }
+
+    private Window resolveWindow(Object source) {
+        if (source instanceof Node node && node.getScene() != null) {
+            return node.getScene().getWindow();
+        }
+        return getOwnerWindow();
     }
 
     private Users refreshCurrentUser() {

@@ -3,6 +3,7 @@ package org.example.meetcare.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.LogoutUtil;
 import org.example.meetcare.utils.NavigationUtil;
 
@@ -40,6 +41,14 @@ public class SidebarMedecinController {
     @FXML
     private void handleAssistantIA(ActionEvent event) {
         NavigationUtil.openMedecinAssistant(event);
+    }
+
+    public void setMessageBadgeCount(int count) {
+        // Badge support is optional on this sidebar version.
+    }
+
+    public void refreshSidebar(Users user) {
+        // This sidebar version does not display dynamic doctor profile data.
     }
 
     @FXML

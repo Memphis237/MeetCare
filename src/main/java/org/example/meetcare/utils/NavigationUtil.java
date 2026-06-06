@@ -73,12 +73,12 @@ public class NavigationUtil {
     }
 
     public static void openPatientMessages(Event event) {
-        ChatNavigationState.requestHumanMessages();
+        AppSession.setOpenAssistantConversation(false);
         navigateTo(event, "/view/messagePatient.fxml", MESSAGE_WIDTH, MESSAGE_HEIGHT, "MeetCare - Messages");
     }
 
     public static void openPatientAssistant(Event event) {
-        ChatNavigationState.requestAssistant();
+        AppSession.setOpenAssistantConversation(true);
         navigateTo(event, "/view/messagePatient.fxml", MESSAGE_WIDTH, MESSAGE_HEIGHT, "MeetCare - Assistant IA");
     }
 
@@ -87,12 +87,12 @@ public class NavigationUtil {
     }
 
     public static void openMedecinMessages(Event event) {
-        ChatNavigationState.requestHumanMessages();
+        AppSession.setOpenAssistantConversation(false);
         navigateTo(event, "/view/messageMedecin.fxml", MESSAGE_WIDTH, MESSAGE_HEIGHT, "MeetCare - Messagerie");
     }
 
     public static void openMedecinAssistant(Event event) {
-        ChatNavigationState.requestAssistant();
+        AppSession.setOpenAssistantConversation(true);
         navigateTo(event, "/view/messageMedecin.fxml", MESSAGE_WIDTH, MESSAGE_HEIGHT, "MeetCare - Assistant IA");
     }
 }

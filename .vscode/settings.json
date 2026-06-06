@@ -21,5 +21,6 @@
         ".git",
         ".idea",
         "uploads"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

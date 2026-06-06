@@ -59,7 +59,7 @@ public class LoginController {
         }
 
         if (role == Role.MEDECIN) {
-            navigate(event, "/view/homeMedecin.fxml", 1100, 700, "MeetCare - Espace médecin");
+            navigate(event, "/view/homeMedecin.fxml", 1100, 700, "MeetCare - Espace medecin");
             return;
         }
 
@@ -73,13 +73,47 @@ public class LoginController {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, width, height);
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            applyPageStylesheet(scene, fxmlPath);
             stage.setScene(scene);
             stage.setTitle(title);
             stage.centerOnScreen();
             stage.show();
         } catch (IOException ex) {
-            showMessage("Impossible d'ouvrir la page demandée.", false);
+            String detail = ex.getCause() != null && ex.getCause().getMessage() != null
+                    ? ex.getCause().getMessage()
+                    : ex.getMessage();
+            System.err.println("Erreur de navigation vers " + fxmlPath + " : " + detail);
+            ex.printStackTrace();
+            showMessage("Impossible d'ouvrir la page : " + safeDetail(detail), false);
         }
+    }
+
+    private void applyPageStylesheet(Scene scene, String fxmlPath) {
+        String stylesheet = null;
+        if (fxmlPath.contains("Patient") || fxmlPath.contains("searchDoctor") || fxmlPath.contains("myAppointments")) {
+            stylesheet = "/css/patient-pages.css";
+        } else if (fxmlPath.contains("Medecin")) {
+            stylesheet = "/css/doctor-pages.css";
+        } else if (fxmlPath.contains("dashboard") || fxmlPath.contains("admin")) {
+            stylesheet = "/css/admin-pages.css";
+        }
+
+        if (stylesheet == null) {
+            return;
+        }
+
+        String url = getClass().getResource(stylesheet).toExternalForm();
+        if (!scene.getStylesheets().contains(url)) {
+            scene.getStylesheets().add(url);
+        }
+    }
+
+    private String safeDetail(String detail) {
+        if (detail == null || detail.isBlank()) {
+            return "cause inconnue";
+        }
+        String normalized = detail.replace('\n', ' ').replace('\r', ' ').trim();
+        return normalized.length() > 80 ? normalized.substring(0, 80) + "..." : normalized;
     }
 
     private void showMessage(String message, boolean success) {

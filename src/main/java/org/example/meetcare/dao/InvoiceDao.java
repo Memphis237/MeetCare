@@ -20,22 +20,32 @@ import java.util.Optional;
 
 public class InvoiceDao {
     public List<Invoice> findByDoctorUserId(int doctorUserId) {
+        int doctorId = findDoctorIdByUserId(doctorUserId)
+                .orElseThrow(() -> new IllegalStateException("Le medecin courant n'est pas lie a un profil medecin."));
+
         String sql = """
-                SELECT i.id_invoices, i.amount, i.description, i.status, i.payment_method, i.paid_at, i.date,
-                       i.id_doctors, i.id_users,
+                SELECT i.id_invoices, i.amount, i.description, i.status, i.payment_method, i.paid_at,
+                       COALESCE(i.paid_at, CURRENT_TIMESTAMP) AS invoice_date,
+                       ? AS doctor_id, i.id_users,
                        du.username AS doctor_username, d.speciality AS doctor_speciality,
                        pu.prenom AS patient_prenom, pu.username AS patient_username
                 FROM invoices i
-                JOIN doctors d ON d.id_doctors = i.id_doctors
+                JOIN doctors d ON d.id_doctors = ?
                 JOIN users du ON du.id_users = d.id_users
                 JOIN users pu ON pu.id_users = i.id_users
-                WHERE d.id_users = ?
-                ORDER BY i.date DESC, i.id_invoices DESC
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM appointments a
+                    WHERE a.id_users = i.id_users
+                      AND a.id_doctors = d.id_doctors
+                )
+                ORDER BY COALESCE(i.paid_at, CURRENT_TIMESTAMP) DESC, i.id_invoices DESC
                 """;
 
         List<Invoice> invoices = new ArrayList<>();
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-            statement.setInt(1, doctorUserId);
+            statement.setInt(1, doctorId);
+            statement.setInt(2, doctorId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     invoices.add(mapInvoice(resultSet));
@@ -49,16 +59,38 @@ public class InvoiceDao {
 
     public List<Invoice> findByPatientUserId(int patientUserId) {
         String sql = """
-                SELECT i.id_invoices, i.amount, i.description, i.status, i.payment_method, i.paid_at, i.date,
-                       i.id_doctors, i.id_users,
-                       du.username AS doctor_username, d.speciality AS doctor_speciality,
+                SELECT i.id_invoices, i.amount, i.description, i.status, i.payment_method, i.paid_at,
+                       COALESCE(i.paid_at, CURRENT_TIMESTAMP) AS invoice_date,
+                       COALESCE((
+                           SELECT a.id_doctors
+                           FROM appointments a
+                           WHERE a.id_users = i.id_users
+                           ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                           LIMIT 1
+                       ), 0) AS doctor_id,
+                       i.id_users,
+                       (
+                           SELECT du.username
+                           FROM appointments a
+                           JOIN doctors d ON d.id_doctors = a.id_doctors
+                           JOIN users du ON du.id_users = d.id_users
+                           WHERE a.id_users = i.id_users
+                           ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                           LIMIT 1
+                       ) AS doctor_username,
+                       (
+                           SELECT d.speciality
+                           FROM appointments a
+                           JOIN doctors d ON d.id_doctors = a.id_doctors
+                           WHERE a.id_users = i.id_users
+                           ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                           LIMIT 1
+                       ) AS doctor_speciality,
                        pu.prenom AS patient_prenom, pu.username AS patient_username
                 FROM invoices i
-                JOIN doctors d ON d.id_doctors = i.id_doctors
-                JOIN users du ON du.id_users = d.id_users
                 JOIN users pu ON pu.id_users = i.id_users
                 WHERE i.id_users = ?
-                ORDER BY i.date DESC, i.id_invoices DESC
+                ORDER BY COALESCE(i.paid_at, CURRENT_TIMESTAMP) DESC, i.id_invoices DESC
                 """;
 
         List<Invoice> invoices = new ArrayList<>();
@@ -101,12 +133,12 @@ public class InvoiceDao {
     }
 
     public Invoice createInvoice(int doctorUserId, int patientUserId, BigDecimal amount, String description) {
-        int doctorId = findDoctorIdByUserId(doctorUserId)
+        findDoctorIdByUserId(doctorUserId)
                 .orElseThrow(() -> new IllegalStateException("Le medecin courant n'est pas lie a un profil medecin."));
 
         String sql = """
-                INSERT INTO invoices (amount, description, status, payment_method, paid_at, id_doctors, id_users)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO invoices (amount, description, status, payment_method, paid_at, id_users)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -115,8 +147,7 @@ public class InvoiceDao {
             statement.setString(3, InvoiceStatus.PENDING);
             statement.setNull(4, Types.VARCHAR);
             statement.setNull(5, Types.TIMESTAMP);
-            statement.setInt(6, doctorId);
-            statement.setInt(7, patientUserId);
+            statement.setInt(6, patientUserId);
             statement.executeUpdate();
 
             try (ResultSet keys = statement.getGeneratedKeys()) {
@@ -153,13 +184,35 @@ public class InvoiceDao {
 
     public Optional<Invoice> findById(int invoiceId) {
         String sql = """
-                SELECT i.id_invoices, i.amount, i.description, i.status, i.payment_method, i.paid_at, i.date,
-                       i.id_doctors, i.id_users,
-                       du.username AS doctor_username, d.speciality AS doctor_speciality,
+                SELECT i.id_invoices, i.amount, i.description, i.status, i.payment_method, i.paid_at,
+                       COALESCE(i.paid_at, CURRENT_TIMESTAMP) AS invoice_date,
+                       COALESCE((
+                           SELECT a.id_doctors
+                           FROM appointments a
+                           WHERE a.id_users = i.id_users
+                           ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                           LIMIT 1
+                       ), 0) AS doctor_id,
+                       i.id_users,
+                       (
+                           SELECT du.username
+                           FROM appointments a
+                           JOIN doctors d ON d.id_doctors = a.id_doctors
+                           JOIN users du ON du.id_users = d.id_users
+                           WHERE a.id_users = i.id_users
+                           ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                           LIMIT 1
+                       ) AS doctor_username,
+                       (
+                           SELECT d.speciality
+                           FROM appointments a
+                           JOIN doctors d ON d.id_doctors = a.id_doctors
+                           WHERE a.id_users = i.id_users
+                           ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                           LIMIT 1
+                       ) AS doctor_speciality,
                        pu.prenom AS patient_prenom, pu.username AS patient_username
                 FROM invoices i
-                JOIN doctors d ON d.id_doctors = i.id_doctors
-                JOIN users du ON du.id_users = d.id_users
                 JOIN users pu ON pu.id_users = i.id_users
                 WHERE i.id_invoices = ?
                 LIMIT 1
@@ -200,10 +253,10 @@ public class InvoiceDao {
         invoice.setDescription(resultSet.getString("description"));
         invoice.setStatus(resultSet.getString("status"));
         invoice.setPaymentMethod(resultSet.getString("payment_method"));
-        invoice.setDoctorId(resultSet.getInt("id_doctors"));
+        invoice.setDoctorId(resultSet.getInt("doctor_id"));
         invoice.setPatientId(resultSet.getInt("id_users"));
-        invoice.setDoctorName(resultSet.getString("doctor_username"));
-        invoice.setDoctorSpeciality(resultSet.getString("doctor_speciality"));
+        invoice.setDoctorName(resultSet.getString("doctor_username") == null ? "Medecin" : resultSet.getString("doctor_username"));
+        invoice.setDoctorSpeciality(resultSet.getString("doctor_speciality") == null ? "Specialite non renseignee" : resultSet.getString("doctor_speciality"));
         invoice.setPatientName(buildPatientName(resultSet.getString("patient_prenom"), resultSet.getString("patient_username")));
 
         Timestamp paidAt = resultSet.getTimestamp("paid_at");
@@ -211,7 +264,7 @@ public class InvoiceDao {
             invoice.setPaidAt(paidAt.toLocalDateTime());
         }
 
-        Timestamp createdAt = resultSet.getTimestamp("date");
+        Timestamp createdAt = resultSet.getTimestamp("invoice_date");
         if (createdAt != null) {
             invoice.setCreatedAt(createdAt.toLocalDateTime());
         }

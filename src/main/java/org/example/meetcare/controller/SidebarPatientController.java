@@ -63,6 +63,10 @@ public class SidebarPatientController {
         // Sidebar currently does not display dynamic profile data on this branch.
     }
 
+    public void setMessageBadgeCount(int count) {
+        // Badge support is optional on this sidebar version.
+    }
+
     private void showUnavailableFeature(String featureName) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("MeetCare");

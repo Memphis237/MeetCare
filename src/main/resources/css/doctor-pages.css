@@ -76,6 +76,20 @@
     -fx-padding: 4 12;
 }
 
+.doctor-badge-blue {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #2563eb;
+    -fx-background-radius: 999;
+    -fx-padding: 4 12;
+}
+
+.doctor-badge-purple {
+    -fx-background-color: #f3e8ff;
+    -fx-text-fill: #9333ea;
+    -fx-background-radius: 999;
+    -fx-padding: 4 12;
+}
+
 .doctor-badge-orange {
     -fx-background-color: #ffedd5;
     -fx-text-fill: #f97316;

@@ -23,22 +23,51 @@
 
     <center>
         <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-            <VBox spacing="18" style="-fx-padding: 18 18 24 18;">
-                <VBox spacing="2">
-                    <Label text="Documents" styleClass="doctor-title"/>
-                    <Label text="Documents envoyés à vos patients" styleClass="doctor-subtitle"/>
-                </VBox>
+            <VBox spacing="20" style="-fx-padding: 24; -fx-background-color: #f8fafc;">
 
-                <HBox spacing="16" styleClass="doctor-card">
-                    <ComboBox fx:id="patientFilterComboBox" prefWidth="260" prefHeight="42"/>
-                    <ComboBox fx:id="typeFilterComboBox" prefWidth="220" prefHeight="42"/>
+                <HBox alignment="CENTER_LEFT">
+                    <VBox spacing="4">
+                        <Label text="Documents" styleClass="doctor-title"/>
+                        <Label text="Consultez et telechargez les documents envoyes a vos patients" styleClass="doctor-subtitle"/>
+                    </VBox>
+
                     <Region HBox.hgrow="ALWAYS"/>
+
                     <Button fx:id="actionAnchorButton" text="+ Nouveau document" onAction="#handleCreateDocument" styleClass="doctor-primary-button"/>
                 </HBox>
 
-                <Label fx:id="documentsCountLabel" text="0 document(s)" style="-fx-font-size: 16px; -fx-text-fill: #475569;"/>
+                <HBox spacing="16">
+                    <VBox spacing="8" styleClass="doctor-card" HBox.hgrow="ALWAYS">
+                        <Label text="Total documents" style="-fx-font-size: 14px; -fx-text-fill: #64748b;"/>
+                        <Label fx:id="totalDocumentsLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                    </VBox>
+                    <VBox spacing="8" styleClass="doctor-card" HBox.hgrow="ALWAYS">
+                        <Label text="Patients concernes" style="-fx-font-size: 14px; -fx-text-fill: #64748b;"/>
+                        <Label fx:id="patientsCountLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #7c3aed;"/>
+                    </VBox>
+                    <VBox spacing="8" styleClass="doctor-card" HBox.hgrow="ALWAYS">
+                        <Label text="Types disponibles" style="-fx-font-size: 14px; -fx-text-fill: #64748b;"/>
+                        <Label fx:id="documentTypesCountLabel" text="0" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #16a34a;"/>
+                    </VBox>
+                </HBox>
 
-                <VBox fx:id="documentsContainer" spacing="12"/>
+                <HBox spacing="16" styleClass="doctor-card" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="patientFilterComboBox" prefWidth="280" prefHeight="42"/>
+                    <ComboBox fx:id="typeFilterComboBox" prefWidth="240" prefHeight="42"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="documentsCountLabel" text="0 document" style="-fx-font-size: 15px; -fx-text-fill: #475569;"/>
+                </HBox>
+
+                <VBox spacing="12">
+                    <Label text="Documents recents" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                    <VBox fx:id="recentDocumentsContainer" spacing="12"/>
+                </VBox>
+
+                <VBox spacing="12">
+                    <Label text="Documents plus anciens" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                    <VBox fx:id="olderDocumentsContainer" spacing="12"/>
+                </VBox>
+
             </VBox>
         </ScrollPane>
     </center>

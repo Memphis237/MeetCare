@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21.0.6"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -21,32 +24,37 @@
     <center>
         <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
             <VBox spacing="18" style="-fx-padding: 18 18 24 18;">
-                <VBox spacing="2">
-                    <Label text="Facturation" styleClass="doctor-title"/>
-                    <Label text="Suivez vos paiements et vos factures" styleClass="doctor-subtitle"/>
-                </VBox>
+                <HBox alignment="CENTER_LEFT">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="Facturation" styleClass="doctor-title"/>
+                        <Label text="Suivez vos paiements et vos factures" styleClass="doctor-subtitle"/>
+                    </VBox>
+                    <Button fx:id="createInvoiceButton" text="Creer une facture" onAction="#handleCreateInvoice"
+                            style="-fx-background-color: #8B5CF6; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18 10 18;"/>
+                </HBox>
 
                 <HBox spacing="16">
                     <VBox spacing="8" styleClass="doctor-card" HBox.hgrow="ALWAYS">
-                        <Label text="Factures émises" styleClass="doctor-subtitle"/>
-                        <Label fx:id="totalInvoicesValueLabel" text="0" styleClass="doctor-stat-value"/>
+                        <Label text="Factures emises" styleClass="doctor-subtitle"/>
+                        <Label fx:id="totalInvoicesLabel" text="0" styleClass="doctor-stat-value"/>
                     </VBox>
                     <VBox spacing="8" styleClass="doctor-card" HBox.hgrow="ALWAYS">
-                        <Label text="Revenus encaissés" styleClass="doctor-subtitle"/>
-                        <Label fx:id="totalRevenueValueLabel" text="0 €" styleClass="doctor-stat-value"/>
+                        <Label text="Factures en attente" styleClass="doctor-subtitle"/>
+                        <Label fx:id="pendingInvoicesLabel" text="0" styleClass="doctor-stat-value"/>
                     </VBox>
                     <VBox spacing="8" styleClass="doctor-card" HBox.hgrow="ALWAYS">
-                        <Label text="En attente" styleClass="doctor-subtitle"/>
-                        <Label fx:id="pendingRevenueValueLabel" text="0 €" styleClass="doctor-stat-value"/>
+                        <Label text="Factures payees" styleClass="doctor-subtitle"/>
+                        <Label fx:id="paidInvoicesLabel" text="0" styleClass="doctor-stat-value"/>
                     </VBox>
                     <VBox spacing="8" styleClass="doctor-card" HBox.hgrow="ALWAYS">
-                        <Label text="Factures payées" styleClass="doctor-subtitle"/>
-                        <Label fx:id="paidInvoicesValueLabel" text="0" styleClass="doctor-stat-value"/>
+                        <Label text="Revenus encaisses" styleClass="doctor-subtitle"/>
+                        <Label fx:id="paidRevenueLabel" text="0,00 €" styleClass="doctor-stat-value"/>
                     </VBox>
                 </HBox>
 
-                <VBox fx:id="invoicesContainer" spacing="12"/>
+                <VBox fx:id="invoiceListContainer" spacing="12"/>
             </VBox>
         </ScrollPane>
     </center>
+
 </BorderPane>

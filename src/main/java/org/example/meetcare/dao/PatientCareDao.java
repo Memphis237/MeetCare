@@ -232,9 +232,11 @@ public class PatientCareDao {
     public List<PatientDocumentRecord> getPatientDocuments() {
         List<PatientDocumentRecord> documents = new ArrayList<>();
         String sql = """
-                SELECT m.title,
+                SELECT m.id_medical_records,
+                       m.title,
                        m.description,
                        m.date,
+                       COALESCE(m.file_path, '') AS file_path,
                        COALESCE(m.document_type, '') AS document_type,
                        u.username AS doctor_name,
                        d.speciality
@@ -254,6 +256,7 @@ public class PatientCareDao {
                     String title = safe(resultSet.getString("title"), "Document medical");
                     String type = safe(resultSet.getString("document_type"), inferDocumentType(title));
                     documents.add(new PatientDocumentRecord(
+                            resultSet.getInt("id_medical_records"),
                             title,
                             formatDoctorName(resultSet.getString("doctor_name")),
                             safe(resultSet.getString("speciality"), "Specialite non renseignee"),
@@ -261,7 +264,8 @@ public class PatientCareDao {
                                     ? ""
                                     : DATE_FORMATTER.format(resultSet.getTimestamp("date").toLocalDateTime().toLocalDate()),
                             type,
-                            safe(resultSet.getString("description"), "")
+                            safe(resultSet.getString("description"), ""),
+                            safe(resultSet.getString("file_path"), "")
                     ));
                 }
             }
@@ -432,12 +436,14 @@ public class PatientCareDao {
     }
 
     public record PatientDocumentRecord(
+            int id,
             String title,
             String doctorName,
             String speciality,
             String date,
             String documentType,
-            String description
+            String description,
+            String filePath
     ) {
     }
 

@@ -7,6 +7,9 @@ import org.example.meetcare.utils.AppSession;
 import org.example.meetcare.utils.DatabaseConnection;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -152,6 +155,7 @@ public class DoctorWorkspaceDao {
                 SELECT m.title,
                        m.description,
                        COALESCE(m.document_type, '') AS document_type,
+                       COALESCE(m.file_path, '') AS file_path,
                        u.username AS patient_name,
                        m.date
                 FROM medical_records m
@@ -174,7 +178,8 @@ public class DoctorWorkspaceDao {
                                     ? ""
                                     : DISPLAY_DATE.format(resultSet.getTimestamp("date").toLocalDateTime().toLocalDate()),
                             "Envoye",
-                            safe(resultSet.getString("description"), "")
+                            safe(resultSet.getString("description"), ""),
+                            safe(resultSet.getString("file_path"), "")
                     ));
                 }
             }
@@ -221,6 +226,7 @@ public class DoctorWorkspaceDao {
     }
 
     public void insertMedicalDocument(int patientId, MedicalDocumentData document) {
+        String resolvedPath = safe(document.getFilePath(), buildDocumentPath(document.getType(), document.getTitle()));
         String sql = """
                 INSERT INTO medical_records (title, document_type, description, file_path, date, id_doctors, id_users)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -229,11 +235,12 @@ public class DoctorWorkspaceDao {
             statement.setString(1, document.getTitle());
             statement.setString(2, document.getType());
             statement.setString(3, document.getDescription());
-            statement.setString(4, safe(document.getFilePath(), buildDocumentPath(document.getType(), document.getTitle())));
+            statement.setString(4, resolvedPath);
             statement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
             statement.setInt(6, resolveDoctorId());
             statement.setInt(7, patientId);
             statement.executeUpdate();
+            ensureMedicalDocumentFile(resolvedPath, document);
         } catch (SQLException ignored) {
         }
     }
@@ -621,6 +628,20 @@ public class DoctorWorkspaceDao {
         return "records/" + slugify(type) + "-" + slugify(title) + ".txt";
     }
 
+    private void ensureMedicalDocumentFile(String filePath, MedicalDocumentData document) {
+        try {
+            Path resolvedPath = Path.of(System.getProperty("user.dir")).resolve(filePath).normalize();
+            Path parent = resolvedPath.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            if (!Files.exists(resolvedPath)) {
+                Files.writeString(resolvedPath, document.getDescription(), StandardCharsets.UTF_8);
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
     private String slugify(String value) {
         return safe(value, "document")
                 .toLowerCase(Locale.ROOT)
@@ -686,7 +707,8 @@ public class DoctorWorkspaceDao {
             String type,
             String date,
             String status,
-            String description
+            String description,
+            String filePath
     ) {
     }
 
