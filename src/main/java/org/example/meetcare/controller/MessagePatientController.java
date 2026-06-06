@@ -1,21 +1,16 @@
 package org.example.meetcare.controller;
 
 import javafx.fxml.FXML;
-import org.example.meetcare.dao.MessagingDao;
+import org.example.meetcare.model.Role;
 
-import java.util.List;
-
-public class MessagePatientController extends AbstractChatController {
+public class MessagePatientController extends AbstractMessagingController {
     @FXML
     private void initialize() {
-        initializeChat();
+        initializeMessaging();
     }
 
     @Override
-    protected List<MessagingDao.ChatContact> loadHumanContacts() {
-        if (currentUser == null) {
-            return List.of();
-        }
-        return new MessagingDao().getPatientContacts(currentUser.getIdUsers());
+    protected Role getTargetRole() {
+        return Role.MEDECIN;
     }
 }

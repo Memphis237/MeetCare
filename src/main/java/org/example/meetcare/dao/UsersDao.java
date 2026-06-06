@@ -1,6 +1,7 @@
 package org.example.meetcare.dao;
 
 import org.example.meetcare.exception.DatabaseException;
+import org.example.meetcare.model.AccountStatus;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.DatabaseConnection;
@@ -47,8 +48,8 @@ public class UsersDao {
 
     public int insert(Users user) {
         String sql = """
-                INSERT INTO users (username, prenom, email, password, phone, avatar, role, address, city, code_postal, country, is_online, last_seen)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO users (username, prenom, email, password, phone, avatar, role, account_status, address, city, code_postal, country, is_online, last_seen)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
         try (PreparedStatement statement = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.getUsername());
@@ -58,15 +59,16 @@ public class UsersDao {
             statement.setString(5, user.getPhone());
             statement.setString(6, user.getAvatar());
             statement.setString(7, user.getRole() == null ? Role.USER.name() : user.getRole().name());
-            statement.setString(8, user.getAddress());
-            statement.setString(9, user.getCity());
-            statement.setString(10, user.getCodePostal());
-            statement.setString(11, user.getCountry());
-            statement.setBoolean(12, user.isOnline());
+            statement.setString(8, user.getAccountStatus() == null ? "PENDING" : user.getAccountStatus().name());
+            statement.setString(9, user.getAddress());
+            statement.setString(10, user.getCity());
+            statement.setString(11, user.getCodePostal());
+            statement.setString(12, user.getCountry());
+            statement.setBoolean(13, user.isOnline());
             if (user.getLastSeen() != null) {
-                statement.setTimestamp(13, Timestamp.valueOf(user.getLastSeen()));
+                statement.setTimestamp(14, Timestamp.valueOf(user.getLastSeen()));
             } else {
-                statement.setTimestamp(13, null);
+                statement.setTimestamp(14, null);
             }
 
             int updatedRows = statement.executeUpdate();
@@ -88,7 +90,7 @@ public class UsersDao {
     public Optional<Users> findByIdentifier(String identifier) {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE username = ? OR email = ?
                 LIMIT 1
@@ -111,7 +113,7 @@ public class UsersDao {
     public Optional<Users> findById(int userId) {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE id_users = ?
                 LIMIT 1
@@ -132,7 +134,7 @@ public class UsersDao {
     public java.util.List<Users> findAllPatients() {
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
-                       code_postal, country, is_online, last_seen, `date`
+                       code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
                 WHERE role = 'USER'
                 ORDER BY prenom, username
@@ -146,6 +148,117 @@ public class UsersDao {
             }
         } catch (SQLException e) {
             throw new DatabaseException("Erreur lors du chargement des patients.", e);
+        }
+        return users;
+    }
+
+    public java.util.List<Users> findAllDoctors() {
+        return findAllByRole(Role.MEDECIN);
+    }
+
+    public java.util.List<Users> findAllByRole(Role role) {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, account_status, is_online, last_seen, `date`
+                FROM users
+                WHERE role = ?
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, role == null ? Role.USER.name() : role.name());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(mapUser(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors du chargement des utilisateurs.", e);
+        }
+        return users;
+    }
+
+    public java.util.List<Users> findAllUsers() {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, account_status, is_online, last_seen, `date`
+                FROM users
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        try (PreparedStatement statement = getConnection().prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                users.add(mapUser(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors du chargement des utilisateurs.", e);
+        }
+        return users;
+    }
+
+    public java.util.List<Users> searchByRole(Role role, String query) {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, account_status, is_online, last_seen, `date`
+                FROM users
+                WHERE role = ?
+                  AND (
+                    LOWER(username) LIKE ?
+                    OR LOWER(prenom) LIKE ?
+                    OR LOWER(email) LIKE ?
+                  )
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        String normalizedQuery = "%" + (query == null ? "" : query.trim().toLowerCase()) + "%";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, role == null ? Role.USER.name() : role.name());
+            statement.setString(2, normalizedQuery);
+            statement.setString(3, normalizedQuery);
+            statement.setString(4, normalizedQuery);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(mapUser(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la recherche des utilisateurs.", e);
+        }
+        return users;
+    }
+
+    public java.util.List<Users> searchAll(String query) {
+        String sql = """
+                SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
+                       code_postal, country, account_status, is_online, last_seen, `date`
+                FROM users
+                WHERE LOWER(username) LIKE ?
+                   OR LOWER(prenom) LIKE ?
+                   OR LOWER(email) LIKE ?
+                   OR LOWER(role) LIKE ?
+                ORDER BY prenom, username
+                """;
+
+        java.util.List<Users> users = new java.util.ArrayList<>();
+        String normalizedQuery = "%" + (query == null ? "" : query.trim().toLowerCase()) + "%";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, normalizedQuery);
+            statement.setString(2, normalizedQuery);
+            statement.setString(3, normalizedQuery);
+            statement.setString(4, normalizedQuery);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(mapUser(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la recherche des utilisateurs.", e);
         }
         return users;
     }
@@ -195,14 +308,33 @@ public class UsersDao {
     }
 
     public void updateOnlineStatus(int userId, boolean online) {
-        String sql = "UPDATE users SET is_online = ?, last_seen = ? WHERE id_users = ?";
+        String sql = """
+                UPDATE users
+                SET is_online = ?,
+                    last_seen = CASE
+                        WHEN ? = FALSE THEN CURRENT_TIMESTAMP
+                        ELSE last_seen
+                    END
+                WHERE id_users = ?
+                """;
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setBoolean(1, online);
-            statement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            statement.setBoolean(2, online);
             statement.setInt(3, userId);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Erreur lors de la mise à jour du statut en ligne.", e);
+        }
+    }
+
+    public void updateAccountStatus(int userId, String accountStatus) {
+        String sql = "UPDATE users SET account_status = ? WHERE id_users = ?";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, accountStatus);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la mise a jour du statut du compte.", e);
         }
     }
 
@@ -220,6 +352,7 @@ public class UsersDao {
         user.setCity(resultSet.getString("city"));
         user.setCodePostal(resultSet.getString("code_postal"));
         user.setCountry(resultSet.getString("country"));
+        user.setAccountStatus(AccountStatus.fromDatabaseValue(resultSet.getString("account_status")));
         user.setOnline(resultSet.getBoolean("is_online"));
 
         Timestamp lastSeen = resultSet.getTimestamp("last_seen");

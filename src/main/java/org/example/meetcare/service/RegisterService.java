@@ -1,21 +1,30 @@
 package org.example.meetcare.service;
 
 import org.example.meetcare.dao.UsersDao;
+import org.example.meetcare.dao.DoctorDao;
+import org.example.meetcare.model.AccountStatus;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.PasswordUtil;
 
 public class RegisterService {
     private final UsersDao usersDao = new UsersDao();
+    private final DoctorDao doctorDao = new DoctorDao();
 
     public Users register(Users user, String confirmPassword) {
         validateRegistration(user, confirmPassword);
 
         user.setPassword(PasswordUtil.hash(user.getPassword()));
-        user.setRole(Role.USER);
+        if (user.getRole() == null) {
+            user.setRole(Role.USER);
+        }
+        user.setAccountStatus(user.getRole() == Role.MEDECIN ? AccountStatus.PENDING : AccountStatus.VERIFIED);
         user.setOnline(false);
         user.setAvatar(null);
         user.setIdUsers(usersDao.insert(user));
+        if (user.getRole() == Role.MEDECIN) {
+            doctorDao.ensureDoctorIdForUser(user.getIdUsers());
+        }
         return user;
     }
 
