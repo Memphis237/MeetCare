@@ -1,10 +1,22 @@
-.menu-button {
+.menu-button,
+.button.menu-button {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
     -fx-font-size: 13px;
+    -fx-text-fill: #334155;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 8 12;
     -fx-min-height: 38;
     -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover,
+.button.menu-button:hover {
+    -fx-background-color: #eaf2ff;
+    -fx-text-fill: #2563eb;
 }
 
 .menu-button-active {

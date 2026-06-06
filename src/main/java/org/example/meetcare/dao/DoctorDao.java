@@ -35,6 +35,8 @@ public class DoctorDao {
                             rs.getString("address"),
                             rs.getString("sector"),
                             rs.getDouble("consultation_price"),
+                            0,
+                            "",
                             rs.getBoolean("accepts_vitale"),
                             rs.getBoolean("teleconsultation")
                     ));

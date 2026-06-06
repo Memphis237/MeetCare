@@ -1,14 +1,20 @@
-.doctor-menu-button {
+.doctor-menu-button,
+.button.doctor-menu-button {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
     -fx-font-size: 13px;
     -fx-text-fill: #111827;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 8 12;
     -fx-background-radius: 10;
     -fx-min-height: 38;
+    -fx-cursor: hand;
 }
 
-.doctor-menu-button:hover {
+.doctor-menu-button:hover,
+.button.doctor-menu-button:hover {
     -fx-background-color: #f5edff;
     -fx-text-fill: #9333ea;
 }

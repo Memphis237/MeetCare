@@ -39,7 +39,7 @@ public class SidebarMedecinController {
 
     @FXML
     private void handleAssistantIA(ActionEvent event) {
-        NavigationUtil.openMedecinMessages(event);
+        NavigationUtil.openMedecinAssistant(event);
     }
 
     @FXML

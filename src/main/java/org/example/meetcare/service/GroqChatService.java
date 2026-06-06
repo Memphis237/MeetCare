@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 public class GroqChatService {
     private static final String DEFAULT_MODEL = "llama-3.1-8b-instant";
+    private static final String LOCAL_FALLBACK_MODEL = "meetcare-local-assistant";
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
     private static final int HISTORY_LIMIT = 8;
 
@@ -24,7 +25,7 @@ public class GroqChatService {
         EnvLoader.load();
         String apiKey = getConfig("GROQ_API_KEY", "groq.api.key");
         if (isBlank(apiKey)) {
-            throw new IllegalStateException("La cle GROQ_API_KEY est manquante.");
+            return generateLocalFallbackReply(userMessage);
         }
 
         String model = getConfig("GROQ_MODEL", "groq.model");
@@ -43,21 +44,59 @@ public class GroqChatService {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IllegalStateException("Groq a renvoye le code " + response.statusCode() + ".");
+                return generateLocalFallbackReply(userMessage);
             }
             return extractAssistantContent(response.body());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("La requete Groq a ete interrompue.", e);
+            return generateLocalFallbackReply(userMessage);
         } catch (Exception e) {
-            throw new IllegalStateException("Impossible de joindre Groq.", e);
+            return generateLocalFallbackReply(userMessage);
         }
     }
 
     public String getModelName() {
         EnvLoader.load();
+        String apiKey = getConfig("GROQ_API_KEY", "groq.api.key");
+        if (isBlank(apiKey)) {
+            return LOCAL_FALLBACK_MODEL;
+        }
         String model = getConfig("GROQ_MODEL", "groq.model");
         return isBlank(model) ? DEFAULT_MODEL : model.trim();
+    }
+
+    private String generateLocalFallbackReply(String userMessage) {
+        String normalized = userMessage == null ? "" : userMessage.toLowerCase(Locale.ROOT);
+
+        if (containsAny(normalized, "bonjour", "salut", "bonsoir", "coucou")) {
+            return "Bonjour, je suis l'assistant MeetCare. Je peux vous aider pour les rendez-vous, les documents, la messagerie ou la facturation.";
+        }
+        if (containsAny(normalized, "rendez-vous", "rdv", "consultation")) {
+            return "Pour un rendez-vous, verifiez le medecin, la date et l'heure disponibles dans votre espace MeetCare, puis confirmez la reservation.";
+        }
+        if (containsAny(normalized, "document", "ordonnance", "analyse", "radio", "scan")) {
+            return "Vos documents medicaux sont consultables dans l'onglet Documents. Si un document manque, vous pouvez contacter votre medecin depuis la messagerie.";
+        }
+        if (containsAny(normalized, "facture", "paiement", "payer")) {
+            return "La rubrique Factures vous permet de suivre les paiements en attente et l'historique de facturation associe a vos consultations.";
+        }
+        if (containsAny(normalized, "message", "messagerie", "docteur", "medecin")) {
+            return "Vous pouvez echanger avec votre medecin depuis Messages. Si aucune conversation n'apparait, verifiez qu'un rendez-vous existe deja avec ce professionnel.";
+        }
+        if (containsAny(normalized, "urgence", "douleur", "grave", "saigne", "respire")) {
+            return "Si la situation semble urgente ou medicalement sensible, contactez rapidement un professionnel de sante ou les services d'urgence.";
+        }
+
+        return "Je peux vous aider sur les rendez-vous, les documents, les factures et la messagerie. Reformulez votre question en precisant votre besoin dans MeetCare.";
+    }
+
+    private boolean containsAny(String text, String... keywords) {
+        for (String keyword : keywords) {
+            if (text.contains(keyword)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String buildRequestBody(String userMessage, List<ChatbotMessage> history, String model) {

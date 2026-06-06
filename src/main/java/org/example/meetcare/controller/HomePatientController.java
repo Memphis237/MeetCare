@@ -39,29 +39,34 @@ public class HomePatientController {
 
     @FXML
     private void initialize() {
-        Users user = refreshCurrentUser();
-        if (user == null) {
-            return;
-        }
+        try {
+            Users user = refreshCurrentUser();
+            if (user == null) {
+                applyFallbackState();
+                return;
+            }
 
-        String displayName = buildDisplayName(user);
-        if (patientNameLabel != null) {
-            patientNameLabel.setText(displayName);
-        }
-        if (welcomeLabel != null) {
-            welcomeLabel.setText("Bienvenue, " + displayName);
-        }
-        if (roleLabel != null) {
-            roleLabel.setText(roleToLabel(user.getRole()));
-        }
-        if (avatarCircle != null && avatarInitialsLabel != null) {
-            AvatarUtil.applyAvatar(avatarCircle, avatarInitialsLabel, user);
-        }
-        if (mainAvatarCircle != null && mainAvatarInitialsLabel != null) {
-            AvatarUtil.applyAvatar(mainAvatarCircle, mainAvatarInitialsLabel, user);
-        }
+            String displayName = buildDisplayName(user);
+            if (patientNameLabel != null) {
+                patientNameLabel.setText(displayName);
+            }
+            if (welcomeLabel != null) {
+                welcomeLabel.setText("Bienvenue, " + displayName);
+            }
+            if (roleLabel != null) {
+                roleLabel.setText(roleToLabel(user.getRole()));
+            }
+            if (avatarCircle != null && avatarInitialsLabel != null) {
+                AvatarUtil.applyAvatar(avatarCircle, avatarInitialsLabel, user);
+            }
+            if (mainAvatarCircle != null && mainAvatarInitialsLabel != null) {
+                AvatarUtil.applyAvatar(mainAvatarCircle, mainAvatarInitialsLabel, user);
+            }
 
-        bindDashboardData();
+            bindDashboardData();
+        } catch (Exception exception) {
+            applyFallbackState();
+        }
     }
 
     private void bindDashboardData() {
@@ -149,7 +154,7 @@ public class HomePatientController {
 
     @FXML
     private void handleOpenAssistant(MouseEvent event) {
-        NavigationUtil.openPatientMessages(event);
+        NavigationUtil.openPatientAssistant(event);
     }
 
     @FXML
@@ -158,14 +163,63 @@ public class HomePatientController {
     }
 
     private Users refreshCurrentUser() {
-        Users user = AppSession.getCurrentUser();
-        if (user == null || user.getIdUsers() <= 0) {
-            return user;
-        }
+        try {
+            Users user = AppSession.getCurrentUser();
+            if (user == null || user.getIdUsers() <= 0) {
+                return user;
+            }
 
-        Users freshUser = new UsersDao().findById(user.getIdUsers()).orElse(user);
-        AppSession.setCurrentUser(freshUser);
-        return freshUser;
+            Users freshUser = new UsersDao().findById(user.getIdUsers()).orElse(user);
+            AppSession.setCurrentUser(freshUser);
+            return freshUser;
+        } catch (Exception exception) {
+            return AppSession.getCurrentUser();
+        }
+    }
+
+    private void applyFallbackState() {
+        if (welcomeLabel != null) {
+            welcomeLabel.setText("Bienvenue");
+        }
+        if (appointmentsCountLabel != null) {
+            appointmentsCountLabel.setText("0");
+        }
+        if (documentsCountLabel != null) {
+            documentsCountLabel.setText("0");
+        }
+        if (invoicesCountLabel != null) {
+            invoicesCountLabel.setText("0");
+        }
+        if (messagesCountLabel != null) {
+            messagesCountLabel.setText("0");
+        }
+        if (nextAppointmentDoctorLabel != null) {
+            nextAppointmentDoctorLabel.setText("Aucun rendez-vous prevu");
+        }
+        if (nextAppointmentSpecialityLabel != null) {
+            nextAppointmentSpecialityLabel.setText("Les informations seront rechargees des que possible.");
+        }
+        if (nextAppointmentStatusLabel != null) {
+            nextAppointmentStatusLabel.setText("A venir");
+        }
+        if (nextAppointmentDateLabel != null) {
+            nextAppointmentDateLabel.setText("Date a definir");
+        }
+        if (nextAppointmentAddressLabel != null) {
+            nextAppointmentAddressLabel.setText("Adresse non disponible.");
+        }
+        if (notificationsContainer != null) {
+            notificationsContainer.getChildren().clear();
+            VBox card = new VBox(8);
+            card.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 12; -fx-padding: 14;");
+            Label title = new Label("Informations indisponibles");
+            title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a;");
+            Label content = new Label("La page s'est ouverte, mais certaines donnees n'ont pas pu etre chargees.");
+            content.setWrapText(true);
+            content.setStyle("-fx-font-size: 13px; -fx-text-fill: #64748b;");
+            card.getChildren().addAll(title, content);
+            notificationsContainer.getChildren().add(card);
+        }
     }
 
     private String buildDisplayName(Users user) {

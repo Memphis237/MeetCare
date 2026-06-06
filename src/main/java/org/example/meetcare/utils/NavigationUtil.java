@@ -39,7 +39,9 @@ public class NavigationUtil {
         try {
             Parent root = FXMLLoader.load(NavigationUtil.class.getResource(fxmlPath));
             Scene scene = new Scene(root, width, height);
-            scene.getStylesheets().add(NavigationUtil.class.getResource("/css/style.css").toExternalForm());
+            if (root.getStylesheets().isEmpty()) {
+                scene.getStylesheets().add(NavigationUtil.class.getResource("/css/style.css").toExternalForm());
+            }
             Stage stage = (Stage) source.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle(title);
@@ -71,7 +73,13 @@ public class NavigationUtil {
     }
 
     public static void openPatientMessages(Event event) {
+        ChatNavigationState.requestHumanMessages();
         navigateTo(event, "/view/messagePatient.fxml", MESSAGE_WIDTH, MESSAGE_HEIGHT, "MeetCare - Messages");
+    }
+
+    public static void openPatientAssistant(Event event) {
+        ChatNavigationState.requestAssistant();
+        navigateTo(event, "/view/messagePatient.fxml", MESSAGE_WIDTH, MESSAGE_HEIGHT, "MeetCare - Assistant IA");
     }
 
     public static void openPatientSettings(Event event) {
@@ -79,6 +87,12 @@ public class NavigationUtil {
     }
 
     public static void openMedecinMessages(Event event) {
+        ChatNavigationState.requestHumanMessages();
         navigateTo(event, "/view/messageMedecin.fxml", MESSAGE_WIDTH, MESSAGE_HEIGHT, "MeetCare - Messagerie");
+    }
+
+    public static void openMedecinAssistant(Event event) {
+        ChatNavigationState.requestAssistant();
+        navigateTo(event, "/view/messageMedecin.fxml", MESSAGE_WIDTH, MESSAGE_HEIGHT, "MeetCare - Assistant IA");
     }
 }

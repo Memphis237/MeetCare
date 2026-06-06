@@ -3,8 +3,10 @@ package org.example.meetcare.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import org.example.meetcare.utils.LogoutUtil;
 import org.example.meetcare.utils.NavigationUtil;
+import org.example.meetcare.model.Users;
 
 public class SidebarPatientController {
     @FXML
@@ -39,7 +41,7 @@ public class SidebarPatientController {
 
     @FXML
     private void handleAssistant(ActionEvent event) {
-        NavigationUtil.openPatientMessages(event);
+        NavigationUtil.openPatientAssistant(event);
     }
 
     @FXML
@@ -55,5 +57,17 @@ public class SidebarPatientController {
     @FXML
     private void handleLogout(ActionEvent event) {
         LogoutUtil.logout((Node) event.getSource());
+    }
+
+    public void refreshSidebar(Users user) {
+        // Sidebar currently does not display dynamic profile data on this branch.
+    }
+
+    private void showUnavailableFeature(String featureName) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("MeetCare");
+        alert.setHeaderText(featureName);
+        alert.setContentText("Cette page sera bientot disponible.");
+        alert.showAndWait();
     }
 }
