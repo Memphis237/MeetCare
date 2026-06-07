@@ -1128,10 +1128,6 @@ public class DocumentsMedecinController {
             throw new IOException("Le fichier source n'existe pas.");
         }
 
-        if (isPrescription(record)) {
-            return prescriptionDocumentUtil.buildHtml(buildPrescriptionRequest(record));
-        }
-
         String lower = path.getFileName().toString().toLowerCase(Locale.ROOT);
         String displayName = escapeHtml(emptyIfBlank(record.getTitle(), path.getFileName().toString()));
         String patientName = escapeHtml(emptyIfBlank(record.getPatientName(), "Patient"));
@@ -1285,7 +1281,7 @@ public class DocumentsMedecinController {
         try (PDDocument document = PDDocument.load(path.toFile())) {
             PDFRenderer renderer = new PDFRenderer(document);
             for (int pageIndex = 0; pageIndex < document.getNumberOfPages(); pageIndex++) {
-                BufferedImage image = renderer.renderImageWithDPI(pageIndex, 150, ImageType.RGB);
+                BufferedImage image = renderer.renderImageWithDPI(pageIndex, 220, ImageType.RGB);
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", output);
                 String base64 = Base64.getEncoder().encodeToString(output.toByteArray());

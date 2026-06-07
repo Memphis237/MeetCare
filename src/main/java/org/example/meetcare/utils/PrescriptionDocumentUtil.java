@@ -18,7 +18,6 @@ public class PrescriptionDocumentUtil {
     public void renderPrescription(PrescriptionRequest request, Path outputPath) throws IOException {
         try (OutputStream outputStream = new FileOutputStream(outputPath.toFile())) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.useFastMode();
             builder.withHtmlContent(buildHtml(request), outputPath.getParent() == null
                     ? Path.of("").toAbsolutePath().toUri().toString()
                     : outputPath.getParent().toUri().toString());
@@ -59,103 +58,122 @@ public class PrescriptionDocumentUtil {
                         }
 
                         html, body {
+                            width: 100%%;
+                            height: 100%%;
                             margin: 0;
                             padding: 0;
                             background: #ffffff;
                             color: #1f2937;
                             font-family: Arial, Helvetica, sans-serif;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
                         }
 
                         .page {
-                            min-height: 100vh;
+                            width: 100%%;
+                            min-height: 297mm;
                             position: relative;
                             box-sizing: border-box;
-                            padding-bottom: 42px;
+                            padding-bottom: 16mm;
+                            overflow: hidden;
                         }
 
                         .topbar {
-                            background: #1e5aa8;
-                            color: #ffffff;
-                            padding: 16px 38px;
-                            display: table;
                             width: 100%%;
+                            background: #1f5ba7;
+                            color: #ffffff;
                             box-sizing: border-box;
+                            padding: 7.5mm 7mm 8mm 7mm;
                         }
 
-                        .brand {
-                            display: table-cell;
+                        .topbar-table {
+                            width: 100%%;
+                            border-collapse: collapse;
+                            table-layout: fixed;
+                        }
+
+                        .topbar-table td {
                             vertical-align: middle;
+                        }
+
+                        .brand-cell {
+                            width: 60%%;
                         }
 
                         .brand-title {
-                            font-size: 26px;
+                            font-size: 24px;
+                            line-height: 1;
                             font-weight: 800;
-                            letter-spacing: -0.4px;
+                            letter-spacing: -0.6px;
                         }
 
                         .brand-subtitle {
-                            font-size: 12px;
-                            margin-top: 6px;
-                            opacity: 0.92;
+                            font-size: 9.5px;
+                            margin-top: 7px;
+                            line-height: 1.2;
+                            opacity: 0.96;
                         }
 
-                        .badge-wrap {
-                            display: table-cell;
-                            vertical-align: middle;
+                        .badge-cell {
                             text-align: right;
+                            width: 40%%;
+                            padding-right: 2mm;
                         }
 
                         .badge {
                             display: inline-block;
-                            min-width: 170px;
-                            padding: 16px 18px;
-                            border-radius: 8px;
+                            min-width: 49mm;
+                            padding: 7px 11px;
+                            border-radius: 5px;
                             background: #ffffff;
-                            color: #1e5aa8;
+                            color: #1f5ba7;
                             font-weight: 800;
-                            font-size: 14px;
-                            letter-spacing: 0.5px;
+                            font-size: 12px;
                             text-transform: uppercase;
+                            letter-spacing: 0.2px;
                             text-align: center;
                         }
 
                         .meta-row {
-                            background: #eef4fb;
-                            padding: 12px 40px;
-                            display: table;
                             width: 100%%;
-                            box-sizing: border-box;
+                            background: #eef4fb;
                             border-bottom: 1px solid #d8e3f2;
+                            box-sizing: border-box;
+                            padding: 7px 8mm;
                         }
 
-                        .meta-item {
-                            display: table-cell;
-                            width: 33.333%%;
-                            font-size: 12px;
-                            color: #41526b;
+                        .meta-table {
+                            width: 100%%;
+                            border-collapse: collapse;
+                            table-layout: fixed;
                         }
 
-                        .content {
-                            padding: 22px 40px 18px 40px;
+                        .meta-table td {
+                            font-size: 10.5px;
+                            color: #475569;
+                            padding: 0;
+                            vertical-align: middle;
+                        }
+
+                        .body {
+                            padding: 10mm 7mm 0 7mm;
                         }
 
                         .two-cols {
-                            display: table;
                             width: 100%%;
-                            border-spacing: 14px 0;
+                            border-collapse: separate;
+                            border-spacing: 4.5mm 0;
                             table-layout: fixed;
-                            margin-top: 16px;
                         }
 
-                        .col {
-                            display: table-cell;
+                        .two-cols td {
                             width: 50%%;
                             vertical-align: top;
                         }
 
                         .card {
                             border: 1px solid #d7dfea;
-                            border-radius: 6px;
+                            border-radius: 5px;
                             overflow: hidden;
                             background: #ffffff;
                         }
@@ -163,78 +181,81 @@ public class PrescriptionDocumentUtil {
                         .card-head {
                             background: #eef4fb;
                             color: #1d4d93;
-                            font-size: 12px;
+                            font-size: 10px;
                             font-weight: 800;
                             text-transform: uppercase;
-                            padding: 8px 12px;
+                            padding: 6px 10px;
                             border-bottom: 1px solid #d7dfea;
                         }
 
                         .card-body {
-                            padding: 12px;
+                            padding: 8px 10px 9px 10px;
                         }
 
                         .person-name {
-                            font-size: 16px;
+                            font-size: 13.5px;
+                            line-height: 1.2;
                             font-weight: 800;
                             color: #13233b;
-                            margin-bottom: 5px;
+                            margin-bottom: 4px;
                         }
 
                         .person-line {
-                            font-size: 12px;
-                            line-height: 1.55;
+                            font-size: 10.5px;
+                            line-height: 1.4;
                             color: #5b6a80;
                         }
 
                         .shared-note {
-                            margin-top: 8px;
-                            font-size: 11px;
+                            margin-top: 4px;
+                            font-size: 10.5px;
                             color: #16a34a;
                             font-weight: 700;
                             text-align: right;
                         }
 
                         .section {
-                            margin-top: 34px;
+                            margin-top: 13.5mm;
+                            page-break-inside: avoid;
                         }
 
                         .section-title {
                             display: table;
                             width: 100%%;
                             border-collapse: collapse;
-                            margin-bottom: 6px;
+                            margin-bottom: 3px;
                         }
 
                         .section-title .bar {
-                            width: 8px;
-                            background: #1e5aa8;
+                            width: 3mm;
+                            background: #1f5ba7;
                         }
 
                         .section-title .label {
-                            padding-left: 8px;
-                            font-size: 13px;
+                            padding-left: 3px;
+                            font-size: 10.5px;
                             font-weight: 800;
                             color: #13233b;
                             text-transform: uppercase;
-                            letter-spacing: 0.3px;
+                            letter-spacing: 0.1px;
                             border-bottom: 1px solid #cbd5e1;
+                            line-height: 1.1;
                         }
 
                         .panel {
                             border: 1px solid #d7dfea;
-                            border-radius: 4px;
+                            border-radius: 3px;
                             background: #f7f9fc;
-                            padding: 12px;
-                            font-size: 13px;
+                            padding: 9px 12px;
+                            font-size: 10.5px;
                             color: #2f3c52;
-                            line-height: 1.65;
+                            line-height: 1.4;
                         }
 
                         .treatment-table {
                             width: 100%%;
                             border-collapse: collapse;
-                            font-size: 12px;
+                            font-size: 10.5px;
                         }
 
                         .treatment-table th {
@@ -242,82 +263,77 @@ public class PrescriptionDocumentUtil {
                             border-bottom: 1px solid #d7dfea;
                             color: #1d4d93;
                             text-align: left;
-                            padding: 8px 10px;
-                            font-size: 11px;
+                            padding: 5px 6px;
+                            font-size: 9.5px;
                             text-transform: uppercase;
-                            letter-spacing: 0.3px;
+                            letter-spacing: 0.25px;
                         }
 
                         .treatment-table td {
                             border-bottom: 1px solid #d7dfea;
-                            padding: 11px 10px;
+                            padding: 8px 6px;
                             vertical-align: top;
                             color: #253247;
                             background: #ffffff;
+                            line-height: 1.35;
                         }
 
                         .num-badge {
                             display: inline-block;
-                            width: 28px;
-                            height: 28px;
-                            line-height: 28px;
+                            width: 7.5mm;
+                            height: 7.5mm;
+                            line-height: 7.5mm;
                             border-radius: 999px;
-                            background: #1e5aa8;
+                            background: #2459d3;
                             color: #ffffff;
                             text-align: center;
                             font-weight: 800;
-                            font-size: 12px;
+                            font-size: 11px;
                         }
 
                         .med-name {
                             font-weight: 800;
-                            margin-bottom: 4px;
-                            font-size: 13px;
-                        }
-
-                        .med-note {
-                            color: #5b6a80;
-                            font-size: 11px;
-                            line-height: 1.5;
+                            margin-bottom: 3px;
+                            font-size: 11.5px;
                         }
 
                         .instructions-list {
                             margin: 0;
-                            padding-left: 16px;
+                            padding-left: 14px;
                         }
 
                         .instructions-list li {
-                            margin-bottom: 4px;
+                            margin-bottom: 3px;
                         }
 
                         .signature-box {
-                            width: 240px;
+                            width: 60mm;
                             margin-left: auto;
-                            margin-top: 10px;
+                            margin-top: 2.5mm;
                             border: 1px solid #d7dfea;
-                            border-radius: 6px;
-                            padding: 10px 12px;
+                            border-radius: 4px;
+                            padding: 8px 10px;
                             background: #ffffff;
                         }
 
                         .signature-label {
-                            font-size: 11px;
+                            font-size: 9.5px;
                             color: #5b6a80;
-                            margin-bottom: 8px;
+                            margin-bottom: 6px;
                         }
 
                         .signature-name {
-                            font-size: 18px;
+                            font-size: 14px;
                             font-style: italic;
-                            color: #1e5aa8;
+                            color: #1f5ba7;
                             font-weight: 400;
                             margin-bottom: 4px;
                         }
 
                         .signature-meta {
-                            font-size: 11px;
+                            font-size: 9.5px;
                             color: #5b6a80;
-                            line-height: 1.45;
+                            line-height: 1.35;
                         }
 
                         .footer {
@@ -325,12 +341,12 @@ public class PrescriptionDocumentUtil {
                             left: 0;
                             right: 0;
                             bottom: 0;
-                            background: #1e5aa8;
-                            color: white;
-                            font-size: 10px;
-                            padding: 8px 18px;
+                            background: #1f5ba7;
+                            color: #ffffff;
+                            font-size: 7.8px;
+                            padding: 5px 10px;
                             text-align: center;
-                            line-height: 1.4;
+                            line-height: 1.2;
                             box-sizing: border-box;
                         }
                     </style>
@@ -338,45 +354,55 @@ public class PrescriptionDocumentUtil {
                 <body>
                     <div class="page">
                         <div class="topbar">
-                            <div class="brand">
-                                <div class="brand-title">+ MeetCare</div>
-                                <div class="brand-subtitle">Plateforme de sante numerique</div>
-                            </div>
-                            <div class="badge-wrap">
-                                <div class="badge">Ordonnance medicale</div>
-                            </div>
+                            <table class="topbar-table">
+                                <tr>
+                                    <td class="brand-cell">
+                                        <div class="brand-title">+ MeetCare</div>
+                                        <div class="brand-subtitle">Plateforme de sante numerique</div>
+                                    </td>
+                                    <td class="badge-cell">
+                                        <div class="badge">Ordonnance medicale</div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
 
                         <div class="meta-row">
-                            <div class="meta-item"><strong>Ref. :</strong> ORD-__ISSUE_STAMP__</div>
-                            <div class="meta-item"><strong>Date d'emission :</strong> __ISSUE_DATE__</div>
-                            <div class="meta-item"><strong>Validite :</strong> __VALIDITY__</div>
+                            <table class="meta-table">
+                                <tr>
+                                    <td><strong>Ref. :</strong> ORD-__ISSUE_STAMP__</td>
+                                    <td><strong>Date d'emission :</strong> __ISSUE_DATE__</td>
+                                    <td><strong>Validite :</strong> __VALIDITY__</td>
+                                </tr>
+                            </table>
                         </div>
 
-                        <div class="content">
-                            <div class="two-cols">
-                                <div class="col">
-                                    <div class="card">
-                                        <div class="card-head">Prescripteur</div>
-                                        <div class="card-body">
-                                            <div class="person-name">Dr. __DOCTOR_NAME__</div>
-                                            <div class="person-line">__DOCTOR_SPECIALITY__</div>
-                                            <div class="person-line">Cabinet MeetCare</div>
-                                            <div class="person-line">Plateforme MeetCare</div>
+                        <div class="body">
+                            <table class="two-cols">
+                                <tr>
+                                    <td>
+                                        <div class="card">
+                                            <div class="card-head">Prescripteur</div>
+                                            <div class="card-body">
+                                                <div class="person-name">Dr. __DOCTOR_NAME__</div>
+                                                <div class="person-line">__DOCTOR_SPECIALITY__</div>
+                                                <div class="person-line">Cabinet MeetCare</div>
+                                                <div class="person-line">Plateforme MeetCare</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="card">
-                                        <div class="card-head">Patient</div>
-                                        <div class="card-body">
-                                            <div class="person-name">__PATIENT_NAME__</div>
-                                            <div class="person-line">Document partage au patient</div>
-                                            <div class="shared-note">Document partage avec le patient</div>
+                                    </td>
+                                    <td>
+                                        <div class="card">
+                                            <div class="card-head">Patient</div>
+                                            <div class="card-body">
+                                                <div class="person-name">__PATIENT_NAME__</div>
+                                                <div class="person-line">Document partage au patient</div>
+                                                <div class="shared-note">Document partage avec le patient</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    </td>
+                                </tr>
+                            </table>
 
                             <div class="section">
                                 <div class="section-title">
@@ -394,11 +420,11 @@ public class PrescriptionDocumentUtil {
                                 <table class="treatment-table">
                                     <thead>
                                         <tr>
-                                            <th style="width: 44px;">N</th>
+                                            <th style="width: 14mm;">N</th>
                                             <th>Medicament / Prestation</th>
                                             <th>Posologie / Instructions</th>
-                                            <th style="width: 90px;">Duree</th>
-                                            <th style="width: 140px;">Remarques</th>
+                                            <th style="width: 22mm;">Duree</th>
+                                            <th style="width: 32mm;">Remarques</th>
                                         </tr>
                                     </thead>
                                     <tbody>
