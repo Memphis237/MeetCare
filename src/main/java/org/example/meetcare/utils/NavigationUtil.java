@@ -88,7 +88,7 @@ public class NavigationUtil {
 
     public static void openAdminSearch(Event event) {
         AppSession.setSidebarRoute("search");
-        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Utilisateurs");
+        navigateTo(event, "/view/usersAdmin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Utilisateurs");
     }
 
     public static void openAdminAppointments(Event event) {

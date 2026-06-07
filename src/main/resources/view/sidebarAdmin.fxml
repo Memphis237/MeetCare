@@ -34,32 +34,32 @@
     <Separator style="-fx-background-color: #D9E8F5;" />
 
     <VBox spacing="2" style="-fx-padding: 10 10 10 10;">
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleHome" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="homeItem" alignment="CENTER_LEFT" onMouseClicked="#handleHome" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-color: #D6E9F8; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 16px; -fx-text-fill: #2B7FD4;" text="⌂" />
             <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;" text="Dashboard" />
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleSearchDoctor" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
-            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔍" />
+        <HBox fx:id="searchItem" alignment="CENTER_LEFT" onMouseClicked="#handleSearchDoctor" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔎" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Utilisateurs" />
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleAppointments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="appointmentsItem" alignment="CENTER_LEFT" onMouseClicked="#handleAppointments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📅" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Médecins" />
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleDocuments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="documentsItem" alignment="CENTER_LEFT" onMouseClicked="#handleDocuments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📄" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rendez-vous" />
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStats" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="statsItem" alignment="CENTER_LEFT" onMouseClicked="#handleStats" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📈" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Statistiques" />
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" spacing="12" onMouseClicked="#handleValidation" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="validationItem" alignment="CENTER_LEFT" spacing="12" onMouseClicked="#handleValidation" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔒✔" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Validation" />
             <Region HBox.hgrow="ALWAYS" />
@@ -69,7 +69,7 @@
             </StackPane>
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleSettings" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="settingsItem" alignment="CENTER_LEFT" onMouseClicked="#handleSettings" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="⚙" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Paramètres" />
         </HBox>
@@ -79,7 +79,7 @@
 
     <Separator style="-fx-background-color: #D9E8F5;" />
 
-    <HBox alignment="CENTER_LEFT" onMouseClicked="#handleLogout" spacing="12" style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
+    <HBox fx:id="logoutItem" alignment="CENTER_LEFT" onMouseClicked="#handleLogout" spacing="12" style="-fx-padding: 16 24 16 24; -fx-cursor: hand;">
         <Label style="-fx-font-size: 13px; -fx-text-fill: red;" text="Déconnexion" />
     </HBox>
 </VBox>
