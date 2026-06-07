@@ -49,10 +49,19 @@ public class DoctorDao {
     }
 
     public Optional<Doctor> findByUserId(int userId) {
+        ensureDoctorProfileForUser(userId);
+
         String sql = """
-            SELECT d.id_doctors, u.username, u.email, u.city,
-                   d.speciality, d.address, d.sector,
-                   d.consultation_price, d.accepts_vitale, d.teleconsultation
+            SELECT COALESCE(d.id_doctors, 0) AS id_doctors,
+                   u.username,
+                   u.email,
+                   u.city,
+                   COALESCE(d.speciality, 'Medecine generale') AS speciality,
+                   COALESCE(d.address, u.address, '') AS address,
+                   COALESCE(d.sector, 'Secteur 1') AS sector,
+                   COALESCE(d.consultation_price, 0) AS consultation_price,
+                   COALESCE(d.accepts_vitale, FALSE) AS accepts_vitale,
+                   COALESCE(d.teleconsultation, FALSE) AS teleconsultation
             FROM doctors d
             JOIN users u ON d.id_users = u.id_users
             WHERE d.id_users = ?
@@ -87,13 +96,23 @@ public class DoctorDao {
     public List<Doctor> searchDoctors(String keyword, String city) {
         List<Doctor> doctors = new ArrayList<>();
 
+        ensureDoctorProfilesForMedicalUsers();
+
         String sql = """
-            SELECT d.id_doctors, u.username, u.email, u.city,
-                   d.speciality, d.address, d.sector,
-                   d.consultation_price, d.accepts_vitale, d.teleconsultation
-            FROM doctors d
-            JOIN users u ON d.id_users = u.id_users
+            SELECT COALESCE(d.id_doctors, 0) AS id_doctors,
+                   u.username,
+                   u.email,
+                   u.city,
+                   COALESCE(d.speciality, 'Medecine generale') AS speciality,
+                   COALESCE(d.address, u.address, '') AS address,
+                   COALESCE(d.sector, 'Secteur 1') AS sector,
+                   COALESCE(d.consultation_price, 0) AS consultation_price,
+                   COALESCE(d.accepts_vitale, FALSE) AS accepts_vitale,
+                   COALESCE(d.teleconsultation, FALSE) AS teleconsultation
+            FROM users u
+            LEFT JOIN doctors d ON d.id_users = u.id_users
             WHERE u.role = 'MEDECIN'
+              AND u.account_status = 'VERIFIED'
             AND (
                 ? = ''
                 OR LOWER(u.username) LIKE LOWER(?)
@@ -141,6 +160,49 @@ public class DoctorDao {
         }
 
         return doctors;
+    }
+
+    private void ensureDoctorProfilesForMedicalUsers() {
+        String sql = """
+                SELECT u.id_users
+                FROM users u
+                LEFT JOIN doctors d ON d.id_users = u.id_users
+                WHERE u.role = 'MEDECIN'
+                  AND d.id_doctors IS NULL
+                """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                ensureDoctorIdForUser(rs.getInt("id_users"));
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Impossible de synchroniser les dossiers medecins.", e);
+        }
+    }
+
+    private void ensureDoctorProfileForUser(int userId) {
+        String sql = """
+                SELECT 1
+                FROM doctors
+                WHERE id_users = ?
+                LIMIT 1
+                """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return;
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Impossible de verifier le dossier medecin.", e);
+        }
+
+        ensureDoctorIdForUser(userId);
     }
 
     public void saveVerificationDecision(int doctorId, int adminId, String decision, String comment) {

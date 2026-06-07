@@ -1,5 +1,6 @@
 package org.example.meetcare.controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -7,15 +8,22 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.example.meetcare.dao.AppointmentDao;
 import org.example.meetcare.model.Appointment;
-import org.example.meetcare.utils.AppointmentStore;
+import org.example.meetcare.model.Users;
+import org.example.meetcare.utils.AppSession;
+import org.example.meetcare.utils.NavigationUtil;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class MyAppointmentsController {
+    private final AppointmentDao appointmentDao = new AppointmentDao();
+    private final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     @FXML
     private VBox appointmentsContainer;
 
@@ -28,7 +36,7 @@ public class MyAppointmentsController {
     @FXML
     private Button cancelledTabButton;
 
-    private String activeStatus = AppointmentStore.STATUS_CONFIRMED;
+    private String activeStatus = "CONFIRME";
 
     @FXML
     private void initialize() {
@@ -36,10 +44,15 @@ public class MyAppointmentsController {
         refreshView();
     }
 
+    @FXML
+    private void handleOpenBookingPage(ActionEvent event) {
+        NavigationUtil.openPatientAppointmentBooking(event);
+    }
+
     private void bindTabActions() {
-        confirmedTabButton.setOnAction(event -> switchTab(AppointmentStore.STATUS_CONFIRMED));
-        completedTabButton.setOnAction(event -> switchTab(AppointmentStore.STATUS_COMPLETED));
-        cancelledTabButton.setOnAction(event -> switchTab(AppointmentStore.STATUS_CANCELLED));
+        confirmedTabButton.setOnAction(event -> switchTab("CONFIRME"));
+        completedTabButton.setOnAction(event -> switchTab("TERMINE"));
+        cancelledTabButton.setOnAction(event -> switchTab("ANNULE"));
     }
 
     private void switchTab(String status) {
@@ -48,16 +61,23 @@ public class MyAppointmentsController {
     }
 
     private void refreshView() {
-        List<Appointment> appointments = AppointmentStore.getAppointments();
+        Users currentUser = AppSession.getCurrentUser();
+        if (currentUser == null || currentUser.getIdUsers() <= 0) {
+            renderAppointments(List.of());
+            updateTabCounts(List.of());
+            return;
+        }
+
+        List<Appointment> appointments = appointmentDao.findByUserId(currentUser.getIdUsers());
         updateTabCounts(appointments);
         updateTabStyles();
         renderAppointments(filterAppointments(appointments, activeStatus));
     }
 
     private void updateTabCounts(List<Appointment> appointments) {
-        confirmedTabButton.setText("Confirmes (" + countByStatus(appointments, AppointmentStore.STATUS_CONFIRMED) + ")");
-        completedTabButton.setText("Termines (" + countByStatus(appointments, AppointmentStore.STATUS_COMPLETED) + ")");
-        cancelledTabButton.setText("Annules (" + countByStatus(appointments, AppointmentStore.STATUS_CANCELLED) + ")");
+        confirmedTabButton.setText("Confirmes (" + countByStatus(appointments, "CONFIRME") + ")");
+        completedTabButton.setText("Termines (" + countByStatus(appointments, "TERMINE") + ")");
+        cancelledTabButton.setText("Annules (" + countByStatus(appointments, "ANNULE") + ")");
     }
 
     private long countByStatus(List<Appointment> appointments, String status) {
@@ -65,9 +85,9 @@ public class MyAppointmentsController {
     }
 
     private void updateTabStyles() {
-        applyTabStyle(confirmedTabButton, AppointmentStore.STATUS_CONFIRMED.equals(activeStatus));
-        applyTabStyle(completedTabButton, AppointmentStore.STATUS_COMPLETED.equals(activeStatus));
-        applyTabStyle(cancelledTabButton, AppointmentStore.STATUS_CANCELLED.equals(activeStatus));
+        applyTabStyle(confirmedTabButton, "CONFIRME".equals(activeStatus));
+        applyTabStyle(completedTabButton, "TERMINE".equals(activeStatus));
+        applyTabStyle(cancelledTabButton, "ANNULE".equals(activeStatus));
     }
 
     private void applyTabStyle(Button button, boolean active) {
@@ -146,18 +166,18 @@ public class MyAppointmentsController {
 
         actions.getChildren().add(status);
 
-        if (AppointmentStore.STATUS_CONFIRMED.equals(appointment.getStatus())) {
+        if ("CONFIRME".equals(appointment.getStatus())) {
             Button completeButton = new Button("Terminer");
             completeButton.setStyle("-fx-background-color: white; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 15px; -fx-padding: 10 20;");
             completeButton.setOnAction(event -> {
-                AppointmentStore.updateStatus(appointment.getId(), AppointmentStore.STATUS_COMPLETED);
+                appointmentDao.updateStatus(appointment.getId(), "TERMINE");
                 refreshView();
             });
 
             Button cancelButton = new Button("Annuler");
             cancelButton.setStyle("-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 10; -fx-background-radius: 10; -fx-text-fill: red; -fx-font-size: 13px; -fx-padding: 6 10;");
             cancelButton.setOnAction(event -> {
-                AppointmentStore.updateStatus(appointment.getId(), AppointmentStore.STATUS_CANCELLED);
+                appointmentDao.updateStatus(appointment.getId(), "ANNULE");
                 refreshView();
             });
 
@@ -173,20 +193,20 @@ public class MyAppointmentsController {
     }
 
     private String getStatusStyle(String status) {
-        if (AppointmentStore.STATUS_CANCELLED.equals(status)) {
+        if ("ANNULE".equals(status)) {
             return "-fx-background-color: #ffedd5; -fx-text-fill: #ea580c; -fx-background-radius: 10; -fx-padding: 5 12;";
         }
-        if (AppointmentStore.STATUS_COMPLETED.equals(status)) {
+        if ("TERMINE".equals(status)) {
             return "-fx-background-color: #eff6ff; -fx-text-fill: #2563eb; -fx-background-radius: 10; -fx-padding: 5 12;";
         }
         return "-fx-background-color: #dcfce7; -fx-text-fill: #15803d; -fx-background-radius: 10; -fx-padding: 5 12;";
     }
 
     private String getDisplayStatus(String status) {
-        if (AppointmentStore.STATUS_CANCELLED.equals(status)) {
+        if ("ANNULE".equals(status)) {
             return "Annule";
         }
-        if (AppointmentStore.STATUS_COMPLETED.equals(status)) {
+        if ("TERMINE".equals(status)) {
             return "Termine";
         }
         return "Confirme";
@@ -200,6 +220,6 @@ public class MyAppointmentsController {
     }
 
     private String formatDate(LocalDate date) {
-        return date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear();
+        return date == null ? "-" : date.format(DATE_FORMATTER);
     }
 }

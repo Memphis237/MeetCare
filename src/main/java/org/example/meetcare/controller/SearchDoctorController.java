@@ -4,8 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -15,14 +13,15 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.meetcare.model.Appointment;
-import org.example.meetcare.utils.AppointmentStore;
+import org.example.meetcare.dao.DoctorDao;
+import org.example.meetcare.model.Doctor;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SearchDoctorController {
@@ -43,76 +42,11 @@ public class SearchDoctorController {
     private Label resultsCountLabel;
 
     private List<DoctorViewData> doctors;
+    private final DoctorDao doctorDao = new DoctorDao();
 
     @FXML
     private void initialize() {
-        doctors = List.of(
-                new DoctorViewData(
-                        "Dr. Sarah Martin",
-                        "Cardiologue",
-                        "Paris",
-                        "15 Avenue des Champs-Elysees, 75008 Paris",
-                        "Secteur 1",
-                        "30 EUR",
-                        true,
-                        true,
-                        "4.8",
-                        LocalDate.of(2026, 5, 11),
-                        "14:30"
-                ),
-                new DoctorViewData(
-                        "Dr. Marc Dubois",
-                        "Generaliste",
-                        "Lyon",
-                        "23 Rue de la Republique, 69002 Lyon",
-                        "Secteur 1",
-                        "25 EUR",
-                        true,
-                        false,
-                        "4.9",
-                        LocalDate.of(2026, 5, 12),
-                        "10:00"
-                ),
-                new DoctorViewData(
-                        "Dr. Julie Bernard",
-                        "Dermatologue",
-                        "Paris",
-                        "8 Boulevard Saint-Germain, 75005 Paris",
-                        "Secteur 2",
-                        "50 EUR",
-                        true,
-                        true,
-                        "4.7",
-                        LocalDate.of(2026, 5, 13),
-                        "16:00"
-                ),
-                new DoctorViewData(
-                        "Dr. Amine Rahmani",
-                        "Pediatre",
-                        "Marseille",
-                        "42 Rue Paradis, 13001 Marseille",
-                        "Secteur 1",
-                        "35 EUR",
-                        true,
-                        false,
-                        "4.6",
-                        LocalDate.of(2026, 5, 14),
-                        "09:15"
-                ),
-                new DoctorViewData(
-                        "Dr. Lea Moreau",
-                        "Ophtalmologue",
-                        "Toulouse",
-                        "12 Allees Jean Jaures, 31000 Toulouse",
-                        "Secteur 2",
-                        "60 EUR",
-                        true,
-                        true,
-                        "4.9",
-                        LocalDate.of(2026, 5, 15),
-                        "11:45"
-                )
-        );
+        doctors = loadDoctors();
 
         refreshResults(doctors);
     }
@@ -225,37 +159,17 @@ public class SearchDoctorController {
     }
 
     private void handleAppointmentBooking(DoctorViewData doctor, Button sourceButton) {
-        ButtonType confirmButton = new ButtonType("Confirmer", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancelButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation du rendez-vous");
-        alert.setHeaderText("Prendre rendez-vous avec " + doctor.name());
-        alert.setContentText("Confirmer le creneau du " + formatDate(doctor.nextSlotDate()) + " a " + doctor.nextSlotTime() + " ?");
-        alert.getButtonTypes().setAll(confirmButton, cancelButton);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == confirmButton) {
-            AppointmentStore.addAppointment(AppointmentStore.createAppointment(
-                    doctor.name(),
-                    doctor.speciality(),
-                    doctor.city(),
-                    doctor.address(),
-                    AppointmentStore.STATUS_CONFIRMED,
-                    doctor.teleconsultation() ? "Motif: Teleconsultation reservee" : "Motif: Consultation reservee",
-                    doctor.teleconsultation(),
-                    doctor.nextSlotDate(),
-                    doctor.nextSlotTime()
-            ));
-            openMyAppointmentsPage(sourceButton);
-        }
+        openBookingPage(sourceButton, doctor);
     }
 
-    private void openMyAppointmentsPage(Button sourceButton) {
+    private void openBookingPage(Button sourceButton, DoctorViewData doctor) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/myAppointments.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/appointmentBookingPatient.fxml"));
             Scene scene = new Scene(loader.load());
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            AppointmentBookingPatientController controller = loader.getController();
+            controller.setInitialDoctor(doctor.id(), doctor.name(), doctor.speciality(), doctor.address(), doctor.nextSlotDate(), doctor.nextSlotTime());
+            controller.applyInitialDoctorSelection();
 
             Stage stage = (Stage) sourceButton.getScene().getWindow();
             stage.setScene(scene);
@@ -263,8 +177,8 @@ public class SearchDoctorController {
         } catch (IOException exception) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle("Erreur");
-            errorAlert.setHeaderText("Impossible d'ouvrir la page des rendez-vous");
-            errorAlert.setContentText("Verifie que myAppointments.fxml est bien disponible.");
+            errorAlert.setHeaderText("Impossible d'ouvrir la page de prise de rendez-vous");
+            errorAlert.setContentText("Verifie que appointmentBookingPatient.fxml est bien disponible.");
             errorAlert.showAndWait();
         }
     }
@@ -293,7 +207,54 @@ public class SearchDoctorController {
         return date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear();
     }
 
+    private List<DoctorViewData> loadDoctors() {
+        List<Doctor> doctorRows = doctorDao.searchDoctors("", "");
+        List<DoctorViewData> viewData = new ArrayList<>();
+        int index = 0;
+        for (Doctor doctor : doctorRows) {
+            viewData.add(toViewData(doctor, index++));
+        }
+        return viewData;
+    }
+
+    private DoctorViewData toViewData(Doctor doctor, int index) {
+        LocalDate nextDate = LocalDate.now().plusDays((doctor.getId() % 5) + 1L);
+        String nextTime = switch (index % 14) {
+            case 0 -> "09:00";
+            case 1 -> "09:30";
+            case 2 -> "10:00";
+            case 3 -> "10:30";
+            case 4 -> "11:00";
+            case 5 -> "11:30";
+            case 6 -> "12:00";
+            case 7 -> "12:30";
+            case 8 -> "13:00";
+            case 9 -> "13:30";
+            case 10 -> "14:00";
+            case 11 -> "14:30";
+            case 12 -> "15:00";
+            default -> "15:30";
+        };
+
+        String rating = String.format(Locale.ROOT, "%.1f", 4.5 + ((doctor.getId() % 5) * 0.1));
+        return new DoctorViewData(
+                doctor.getId(),
+                "Dr. " + doctor.getUsername(),
+                doctor.getSpeciality(),
+                doctor.getCity(),
+                doctor.getAddress(),
+                doctor.getSector(),
+                doctor.getPrice() + " EUR",
+                doctor.isAcceptsVitale(),
+                doctor.isTeleconsultation(),
+                rating,
+                nextDate,
+                nextTime
+        );
+    }
+
     private record DoctorViewData(
+            int id,
             String name,
             String speciality,
             String city,

@@ -47,6 +47,11 @@ public class NavigationUtil {
         navigateTo(event, "/view/myAppointments.fxml", PATIENT_WIDTH, 720, "MeetCare - Mes rendez-vous");
     }
 
+    public static void openPatientAppointmentBooking(Event event) {
+        AppSession.setSidebarRoute("appointments");
+        navigateTo(event, "/view/appointmentBookingPatient.fxml", PATIENT_WIDTH, 760, "MeetCare - Prendre un rendez-vous");
+    }
+
     public static void openPatientDocuments(Event event) {
         AppSession.setSidebarRoute("documents");
         navigateTo(event, "/view/documentsPatient.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Documents");

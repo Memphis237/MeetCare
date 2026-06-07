@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE doctors (
     id_doctors INT AUTO_INCREMENT PRIMARY KEY,
     speciality VARCHAR(100),
+    address VARCHAR(255),
     experience INT,
     consultation_price DECIMAL(10,2),
     biography TEXT,
@@ -181,3 +182,30 @@ CREATE TABLE doctor_verifications (
     FOREIGN KEY (id_doctors) REFERENCES doctors(id_doctors) ON DELETE CASCADE,
     FOREIGN KEY (id_admin) REFERENCES users(id_users) ON DELETE CASCADE
 );
+
+-- SAMPLE DATA
+INSERT INTO users (username, prenom, email, password, phone, avatar, role, account_status, address, city, code_postal, country)
+VALUES
+('martin', 'Antoine', 'dr.martin@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000001', NULL, 'MEDECIN', 'VERIFIED', '12 rue Victor-Hugo', 'Paris', '75001', 'France'),
+('dupont', 'Claire', 'dr.dupont@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000002', NULL, 'MEDECIN', 'VERIFIED', '8 avenue Foch', 'Lyon', '69002', 'France'),
+('bernard', 'Luc', 'dr.bernard@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000003', NULL, 'MEDECIN', 'VERIFIED', '45 boulevard Michelet', 'Marseille', '13008', 'France'),
+('laurent', 'Sophie', 'dr.laurent@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000004', NULL, 'MEDECIN', 'VERIFIED', '19 rue Nationale', 'Lille', '59000', 'France'),
+('petit', 'Nicolas', 'dr.petit@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000005', NULL, 'MEDECIN', 'VERIFIED', '72 place Bellecour', 'Lyon', '69002', 'France'),
+('robert', 'Emma', 'dr.robert@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000006', NULL, 'MEDECIN', 'VERIFIED', '3 rue de la Gare', 'Toulouse', '31000', 'France'),
+('richard', 'Julien', 'dr.richard@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000007', NULL, 'MEDECIN', 'VERIFIED', '14 cours de la Liberté', 'Bordeaux', '33000', 'France'),
+('durand', 'Manon', 'dr.durand@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000008', NULL, 'MEDECIN', 'VERIFIED', '27 rue de Strasbourg', 'Nantes', '44000', 'France'),
+('faure', 'Thomas', 'dr.faure@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000009', NULL, 'MEDECIN', 'VERIFIED', '6 avenue du Parc', 'Nice', '06000', 'France'),
+('mercier', 'Laura', 'dr.mercier@meetcare.test', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '0600000010', NULL, 'MEDECIN', 'VERIFIED', '101 rue des Lilas', 'Strasbourg', '67000', 'France');
+
+INSERT INTO doctors (speciality, address, experience, consultation_price, biography, sector, accepts_vitale, teleconsultation, public_profile_completed, id_users)
+VALUES
+('Cardiologie', '12 rue Victor-Hugo', 15, 70.00, 'Spécialiste du cœur et du suivi cardiovasculaire.', 'Secteur 2', TRUE, TRUE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.martin@meetcare.test')),
+('Dermatologie', '8 avenue Foch', 11, 60.00, 'Consultations peau, cheveux et ongles.', 'Secteur 1', TRUE, TRUE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.dupont@meetcare.test')),
+('Généraliste', '45 boulevard Michelet', 9, 35.00, 'Médecine générale pour toute la famille.', 'Secteur 1', TRUE, FALSE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.bernard@meetcare.test')),
+('Pédiatrie', '19 rue Nationale', 13, 55.00, 'Suivi médical des enfants et adolescents.', 'Secteur 2', TRUE, TRUE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.laurent@meetcare.test')),
+('Ophtalmologie', '72 place Bellecour', 17, 80.00, 'Bilan visuel et pathologies oculaires.', 'Secteur 2', TRUE, FALSE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.petit@meetcare.test')),
+('Gynécologie', '3 rue de la Gare', 14, 75.00, 'Suivi gynécologique et prévention.', 'Secteur 2', TRUE, TRUE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.robert@meetcare.test')),
+('ORL', '14 cours de la Liberté', 10, 65.00, 'Oreille, nez, gorge et chirurgie ORL légère.', 'Secteur 1', TRUE, TRUE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.richard@meetcare.test')),
+('Psychiatrie', '27 rue de Strasbourg', 12, 90.00, 'Accompagnement psychologique et psychiatrique.', 'Secteur 2', FALSE, TRUE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.durand@meetcare.test')),
+('Radiologie', '6 avenue du Parc', 16, 85.00, 'Imagerie médicale et diagnostics par radio.', 'Secteur 2', TRUE, FALSE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.faure@meetcare.test')),
+('Endocrinologie', '101 rue des Lilas', 8, 68.00, 'Diabète, thyroïde et métabolisme.', 'Secteur 1', TRUE, TRUE, TRUE, (SELECT id_users FROM users WHERE email = 'dr.mercier@meetcare.test'));

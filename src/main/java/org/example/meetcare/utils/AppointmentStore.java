@@ -5,6 +5,7 @@ import org.example.meetcare.model.Appointment;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public final class AppointmentStore {
     public static final String STATUS_CONFIRMED = "CONFIRME";
@@ -42,6 +43,35 @@ public final class AppointmentStore {
                 return;
             }
         }
+    }
+
+    public static boolean isSlotAvailable(String doctorName, LocalDate date, String time) {
+        initializeDefaults();
+        if (doctorName == null || date == null || time == null) {
+            return true;
+        }
+
+        String normalizedDoctor = normalize(doctorName);
+        String normalizedTime = time.trim();
+        return APPOINTMENTS.stream()
+                .filter(appointment -> !STATUS_CANCELLED.equals(appointment.getStatus()))
+                .noneMatch(appointment -> normalizedDoctor.equals(normalize(appointment.getDoctorName()))
+                        && date.equals(appointment.getDate())
+                        && normalizedTime.equals(appointment.getTime()));
+    }
+
+    public static Appointment findNextAppointmentForDoctor(String doctorName) {
+        initializeDefaults();
+        if (doctorName == null) {
+            return null;
+        }
+
+        String normalizedDoctor = normalize(doctorName);
+        return APPOINTMENTS.stream()
+                .filter(appointment -> normalizedDoctor.equals(normalize(appointment.getDoctorName())))
+                .filter(appointment -> !STATUS_CANCELLED.equals(appointment.getStatus()))
+                .findFirst()
+                .orElse(null);
     }
 
     private static void initializeDefaults() {
@@ -86,5 +116,9 @@ public final class AppointmentStore {
         ));
 
         initialized = true;
+    }
+
+    private static String normalize(String value) {
+        return value == null ? "" : value.toLowerCase(Locale.ROOT).trim();
     }
 }
