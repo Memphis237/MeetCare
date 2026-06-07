@@ -109,41 +109,48 @@ public class MedecinAppointmentsController {
     @FXML
     private void initialize() {
         refreshView();
+        updateFilterStyles();
     }
 
     @FXML
     private void handleTodayFilter(ActionEvent event) {
         activeFilter = "TODAY";
+        updateFilterStyles();
         renderAppointments();
     }
 
     @FXML
     private void handleAllFilter(ActionEvent event) {
         activeFilter = "ALL";
+        updateFilterStyles();
         renderAppointments();
     }
 
     @FXML
     private void handleConfirmedFilter(ActionEvent event) {
         activeFilter = "CONFIRME";
+        updateFilterStyles();
         renderAppointments();
     }
 
     @FXML
     private void handleCompletedFilter(ActionEvent event) {
         activeFilter = "TERMINE";
+        updateFilterStyles();
         renderAppointments();
     }
 
     @FXML
     private void handleCancelledFilter(ActionEvent event) {
         activeFilter = "ANNULE";
+        updateFilterStyles();
         renderAppointments();
     }
 
     @FXML
     private void handleTeleconsultationFilter(ActionEvent event) {
         activeFilter = "TELECONSULTATION";
+        updateFilterStyles();
         renderAppointments();
     }
 
@@ -151,7 +158,7 @@ public class MedecinAppointmentsController {
     private void handleManageAvailability(ActionEvent event) {
         Users currentUser = AppSession.getCurrentUser();
         if (currentUser == null || currentUser.getIdUsers() <= 0) {
-            showAlert(AlertType.WARNING, "Session invalide", "Aucun medecin connecte.");
+            showAlert(AlertType.WARNING, "Session invalide", "Aucun médecin connecté.");
             return;
         }
 
@@ -159,7 +166,7 @@ public class MedecinAppointmentsController {
 
         Dialog<Void> dialog = new Dialog<>();
         dialog.initOwner(owner);
-        dialog.setTitle("Gestion disponibilite");
+        dialog.setTitle("Gestion disponibilité");
         dialog.setHeaderText(null);
 
         DialogPane dialogPane = dialog.getDialogPane();
@@ -172,9 +179,9 @@ public class MedecinAppointmentsController {
         content.setStyle("-fx-padding: 22; -fx-background-color: #f8fbff;");
 
         VBox intro = new VBox(4);
-        Label title = new Label("Gestion disponibilite");
+        Label title = new Label("Gestion disponibilité");
         title.setStyle("-fx-font-size: 22px; -fx-font-weight: 800; -fx-text-fill: #0f172a;");
-        Label subtitle = new Label("Bloquez une journee ou un creneau horaire, puis retirez les blocages deja poses.");
+        Label subtitle = new Label("Bloquez une journée ou un créneau horaire, puis retirez les blocages déjà posés.");
         subtitle.setStyle("-fx-font-size: 13px; -fx-text-fill: #64748b;");
         intro.getChildren().addAll(title, subtitle);
 
@@ -190,12 +197,12 @@ public class MedecinAppointmentsController {
         datePicker.setPrefWidth(180);
 
         ToggleGroup modeGroup = new ToggleGroup();
-        RadioButton wholeDayRadio = new RadioButton("Journee entiere");
+        RadioButton wholeDayRadio = new RadioButton("Journée entière");
         wholeDayRadio.setToggleGroup(modeGroup);
         wholeDayRadio.setSelected(true);
         wholeDayRadio.getStyleClass().add("doctor-filter-label");
 
-        RadioButton slotRadio = new RadioButton("Creneau horaire");
+        RadioButton slotRadio = new RadioButton("Créneau horaire");
         slotRadio.setToggleGroup(modeGroup);
         slotRadio.getStyleClass().add("doctor-filter-label");
 
@@ -203,7 +210,7 @@ public class MedecinAppointmentsController {
         modeBox.setAlignment(Pos.CENTER_LEFT);
 
         ComboBox<String> startTimeBox = new ComboBox<>(FXCollections.observableArrayList(TIME_OPTIONS));
-        startTimeBox.setPromptText("Debut");
+        startTimeBox.setPromptText("Début");
         startTimeBox.getStyleClass().add("doctor-input");
         startTimeBox.setPrefWidth(140);
         startTimeBox.setDisable(true);
@@ -232,7 +239,7 @@ public class MedecinAppointmentsController {
         form.add(datePicker, 1, 0);
         form.add(new Label("Type"), 0, 1);
         form.add(modeBox, 1, 1);
-        form.add(new Label("Debut"), 0, 2);
+        form.add(new Label("Début"), 0, 2);
         form.add(startTimeBox, 1, 2);
         form.add(new Label("Fin"), 0, 3);
         form.add(endTimeBox, 1, 3);
@@ -244,7 +251,7 @@ public class MedecinAppointmentsController {
 
         VBox blocksCard = new VBox(12);
         blocksCard.setStyle("-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 18; -fx-padding: 18;");
-        Label blocksTitle = new Label("Blocages enregistres");
+        Label blocksTitle = new Label("Blocages enregistrés");
         blocksTitle.setStyle("-fx-font-size: 17px; -fx-font-weight: 800; -fx-text-fill: #0f172a;");
         VBox blocksContainer = new VBox(10);
         blocksContainer.setFillWidth(true);
@@ -254,7 +261,7 @@ public class MedecinAppointmentsController {
         addBlockButton.setOnAction(addEvent -> {
             LocalDate selectedDate = datePicker.getValue();
             if (selectedDate == null) {
-                showAlert(AlertType.WARNING, "Date manquante", "Veuillez selectionner une date.");
+                showAlert(AlertType.WARNING, "Date manquante", "Veuillez sélectionner une date.");
                 return;
             }
 
@@ -264,25 +271,25 @@ public class MedecinAppointmentsController {
 
             if (!wholeDay) {
                 if (startTime == null || endTime == null) {
-                    showAlert(AlertType.WARNING, "Creneau incomplet", "Veuillez choisir une heure de debut et de fin.");
+                    showAlert(AlertType.WARNING, "Créneau incomplet", "Veuillez choisir une heure de début et de fin.");
                     return;
                 }
 
                 LocalTime start = LocalTime.parse(startTime, TIME_FORMATTER);
                 LocalTime end = LocalTime.parse(endTime, TIME_FORMATTER);
                 if (!start.isBefore(end)) {
-                    showAlert(AlertType.WARNING, "Creneau invalide", "L'heure de fin doit etre apres l'heure de debut.");
+                    showAlert(AlertType.WARNING, "Créneau invalide", "L'heure de fin doit être après l'heure de début.");
                     return;
                 }
                 if (hasConflict(currentUser.getIdUsers(), selectedDate, start, end)) {
-                    showAlert(AlertType.INFORMATION, "Blocage existant", "Un blocage existe deja pour ce jour ou ce creneau.");
+                    showAlert(AlertType.INFORMATION, "Blocage existant", "Un blocage existe déjà pour ce jour ou ce créneau.");
                     return;
                 }
 
                 availabilityBlockDao.addBlock(currentUser.getIdUsers(), selectedDate, startTime, endTime, false, reasonField.getText());
             } else {
                 if (availabilityBlockDao.isWholeDayBlocked(currentUser.getIdUsers(), selectedDate)) {
-                    showAlert(AlertType.INFORMATION, "Blocage existant", "Une indisponibilite a la journee existe deja pour cette date.");
+                    showAlert(AlertType.INFORMATION, "Blocage existant", "Une indisponibilité à la journée existe déjà pour cette date.");
                     return;
                 }
 
@@ -291,7 +298,7 @@ public class MedecinAppointmentsController {
 
             reasonField.clear();
             refreshAvailabilityBlocks(blocksContainer, currentUser.getIdUsers());
-            showAlert(AlertType.INFORMATION, "Blocage ajoute", "La disponibilite a bien ete mise a jour.");
+            showAlert(AlertType.INFORMATION, "Blocage ajouté", "La disponibilité a bien été mise à jour.");
         });
 
         formCard.getChildren().addAll(form, addBlockButton);
@@ -337,17 +344,18 @@ public class MedecinAppointmentsController {
         long teleconsultations = weekAppointments.stream().filter(Appointment::isTeleconsultation).count();
 
         weekAppointmentsCountLabel.setText(String.valueOf(weekAppointments.size()));
-        weekAppointmentsMetaLabel.setText(weekAppointments.isEmpty() ? "Aucun rendez-vous cette semaine" : "Consultations planifiees");
+        weekAppointmentsMetaLabel.setText(weekAppointments.isEmpty() ? "Aucun rendez-vous cette semaine" : "Consultations planifiées");
         confirmedCountLabel.setText(String.valueOf(confirmed));
         confirmedMetaLabel.setText("Consultations valides");
         completedCountLabel.setText(String.valueOf(completed));
-        completedMetaLabel.setText("Rendez-vous clotures");
+        completedMetaLabel.setText("Rendez-vous clôturés");
         teleconsultationsCountLabel.setText(String.valueOf(teleconsultations));
-        teleconsultationsMetaLabel.setText("A distance");
+        teleconsultationsMetaLabel.setText("À distance");
         updateFilterStyles();
     }
 
     private void renderAppointments() {
+        updateFilterStyles();
         appointmentsContainer.getChildren().clear();
 
         List<Appointment> filtered = filterAppointments();
@@ -377,7 +385,7 @@ public class MedecinAppointmentsController {
             emptyState.setStyle("-fx-background-color: #f8fafc; -fx-background-radius: 14; -fx-border-color: #dbe5f0; -fx-border-radius: 14; -fx-padding: 16;");
             Label emptyTitle = new Label("Aucun blocage pour le moment");
             emptyTitle.setStyle("-fx-font-size: 15px; -fx-font-weight: 700; -fx-text-fill: #0f172a;");
-            Label emptySubtitle = new Label("Ajoute une indisponibilite pour masquer un jour ou un creneau.");
+            Label emptySubtitle = new Label("Ajoutez une indisponibilité pour masquer un jour ou un créneau.");
             emptySubtitle.setStyle("-fx-font-size: 13px; -fx-text-fill: #64748b;");
             emptySubtitle.setWrapText(true);
             emptyState.getChildren().addAll(emptyTitle, emptySubtitle);
@@ -417,10 +425,10 @@ public class MedecinAppointmentsController {
         right.setMinWidth(190);
         Label status = new Label(getDisplayStatus(appointment.getStatus()));
         status.setStyle(getStatusStyle(appointment.getStatus()));
-        Label location = new Label(appointment.isTeleconsultation() ? "Teleconsultation" : safeText(appointment.getAddress()));
+        Label location = new Label(appointment.isTeleconsultation() ? "Téléconsultation" : safeText(appointment.getAddress()));
         location.setStyle("-fx-font-size: 12px; -fx-text-fill: #475569;");
         location.setWrapText(true);
-        Button detailsButton = new Button("Voir details");
+        Button detailsButton = new Button("Voir détails");
         detailsButton.setStyle("-fx-background-color: #eff6ff; -fx-text-fill: #1d4ed8; -fx-background-radius: 10; -fx-border-color: #bfdbfe; -fx-border-radius: 10; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 8 14;");
         detailsButton.setOnAction(event -> showAppointmentDetails(appointment));
         right.getChildren().addAll(status, location, detailsButton);
@@ -438,7 +446,7 @@ public class MedecinAppointmentsController {
         left.setMinWidth(180);
         Label dateLabel = new Label(formatDate(block.getBlockDate()));
         dateLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: 800; -fx-text-fill: #0f172a;");
-        Label typeLabel = new Label(block.isWholeDay() ? "Journee entiere" : formatBlockTimeRange(block.getStartTime(), block.getEndTime()));
+        Label typeLabel = new Label(block.isWholeDay() ? "Journée entière" : formatBlockTimeRange(block.getStartTime(), block.getEndTime()));
         typeLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #2563eb; -fx-font-weight: 700;");
         left.getChildren().addAll(dateLabel, typeLabel);
 
@@ -447,7 +455,7 @@ public class MedecinAppointmentsController {
         Label reason = new Label(safeText(block.getReason()));
         reason.setStyle("-fx-font-size: 13px; -fx-text-fill: #334155;");
         reason.setWrapText(true);
-        Label meta = new Label(block.isWholeDay() ? "Blocage sur toute la journee" : "Blocage sur un creneau specifique");
+        Label meta = new Label(block.isWholeDay() ? "Blocage sur toute la journée" : "Blocage sur un créneau spécifique");
         meta.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748b;");
         center.getChildren().addAll(reason, meta);
 
@@ -472,7 +480,7 @@ public class MedecinAppointmentsController {
 
     private void showAppointmentDetails(Appointment appointment) {
         Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Details du rendez-vous");
+        dialog.setTitle("Détails du rendez-vous");
         dialog.setHeaderText(null);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
@@ -483,12 +491,12 @@ public class MedecinAppointmentsController {
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;");
 
         Label lines = new Label(
-                "Date: " + formatDate(appointment.getDate()) + "\n" +
-                "Heure: " + formatTime(appointment.getTime()) + "\n" +
-                "Statut: " + getDisplayStatus(appointment.getStatus()) + "\n" +
-                "Type: " + (appointment.isTeleconsultation() ? "Teleconsultation" : "Cabinet") + "\n" +
-                "Motif: " + safeText(appointment.getDetails()) + "\n" +
-                "Lieu: " + safeText(appointment.getAddress())
+                "Date : " + formatDate(appointment.getDate()) + "\n" +
+                "Heure : " + formatTime(appointment.getTime()) + "\n" +
+                "Statut : " + getDisplayStatus(appointment.getStatus()) + "\n" +
+                "Type : " + (appointment.isTeleconsultation() ? "Téléconsultation" : "Cabinet") + "\n" +
+                "Motif : " + safeText(appointment.getDetails()) + "\n" +
+                "Lieu : " + safeText(appointment.getAddress())
         );
         lines.setStyle("-fx-font-size: 13px; -fx-text-fill: #334155; -fx-line-spacing: 4;");
         lines.setWrapText(true);
@@ -584,7 +592,7 @@ public class MedecinAppointmentsController {
 
     private String formatBlockTimeRange(String startTime, String endTime) {
         if (startTime == null || endTime == null || startTime.isBlank() || endTime.isBlank()) {
-            return "Creneau horaire";
+            return "Créneau horaire";
         }
         return startTime.trim() + " - " + endTime.trim();
     }
@@ -601,12 +609,12 @@ public class MedecinAppointmentsController {
 
     private String getDisplayStatus(String status) {
         if ("ANNULE".equalsIgnoreCase(status)) {
-            return "Annule";
+            return "Annulé";
         }
         if ("TERMINE".equalsIgnoreCase(status)) {
-            return "Termine";
+            return "Terminé";
         }
-        return "Confirme";
+        return "Confirmé";
     }
 
     private static List<String> buildTimeOptions() {
