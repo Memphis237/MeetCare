@@ -93,6 +93,41 @@ public class DoctorDao {
         }
     }
 
+    public void updateProfile(int userId, String speciality, String address, String sector,
+                              String consultationPrice, String experience, String biography,
+                              boolean acceptsVitale, boolean teleconsultation) {
+        ensureDoctorProfileForUser(userId);
+
+        String sql = """
+                UPDATE doctors
+                SET speciality = ?,
+                    address = ?,
+                    sector = ?,
+                    consultation_price = ?,
+                    experience = ?,
+                    biography = ?,
+                    accepts_vitale = ?,
+                    teleconsultation = ?
+                WHERE id_users = ?
+                """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, normalizeValue(speciality, "Medecine generale"));
+            stmt.setString(2, normalizeValue(address, ""));
+            stmt.setString(3, normalizeValue(sector, "Secteur 1"));
+            setOptionalDecimal(stmt, 4, consultationPrice);
+            setOptionalInteger(stmt, 5, experience);
+            stmt.setString(6, normalizeValue(biography, ""));
+            stmt.setBoolean(7, acceptsVitale);
+            stmt.setBoolean(8, teleconsultation);
+            stmt.setInt(9, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("Impossible de mettre a jour le profil medecin.", e);
+        }
+    }
+
     public List<Doctor> searchDoctors(String keyword, String city) {
         List<Doctor> doctors = new ArrayList<>();
 
@@ -203,6 +238,36 @@ public class DoctorDao {
         }
 
         ensureDoctorIdForUser(userId);
+    }
+
+    private void setOptionalDecimal(PreparedStatement stmt, int index, String value) throws SQLException {
+        if (value == null || value.isBlank()) {
+            stmt.setNull(index, Types.DECIMAL);
+            return;
+        }
+
+        try {
+            stmt.setDouble(index, Double.parseDouble(value.trim().replace(',', '.')));
+        } catch (NumberFormatException ex) {
+            stmt.setNull(index, Types.DECIMAL);
+        }
+    }
+
+    private void setOptionalInteger(PreparedStatement stmt, int index, String value) throws SQLException {
+        if (value == null || value.isBlank()) {
+            stmt.setNull(index, Types.INTEGER);
+            return;
+        }
+
+        try {
+            stmt.setInt(index, Integer.parseInt(value.trim()));
+        } catch (NumberFormatException ex) {
+            stmt.setNull(index, Types.INTEGER);
+        }
+    }
+
+    private String normalizeValue(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value.trim();
     }
 
     public void saveVerificationDecision(int doctorId, int adminId, String decision, String comment) {

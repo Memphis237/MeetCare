@@ -338,6 +338,16 @@ public class UsersDao {
         }
     }
 
+    public void deleteById(int userId) {
+        String sql = "DELETE FROM users WHERE id_users = ?";
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la suppression du compte.", e);
+        }
+    }
+
     private Users mapUser(ResultSet resultSet) throws SQLException {
         Users user = new Users();
         user.setIdUsers(resultSet.getInt("id_users"));

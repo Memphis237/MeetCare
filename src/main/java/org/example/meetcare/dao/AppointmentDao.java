@@ -116,6 +116,57 @@ public class AppointmentDao {
         return appointments;
     }
 
+    public List<Appointment> findByDoctorUserId(int userId) {
+        String sql = """
+                SELECT a.id_appointments,
+                       a.appointment_date,
+                       a.appointment_time,
+                       a.status,
+                       a.notes,
+                       a.id_users,
+                       d.teleconsultation,
+                       COALESCE(d.address, doctor_user.address, '') AS doctor_address,
+                       d.speciality,
+                       doctor_user.username AS doctor_username,
+                       patient_user.username AS patient_username,
+                       patient_user.prenom AS patient_prenom,
+                       patient_user.city AS patient_city
+                FROM appointments a
+                JOIN doctors d ON a.id_doctors = d.id_doctors
+                JOIN users doctor_user ON d.id_users = doctor_user.id_users
+                JOIN users patient_user ON a.id_users = patient_user.id_users
+                WHERE doctor_user.id_users = ?
+                ORDER BY a.appointment_date DESC, a.appointment_time DESC
+                """;
+
+        List<Appointment> appointments = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment(
+                            rs.getInt("id_appointments"),
+                            "Dr. " + safeText(rs.getString("doctor_username")),
+                            rs.getString("speciality"),
+                            rs.getString("patient_city"),
+                            rs.getString("doctor_address"),
+                            rs.getString("status"),
+                            rs.getString("notes"),
+                            rs.getBoolean("teleconsultation"),
+                            rs.getDate("appointment_date").toLocalDate(),
+                            rs.getTime("appointment_time").toLocalTime().format(TIME_FORMATTER),
+                            buildDisplayName(rs.getString("patient_prenom"), rs.getString("patient_username"))
+                    );
+                    appointments.add(appointment);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Impossible de charger l'agenda du medecin.", ex);
+        }
+        return appointments;
+    }
+
     public void updateStatus(int appointmentId, String status) {
         String sql = "UPDATE appointments SET status = ? WHERE id_appointments = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -126,5 +177,24 @@ public class AppointmentDao {
         } catch (SQLException ex) {
             throw new IllegalStateException("Impossible de mettre a jour le rendez-vous.", ex);
         }
+    }
+
+    private String buildDisplayName(String prenom, String username) {
+        String first = safeText(prenom);
+        String second = safeText(username);
+        if ("-".equals(first) && "-".equals(second)) {
+            return "-";
+        }
+        if ("-".equals(first)) {
+            return second;
+        }
+        if ("-".equals(second)) {
+            return first;
+        }
+        return first + " " + second;
+    }
+
+    private String safeText(String value) {
+        return value == null || value.isBlank() ? "-" : value.trim();
     }
 }

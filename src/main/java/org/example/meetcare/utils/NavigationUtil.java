@@ -128,7 +128,7 @@ public class NavigationUtil {
 
     public static void openMedecinAgenda(Event event) {
         AppSession.setSidebarRoute("appointments");
-        navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Agenda");
+        navigateTo(event, "/view/myAppointmentsMedecin.fxml", PATIENT_WIDTH, 720, "MeetCare - Agenda");
     }
 
     public static void openMedecinValidation(Event event) {
@@ -181,7 +181,7 @@ public class NavigationUtil {
 
     public static void openMedecinSettings(Event event) {
         AppSession.setSidebarRoute("settings");
-        navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
+        navigateTo(event, "/view/settingsMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
     }
 
     private static String routeFromNavigation(String fxmlPath, String title) {

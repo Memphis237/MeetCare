@@ -141,6 +141,97 @@
     -fx-text-fill: #475569;
 }
 
+.doctor-dashboard-hero {
+    -fx-background-color: linear-gradient(to right, #0f172a, #134e8f 52%, #0f766e);
+    -fx-background-radius: 26;
+    -fx-padding: 24 26 24 26;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.16), 24, 0, 0, 10);
+}
+
+.doctor-dashboard-hero-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+    -fx-text-fill: white;
+}
+
+.doctor-dashboard-hero-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255,255,255,0.84);
+}
+
+.doctor-appointment-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #dbe5f0;
+    -fx-border-radius: 20;
+    -fx-padding: 18 20 18 20;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 16, 0, 0, 6);
+}
+
+.doctor-appointment-time {
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #1d4ed8;
+}
+
+.doctor-appointment-day {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-font-weight: 700;
+}
+
+.doctor-appointment-name {
+    -fx-font-size: 17px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+}
+
+.doctor-appointment-meta {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.doctor-appointment-details {
+    -fx-font-size: 13px;
+    -fx-text-fill: #334155;
+}
+
+.doctor-appointment-location {
+    -fx-font-size: 12px;
+    -fx-text-fill: #475569;
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 7 10;
+}
+
+.doctor-status-pill {
+    -fx-background-radius: 999;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-padding: 6 12;
+}
+
+.doctor-empty-state {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 18;
+    -fx-border-color: #dbe5f0;
+    -fx-border-radius: 18;
+    -fx-padding: 22;
+}
+
+.doctor-empty-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+}
+
+.doctor-empty-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
 .doctor-preview-placeholder {
     -fx-background-color: rgba(255,255,255,0.96);
     -fx-background-radius: 16;

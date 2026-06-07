@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class Appointment {
     private final int id;
     private final String doctorName;
+    private final String patientName;
     private final String speciality;
     private final String city;
     private final String address;
@@ -16,8 +17,14 @@ public class Appointment {
 
     public Appointment(int id, String doctorName, String speciality, String city, String address, String status,
                        String details, boolean teleconsultation, LocalDate date, String time) {
+        this(id, doctorName, speciality, city, address, status, details, teleconsultation, date, time, null);
+    }
+
+    public Appointment(int id, String doctorName, String speciality, String city, String address, String status,
+                       String details, boolean teleconsultation, LocalDate date, String time, String patientName) {
         this.id = id;
         this.doctorName = doctorName;
+        this.patientName = patientName;
         this.speciality = speciality;
         this.city = city;
         this.address = address;
@@ -34,6 +41,10 @@ public class Appointment {
 
     public String getDoctorName() {
         return doctorName;
+    }
+
+    public String getPatientName() {
+        return patientName;
     }
 
     public String getSpeciality() {
