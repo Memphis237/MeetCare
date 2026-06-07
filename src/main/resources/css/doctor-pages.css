@@ -251,6 +251,129 @@
     -fx-wrap-text: true;
 }
 
+.doctor-table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.doctor-table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.doctor-table-view .column-header,
+.doctor-table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.doctor-table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 52px;
+}
+
+.doctor-table-view .table-row-cell:selected {
+    -fx-background-color: #dbeafe;
+}
+
+.doctor-table-view .table-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #0f172a;
+    -fx-padding: 0 12 0 12;
+}
+
+.doctor-metric-card {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 16;
+    -fx-border-color: #dbe5f0;
+    -fx-border-radius: 16;
+    -fx-padding: 16;
+}
+
+.doctor-metric-title {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-font-weight: 600;
+}
+
+.doctor-metric-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+}
+
+.doctor-patient-card {
+    -fx-background-color: #f0fbf4;
+    -fx-background-radius: 16;
+    -fx-border-color: #d7e7dc;
+    -fx-border-radius: 16;
+    -fx-padding: 14 16 14 16;
+    -fx-cursor: hand;
+}
+
+.doctor-patient-card:hover {
+    -fx-background-color: #e8f9ee;
+}
+
+.doctor-patient-card-active {
+    -fx-background-color: #e9f8ef;
+    -fx-border-color: #bbf7d0;
+}
+
+.doctor-patient-badge {
+    -fx-min-width: 48;
+    -fx-min-height: 48;
+    -fx-background-radius: 24;
+    -fx-background-color: #10b981;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-alignment: center;
+}
+
+.doctor-patient-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+}
+
+.doctor-patient-meta {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.doctor-history-card {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 16;
+    -fx-border-color: #dbe5f0;
+    -fx-border-radius: 16;
+    -fx-padding: 16;
+}
+
+.doctor-history-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+}
+
+.doctor-history-meta {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.doctor-load-button {
+    -fx-background-color: white;
+    -fx-border-color: #bfdbfe;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #1d4ed8;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 12;
+}
+
 .document-card {
     -fx-cursor: hand;
 }

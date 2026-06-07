@@ -137,7 +137,8 @@ public class NavigationUtil {
     }
 
     public static void openMedecinPatients(Event event) {
-        openMedecinValidation(event);
+        AppSession.setSidebarRoute("search");
+        navigateTo(event, "/view/patientsMedecin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Recherche patients");
     }
 
     public static void openMedecinAvailability(Event event) {

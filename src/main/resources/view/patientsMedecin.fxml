@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.PatientsMedecinController"
+            prefWidth="1200" prefHeight="800"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #EBF3FB;">
+
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox spacing="22" style="-fx-padding: 28; -fx-background-color: #EBF3FB;">
+                <VBox spacing="6">
+                    <Label text="Mes patients" styleClass="doctor-page-title"/>
+                    <Label text="Consultez les dossiers et l'historique de vos patients" styleClass="doctor-page-subtitle"/>
+                </VBox>
+
+                <HBox spacing="18" alignment="TOP_LEFT">
+                    <VBox spacing="18" prefWidth="350" maxWidth="350">
+                        <VBox spacing="10" styleClass="doctor-filter-card">
+                            <Label text="Rechercher un patient" styleClass="doctor-section-title"/>
+                            <TextField fx:id="searchField"
+                                       promptText="Nom, email, ville ou téléphone..."
+                                       onAction="#handleSearch"
+                                       styleClass="doctor-input"/>
+                        </VBox>
+
+                        <VBox spacing="12" styleClass="doctor-filter-card">
+                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                <Label text="Patients" styleClass="doctor-section-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="filteredCountLabel" text="0 patient(s)" styleClass="doctor-filter-count"/>
+                            </HBox>
+                            <VBox fx:id="patientsListContainer" spacing="10"/>
+                        </VBox>
+                    </VBox>
+
+                    <VBox spacing="16" HBox.hgrow="ALWAYS">
+                        <VBox spacing="16" styleClass="doctor-preview-pane" VBox.vgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="14">
+                                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                    <Label fx:id="selectedPatientNameLabel" text="Sélectionne un patient" styleClass="doctor-page-title"/>
+                                    <Label fx:id="selectedPatientMetaLabel" text="Choisis un patient dans la colonne de gauche pour charger son dossier." wrapText="true" styleClass="doctor-page-subtitle"/>
+                                </VBox>
+                                <Label fx:id="selectedPatientBadgeLabel" text="0" style="-fx-min-width: 72; -fx-min-height: 72; -fx-background-radius: 36; -fx-background-color: #10b981; -fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: 800; -fx-alignment: center; -fx-background-insets: 0;"/>
+                            </HBox>
+
+                            <HBox spacing="12">
+                                <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card">
+                                    <Label text="Total RDV" styleClass="doctor-metric-title"/>
+                                    <Label fx:id="totalAppointmentsValueLabel" text="0" styleClass="doctor-metric-value blue-value"/>
+                                </VBox>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card">
+                                    <Label text="Confirmés" styleClass="doctor-metric-title"/>
+                                    <Label fx:id="confirmedAppointmentsValueLabel" text="0" styleClass="doctor-metric-value green-value"/>
+                                </VBox>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card">
+                                    <Label text="Terminés" styleClass="doctor-metric-title"/>
+                                    <Label fx:id="completedAppointmentsValueLabel" text="0" styleClass="doctor-metric-value purple-value"/>
+                                </VBox>
+                            </HBox>
+
+                            <VBox spacing="12" VBox.vgrow="ALWAYS">
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label text="Historique des consultations" styleClass="doctor-section-title"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="dossierStatusLabel" text="Aucun dossier chargé" styleClass="doctor-filter-count"/>
+                                </HBox>
+                                <VBox fx:id="historyContainer" spacing="12" VBox.vgrow="ALWAYS"/>
+                            </VBox>
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

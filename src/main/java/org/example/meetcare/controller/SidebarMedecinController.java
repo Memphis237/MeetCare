@@ -168,7 +168,7 @@ public class SidebarMedecinController {
         if (blockIfPending()) {
             return;
         }
-        NavigationUtil.openMedecinHome(event);
+        NavigationUtil.openMedecinPatients(event);
     }
 
     @FXML
