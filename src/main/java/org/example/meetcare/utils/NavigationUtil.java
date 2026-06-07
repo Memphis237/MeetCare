@@ -93,7 +93,7 @@ public class NavigationUtil {
 
     public static void openAdminAppointments(Event event) {
         AppSession.setSidebarRoute("appointments");
-        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Médecins");
+        navigateTo(event, "/view/doctorsAdmin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Médecins");
     }
 
     public static void openAdminDocuments(Event event) {
@@ -189,8 +189,14 @@ public class NavigationUtil {
         String titleValue = title == null ? "" : title.toLowerCase();
         String pathValue = fxmlPath == null ? "" : fxmlPath.toLowerCase();
 
+        if (titleValue.contains("rendez-vous")) {
+            return "documents";
+        }
+        if (titleValue.contains("médecins") || titleValue.contains("medecins")) {
+            return "appointments";
+        }
         if (pathValue.contains("message")) {
-            return titleValue.contains("messagerie") ? "messages" : "messages";
+            return "messages";
         }
         if (pathValue.contains("settings")) {
             return "settings";
@@ -198,23 +204,17 @@ public class NavigationUtil {
         if (pathValue.contains("validation")) {
             return "validation";
         }
-        if (pathValue.contains("invoice")) {
-            return "invoices";
+        if (pathValue.contains("appointment") || pathValue.contains("myappointments")) {
+            return "appointments";
         }
         if (pathValue.contains("documents")) {
             return "documents";
         }
-        if (pathValue.contains("appointment") || pathValue.contains("myappointments")) {
-            return "appointments";
+        if (pathValue.contains("invoice")) {
+            return "invoices";
         }
         if (titleValue.contains("utilisateurs") || titleValue.contains("recherche")) {
             return "search";
-        }
-        if (titleValue.contains("médecins") || titleValue.contains("medecins")) {
-            return "appointments";
-        }
-        if (titleValue.contains("rendez-vous")) {
-            return "documents";
         }
         if (titleValue.contains("statistiques")) {
             return "stats";

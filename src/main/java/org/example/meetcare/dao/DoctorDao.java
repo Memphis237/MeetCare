@@ -1,6 +1,10 @@
 package org.example.meetcare.dao;
 
 import org.example.meetcare.model.Doctor;
+import org.example.meetcare.model.DoctorAdminEntry;
+import org.example.meetcare.model.AccountStatus;
+import org.example.meetcare.model.Role;
+import org.example.meetcare.model.Users;
 import java.util.Optional;
 import org.example.meetcare.utils.DatabaseConnection;
 
@@ -270,6 +274,98 @@ public class DoctorDao {
         return value == null || value.isBlank() ? fallback : value.trim();
     }
 
+    public List<DoctorAdminEntry> findAllAdminEntries() {
+        return findAdminEntries("");
+    }
+
+    public List<DoctorAdminEntry> findAdminEntries(String query) {
+        ensureDoctorProfilesForMedicalUsers();
+
+        String sql = """
+                SELECT u.id_users,
+                       COALESCE(d.id_doctors, 0) AS id_doctors,
+                       u.prenom,
+                       u.username,
+                       u.email,
+                       u.phone,
+                       u.city,
+                       u.address,
+                       COALESCE(d.speciality, 'Médecine générale') AS speciality,
+                       COALESCE(d.address, u.address, '') AS doctor_address,
+                       d.experience,
+                       d.consultation_price,
+                       d.biography,
+                       d.sector,
+                       COALESCE(d.teleconsultation, FALSE) AS teleconsultation,
+                       COALESCE(d.accepts_vitale, FALSE) AS accepts_vitale,
+                       COALESCE(d.public_profile_completed, FALSE) AS public_profile_completed,
+                       COALESCE(u.account_status, 'PENDING') AS account_status
+                FROM users u
+                LEFT JOIN doctors d ON d.id_users = u.id_users
+                WHERE u.role = 'MEDECIN'
+                  AND (
+                        ? = ''
+                        OR LOWER(u.username) LIKE LOWER(?)
+                        OR LOWER(u.prenom) LIKE LOWER(?)
+                        OR LOWER(u.email) LIKE LOWER(?)
+                        OR LOWER(COALESCE(d.speciality, '')) LIKE LOWER(?)
+                        OR LOWER(COALESCE(u.city, '')) LIKE LOWER(?)
+                  )
+                ORDER BY
+                    CASE COALESCE(u.account_status, 'PENDING')
+                        WHEN 'PENDING' THEN 0
+                        WHEN 'VERIFIED' THEN 1
+                        WHEN 'REJECTED' THEN 2
+                        WHEN 'SUSPENDED' THEN 3
+                        ELSE 4
+                    END,
+                    u.prenom,
+                    u.username
+                """;
+
+        String normalizedQuery = query == null ? "" : query.trim();
+        String like = "%" + normalizedQuery + "%";
+
+        List<DoctorAdminEntry> entries = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, normalizedQuery);
+            stmt.setString(2, like);
+            stmt.setString(3, like);
+            stmt.setString(4, like);
+            stmt.setString(5, like);
+            stmt.setString(6, like);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    entries.add(new DoctorAdminEntry(
+                            rs.getInt("id_users"),
+                            rs.getInt("id_doctors"),
+                            rs.getString("prenom"),
+                            rs.getString("username"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("city"),
+                            rs.getString("address"),
+                            rs.getString("speciality"),
+                            rs.getString("doctor_address"),
+                            getInteger(rs, "experience"),
+                            getDouble(rs, "consultation_price"),
+                            rs.getString("biography"),
+                            rs.getString("sector"),
+                            rs.getBoolean("teleconsultation"),
+                            rs.getBoolean("accepts_vitale"),
+                            rs.getBoolean("public_profile_completed"),
+                            AccountStatus.fromDatabaseValue(rs.getString("account_status"))
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Impossible de charger les medecins.", e);
+        }
+        return entries;
+    }
+
     public void saveVerificationDecision(int doctorId, int adminId, String decision, String comment) {
         String sql = "INSERT INTO doctor_verifications (decision, comment, id_doctors, id_admin) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -320,5 +416,15 @@ public class DoctorDao {
         } catch (SQLException e) {
             throw new IllegalStateException("Impossible de mettre a jour le profil public.", e);
         }
+    }
+
+    private Integer getInteger(ResultSet rs, String column) throws SQLException {
+        int value = rs.getInt(column);
+        return rs.wasNull() ? null : value;
+    }
+
+    private Double getDouble(ResultSet rs, String column) throws SQLException {
+        double value = rs.getDouble(column);
+        return rs.wasNull() ? null : value;
     }
 }

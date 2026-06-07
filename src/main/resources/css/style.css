@@ -256,3 +256,109 @@
     -fx-font-size: 13px;
     -fx-text-fill: #64748b;
 }
+
+/* Admin doctors */
+.doctors-admin-search {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-color: #dbe5ef;
+    -fx-border-radius: 16;
+    -fx-padding: 12 16 12 16;
+    -fx-font-size: 14px;
+}
+
+.doctors-admin-filter-card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-color: #dbe5ef;
+    -fx-border-radius: 18;
+    -fx-padding: 22;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.06), 12, 0, 0, 2);
+}
+
+.doctors-admin-list {
+    -fx-spacing: 16;
+}
+
+.doctor-admin-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #e4eaf1;
+    -fx-border-radius: 20;
+    -fx-padding: 22;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.06), 12, 0, 0, 2);
+}
+
+.doctor-admin-avatar {
+    -fx-background-color: #0ea5e9;
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-min-width: 60;
+    -fx-min-height: 60;
+    -fx-alignment: center;
+    -fx-background-radius: 30;
+}
+
+.doctor-admin-name {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.doctor-admin-speciality {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+}
+
+.doctor-admin-bio {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.doctor-admin-meta {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.doctor-admin-status-valid {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #15803d;
+    -fx-background-radius: 999;
+    -fx-padding: 8 14 8 14;
+    -fx-font-weight: bold;
+}
+
+.doctor-admin-status-pending {
+    -fx-background-color: #fef3c7;
+    -fx-text-fill: #b45309;
+    -fx-background-radius: 999;
+    -fx-padding: 8 14 8 14;
+    -fx-font-weight: bold;
+}
+
+.doctor-admin-status-rejected {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #b91c1c;
+    -fx-background-radius: 999;
+    -fx-padding: 8 14 8 14;
+    -fx-font-weight: bold;
+}
+
+.doctor-admin-action-validate {
+    -fx-background-color: #16a34a;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-padding: 10 16 10 16;
+    -fx-font-weight: bold;
+}
+
+.doctor-admin-action-reject {
+    -fx-background-color: white;
+    -fx-text-fill: #dc2626;
+    -fx-border-color: #fca5a5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 10 16 10 16;
+    -fx-font-weight: bold;
+}
