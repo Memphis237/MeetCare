@@ -2,6 +2,7 @@ C:\wamp64\www\MeetCare\src\main\java\module-info.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AbstractChatController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AbstractMessagingController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AppointmentBookingPatientController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AppointmentsAdminController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DashboardController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DocumentsMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DocumentsPatientController.java
@@ -17,6 +18,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\MyAppointme
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\PatientsMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\RegisterController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SearchDoctorController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SettingsAdminController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SettingsMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SettingsPatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SidebarAdminController.java

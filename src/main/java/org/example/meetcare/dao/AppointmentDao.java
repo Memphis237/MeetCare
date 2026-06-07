@@ -6,9 +6,9 @@ import org.example.meetcare.utils.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,12 +18,18 @@ import java.util.List;
 
 public class AppointmentDao {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private static volatile boolean schemaChecked;
+
     private final AvailabilityBlockDao availabilityBlockDao = new AvailabilityBlockDao();
+
+    public AppointmentDao() {
+        ensureSchema();
+    }
 
     public int insertAppointment(int doctorId, int userId, LocalDate date, String time, String notes) {
         String sql = """
-                INSERT INTO appointments (appointment_date, appointment_time, status, notes, id_doctors, id_users)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO appointments (appointment_date, appointment_time, status, urgency, notes, id_doctors, id_users)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -31,9 +37,10 @@ public class AppointmentDao {
             stmt.setDate(1, Date.valueOf(date));
             stmt.setTime(2, Time.valueOf(LocalTime.parse(time)));
             stmt.setString(3, "CONFIRME");
-            stmt.setString(4, notes);
-            stmt.setInt(5, doctorId);
-            stmt.setInt(6, userId);
+            stmt.setString(4, "NORMAL");
+            stmt.setString(5, notes);
+            stmt.setInt(6, doctorId);
+            stmt.setInt(7, userId);
             stmt.executeUpdate();
 
             try (ResultSet keys = stmt.getGeneratedKeys()) {
@@ -85,6 +92,7 @@ public class AppointmentDao {
                        a.appointment_date,
                        a.appointment_time,
                        a.status,
+                       COALESCE(a.urgency, 'NORMAL') AS urgency,
                        a.notes,
                        a.id_users,
                        d.teleconsultation,
@@ -107,11 +115,12 @@ public class AppointmentDao {
                 while (rs.next()) {
                     Appointment appointment = new Appointment(
                             rs.getInt("id_appointments"),
-                            "Dr. " + rs.getString("doctor_name"),
+                            "Dr. " + safeText(rs.getString("doctor_name")),
                             rs.getString("speciality"),
                             rs.getString("doctor_city"),
                             rs.getString("doctor_address"),
                             rs.getString("status"),
+                            rs.getString("urgency"),
                             rs.getString("notes"),
                             rs.getBoolean("teleconsultation"),
                             rs.getDate("appointment_date").toLocalDate(),
@@ -132,12 +141,14 @@ public class AppointmentDao {
                        a.appointment_date,
                        a.appointment_time,
                        a.status,
+                       COALESCE(a.urgency, 'NORMAL') AS urgency,
                        a.notes,
                        a.id_users,
                        d.teleconsultation,
                        COALESCE(d.address, doctor_user.address, '') AS doctor_address,
                        d.speciality,
                        doctor_user.username AS doctor_username,
+                       doctor_user.prenom AS doctor_prenom,
                        patient_user.username AS patient_username,
                        patient_user.prenom AS patient_prenom,
                        patient_user.city AS patient_city
@@ -157,11 +168,12 @@ public class AppointmentDao {
                 while (rs.next()) {
                     Appointment appointment = new Appointment(
                             rs.getInt("id_appointments"),
-                            "Dr. " + safeText(rs.getString("doctor_username")),
+                            buildDoctorLabel(rs.getString("doctor_prenom"), rs.getString("doctor_username")),
                             rs.getString("speciality"),
                             rs.getString("patient_city"),
                             rs.getString("doctor_address"),
                             rs.getString("status"),
+                            rs.getString("urgency"),
                             rs.getString("notes"),
                             rs.getBoolean("teleconsultation"),
                             rs.getDate("appointment_date").toLocalDate(),
@@ -177,15 +189,117 @@ public class AppointmentDao {
         return appointments;
     }
 
+    public List<Appointment> findAllAppointments() {
+        String sql = """
+                SELECT a.id_appointments,
+                       a.appointment_date,
+                       a.appointment_time,
+                       a.status,
+                       COALESCE(a.urgency, 'NORMAL') AS urgency,
+                       a.notes,
+                       a.id_users,
+                       d.teleconsultation,
+                       COALESCE(d.address, doctor_user.address, '') AS doctor_address,
+                       d.speciality,
+                       doctor_user.username AS doctor_username,
+                       doctor_user.prenom AS doctor_prenom,
+                       patient_user.username AS patient_username,
+                       patient_user.prenom AS patient_prenom,
+                       patient_user.city AS patient_city
+                FROM appointments a
+                JOIN doctors d ON a.id_doctors = d.id_doctors
+                JOIN users doctor_user ON d.id_users = doctor_user.id_users
+                JOIN users patient_user ON a.id_users = patient_user.id_users
+                ORDER BY a.appointment_date ASC, a.appointment_time ASC
+                """;
+
+        List<Appointment> appointments = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Appointment appointment = new Appointment(
+                        rs.getInt("id_appointments"),
+                        buildDoctorLabel(rs.getString("doctor_prenom"), rs.getString("doctor_username")),
+                        rs.getString("speciality"),
+                        rs.getString("patient_city"),
+                        rs.getString("doctor_address"),
+                        rs.getString("status"),
+                        rs.getString("urgency"),
+                        rs.getString("notes"),
+                        rs.getBoolean("teleconsultation"),
+                        rs.getDate("appointment_date").toLocalDate(),
+                        rs.getTime("appointment_time").toLocalTime().format(TIME_FORMATTER),
+                        buildDisplayName(rs.getString("patient_prenom"), rs.getString("patient_username"))
+                );
+                appointments.add(appointment);
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Impossible de charger tous les rendez-vous.", ex);
+        }
+        return appointments;
+    }
+
     public void updateStatus(int appointmentId, String status) {
         String sql = "UPDATE appointments SET status = ? WHERE id_appointments = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, status);
+            stmt.setString(1, normalizeStatus(status));
             stmt.setInt(2, appointmentId);
             stmt.executeUpdate();
         } catch (SQLException ex) {
             throw new IllegalStateException("Impossible de mettre a jour le rendez-vous.", ex);
+        }
+    }
+
+    public void updateStatusAndUrgency(int appointmentId, String status, String urgency) {
+        String sql = """
+                UPDATE appointments
+                SET status = ?, urgency = ?
+                WHERE id_appointments = ?
+                """;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, normalizeStatus(status));
+            stmt.setString(2, normalizeUrgency(urgency));
+            stmt.setInt(3, appointmentId);
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Impossible de mettre a jour le rendez-vous.", ex);
+        }
+    }
+
+    private void ensureSchema() {
+        if (schemaChecked) {
+            return;
+        }
+
+        synchronized (AppointmentDao.class) {
+            if (schemaChecked) {
+                return;
+            }
+
+            String sql = """
+                    SELECT COUNT(*)
+                    FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'appointments'
+                      AND COLUMN_NAME = 'urgency'
+                    """;
+
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql);
+                 ResultSet rs = stmt.executeQuery()) {
+                boolean hasUrgencyColumn = rs.next() && rs.getInt(1) > 0;
+                if (!hasUrgencyColumn) {
+                    try (Statement alter = conn.createStatement()) {
+                        alter.executeUpdate("ALTER TABLE appointments ADD COLUMN urgency VARCHAR(20) NOT NULL DEFAULT 'NORMAL' AFTER status");
+                    }
+                }
+                schemaChecked = true;
+            } catch (SQLException ex) {
+                throw new IllegalStateException("Impossible de verifier la structure des rendez-vous.", ex);
+            }
         }
     }
 
@@ -202,6 +316,30 @@ public class AppointmentDao {
             return first;
         }
         return first + " " + second;
+    }
+
+    private String buildDoctorLabel(String prenom, String username) {
+        String displayName = buildDisplayName(prenom, username);
+        return "-".equals(displayName) ? "Dr." : "Dr. " + displayName;
+    }
+
+    private String normalizeStatus(String status) {
+        if (status == null || status.isBlank()) {
+            return "CONFIRME";
+        }
+        return status.trim().toUpperCase();
+    }
+
+    private String normalizeUrgency(String urgency) {
+        if (urgency == null || urgency.isBlank()) {
+            return "NORMAL";
+        }
+
+        String normalized = urgency.trim().toUpperCase();
+        return switch (normalized) {
+            case "NORMAL", "URGENT", "ELEVEE", "CRITIQUE" -> normalized;
+            default -> "NORMAL";
+        };
     }
 
     private String safeText(String value) {

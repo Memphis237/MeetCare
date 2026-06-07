@@ -88,17 +88,17 @@ public class NavigationUtil {
 
     public static void openAdminSearch(Event event) {
         AppSession.setSidebarRoute("search");
-        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Recherche");
+        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Utilisateurs");
     }
 
     public static void openAdminAppointments(Event event) {
         AppSession.setSidebarRoute("appointments");
-        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Rendez-vous");
+        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Médecins");
     }
 
     public static void openAdminDocuments(Event event) {
         AppSession.setSidebarRoute("documents");
-        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Documents");
+        navigateTo(event, "/view/appointmentsAdmin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Rendez-vous");
     }
 
     public static void openAdminInvoices(Event event) {
@@ -118,7 +118,7 @@ public class NavigationUtil {
 
     public static void openAdminSettings(Event event) {
         AppSession.setSidebarRoute("settings");
-        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
+        navigateTo(event, "/view/settingsAdmin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
     }
 
     public static void openMedecinHome(Event event) {
@@ -207,8 +207,14 @@ public class NavigationUtil {
         if (pathValue.contains("appointment") || pathValue.contains("myappointments")) {
             return "appointments";
         }
-        if (titleValue.contains("recherche")) {
+        if (titleValue.contains("utilisateurs") || titleValue.contains("recherche")) {
             return "search";
+        }
+        if (titleValue.contains("médecins") || titleValue.contains("medecins")) {
+            return "appointments";
+        }
+        if (titleValue.contains("rendez-vous")) {
+            return "documents";
         }
         if (titleValue.contains("statistiques")) {
             return "stats";

@@ -59,6 +59,7 @@ CREATE TABLE appointments (
     appointment_date DATE NOT NULL,
     appointment_time TIME NOT NULL,
     status VARCHAR(50),
+    urgency VARCHAR(20) NOT NULL DEFAULT 'NORMAL',
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     id_doctors INT,

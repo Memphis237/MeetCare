@@ -57,6 +57,7 @@ CREATE TABLE appointments (
                               appointment_date DATE NOT NULL,
                               appointment_time TIME NOT NULL,
                               status ENUM('PENDING','CONFIRMED','CANCELLED','COMPLETED') DEFAULT 'PENDING',
+                              urgency VARCHAR(20) NOT NULL DEFAULT 'NORMAL',
                               notes TEXT,
                               completed_at DATETIME,
                               date_ TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

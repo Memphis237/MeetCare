@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.HBox?>
@@ -42,22 +41,17 @@
 
         <HBox alignment="CENTER_LEFT" onMouseClicked="#handleSearchDoctor" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔍" />
-            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rechercher" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Utilisateurs" />
         </HBox>
 
         <HBox alignment="CENTER_LEFT" onMouseClicked="#handleAppointments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📅" />
-            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Mes rendez-vous" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Médecins" />
         </HBox>
 
         <HBox alignment="CENTER_LEFT" onMouseClicked="#handleDocuments" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="📄" />
-            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Documents" />
-        </HBox>
-
-        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleInvoices" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
-            <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="💲" />
-            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Factures" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rendez-vous" />
         </HBox>
 
         <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStats" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">

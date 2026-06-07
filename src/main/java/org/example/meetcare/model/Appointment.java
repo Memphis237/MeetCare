@@ -10,6 +10,7 @@ public class Appointment {
     private final String city;
     private final String address;
     private String status;
+    private String urgency;
     private final String details;
     private final boolean teleconsultation;
     private final LocalDate date;
@@ -17,11 +18,22 @@ public class Appointment {
 
     public Appointment(int id, String doctorName, String speciality, String city, String address, String status,
                        String details, boolean teleconsultation, LocalDate date, String time) {
-        this(id, doctorName, speciality, city, address, status, details, teleconsultation, date, time, null);
+        this(id, doctorName, speciality, city, address, status, "NORMAL", details, teleconsultation, date, time, null);
     }
 
     public Appointment(int id, String doctorName, String speciality, String city, String address, String status,
                        String details, boolean teleconsultation, LocalDate date, String time, String patientName) {
+        this(id, doctorName, speciality, city, address, status, "NORMAL", details, teleconsultation, date, time, patientName);
+    }
+
+    public Appointment(int id, String doctorName, String speciality, String city, String address, String status,
+                       String urgency, String details, boolean teleconsultation, LocalDate date, String time) {
+        this(id, doctorName, speciality, city, address, status, urgency, details, teleconsultation, date, time, null);
+    }
+
+    public Appointment(int id, String doctorName, String speciality, String city, String address, String status,
+                       String urgency, String details, boolean teleconsultation, LocalDate date, String time,
+                       String patientName) {
         this.id = id;
         this.doctorName = doctorName;
         this.patientName = patientName;
@@ -29,6 +41,7 @@ public class Appointment {
         this.city = city;
         this.address = address;
         this.status = status;
+        this.urgency = urgency;
         this.details = details;
         this.teleconsultation = teleconsultation;
         this.date = date;
@@ -65,6 +78,14 @@ public class Appointment {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getUrgency() {
+        return urgency;
+    }
+
+    public void setUrgency(String urgency) {
+        this.urgency = urgency;
     }
 
     public String getDetails() {
