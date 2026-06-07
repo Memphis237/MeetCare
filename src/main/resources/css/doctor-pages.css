@@ -286,11 +286,18 @@
 }
 
 .doctor-metric-card {
-    -fx-background-color: #f8fafc;
+    -fx-background-color: white;
     -fx-background-radius: 16;
-    -fx-border-color: #dbe5f0;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
     -fx-border-radius: 16;
-    -fx-padding: 16;
+    -fx-padding: 18 20 18 20;
+    -fx-pref-width: 0;
+}
+
+.doctor-metric-content {
+    -fx-padding: 0;
 }
 
 .doctor-metric-title {
@@ -302,6 +309,34 @@
 .doctor-metric-value {
     -fx-font-size: 28px;
     -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+}
+
+.doctor-metric-card-total {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #bfdbfe;
+}
+
+.doctor-metric-card-confirmed {
+    -fx-background-color: #ecfdf3;
+    -fx-border-color: #bbf7d0;
+}
+
+.doctor-metric-card-completed {
+    -fx-background-color: #fafafa;
+    -fx-border-color: #e5e7eb;
+}
+
+.doctor-metric-title-total {
+    -fx-text-fill: #2563eb;
+}
+
+.doctor-metric-title-confirmed {
+    -fx-text-fill: #059669;
+}
+
+.doctor-metric-title-completed {
+    -fx-text-fill: #334155;
 }
 
 .doctor-patient-card {
@@ -320,6 +355,13 @@
 .doctor-patient-card-active {
     -fx-background-color: #e9f8ef;
     -fx-border-color: #bbf7d0;
+}
+
+.doctor-patient-avatar {
+    -fx-background-color: #dbeafe;
+    -fx-background-radius: 999;
+    -fx-min-width: 48;
+    -fx-min-height: 48;
 }
 
 .doctor-patient-badge {

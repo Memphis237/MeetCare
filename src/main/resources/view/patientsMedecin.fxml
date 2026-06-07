@@ -57,17 +57,23 @@
                             </HBox>
 
                             <HBox spacing="12">
-                                <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card">
-                                    <Label text="Total RDV" styleClass="doctor-metric-title"/>
-                                    <Label fx:id="totalAppointmentsValueLabel" text="0" styleClass="doctor-metric-value blue-value"/>
+                                <VBox spacing="0" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card doctor-metric-card-total">
+                                    <VBox spacing="4" styleClass="doctor-metric-content">
+                                        <Label text="Total RDV" styleClass="doctor-metric-title doctor-metric-title-total"/>
+                                        <Label fx:id="totalAppointmentsValueLabel" text="0" styleClass="doctor-metric-value"/>
+                                    </VBox>
                                 </VBox>
-                                <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card">
-                                    <Label text="Confirmés" styleClass="doctor-metric-title"/>
-                                    <Label fx:id="confirmedAppointmentsValueLabel" text="0" styleClass="doctor-metric-value green-value"/>
+                                <VBox spacing="0" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card doctor-metric-card-confirmed">
+                                    <VBox spacing="4" styleClass="doctor-metric-content">
+                                        <Label text="Confirmés" styleClass="doctor-metric-title doctor-metric-title-confirmed"/>
+                                        <Label fx:id="confirmedAppointmentsValueLabel" text="0" styleClass="doctor-metric-value"/>
+                                    </VBox>
                                 </VBox>
-                                <VBox spacing="6" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card">
-                                    <Label text="Terminés" styleClass="doctor-metric-title"/>
-                                    <Label fx:id="completedAppointmentsValueLabel" text="0" styleClass="doctor-metric-value purple-value"/>
+                                <VBox spacing="0" HBox.hgrow="ALWAYS" styleClass="doctor-metric-card doctor-metric-card-completed">
+                                    <VBox spacing="4" styleClass="doctor-metric-content">
+                                        <Label text="Terminés" styleClass="doctor-metric-title doctor-metric-title-completed"/>
+                                        <Label fx:id="completedAppointmentsValueLabel" text="0" styleClass="doctor-metric-value"/>
+                                    </VBox>
                                 </VBox>
                             </HBox>
 

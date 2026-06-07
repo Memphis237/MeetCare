@@ -8,10 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import org.example.meetcare.dao.AppointmentDao;
 import org.example.meetcare.dao.MedicalRecordDao;
 import org.example.meetcare.dao.UsersDao;
@@ -19,6 +21,7 @@ import org.example.meetcare.model.Appointment;
 import org.example.meetcare.model.MedicalRecord;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AppSession;
+import org.example.meetcare.utils.AvatarUtil;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -174,7 +177,7 @@ public class PatientsMedecinController {
             return;
         }
 
-        if (selectedPatient == null || !filtered.contains(selectedPatient)) {
+        if (selectedPatient == null || filtered.stream().noneMatch(row -> row.patient().getIdUsers() == selectedPatient.patient().getIdUsers())) {
             selectedPatient = filtered.get(0);
         }
 
@@ -188,18 +191,19 @@ public class PatientsMedecinController {
             return;
         }
 
-        selectedPatient = row;
-        selectedPatientNameLabel.setText(row.displayName());
-        selectedPatientMetaLabel.setText(buildPatientMeta(row.patient(), row.records().size()));
-        selectedPatientBadgeLabel.setText(String.valueOf(row.totalAppointments()));
-        totalAppointmentsValueLabel.setText(String.valueOf(row.totalAppointments()));
-        confirmedAppointmentsValueLabel.setText(String.valueOf(row.confirmedAppointments()));
-        completedAppointmentsValueLabel.setText(String.valueOf(row.completedAppointments()));
-        dossierStatusLabel.setText(row.lastAppointmentDate() == null
+        PatientRowData freshRow = refreshPatientSnapshot(row.patient());
+        selectedPatient = freshRow;
+        selectedPatientNameLabel.setText(freshRow.displayName());
+        selectedPatientMetaLabel.setText(buildPatientMeta(freshRow.patient(), freshRow.records().size()));
+        selectedPatientBadgeLabel.setText(String.valueOf(freshRow.totalAppointments()));
+        totalAppointmentsValueLabel.setText(String.valueOf(freshRow.totalAppointments()));
+        confirmedAppointmentsValueLabel.setText(String.valueOf(freshRow.confirmedAppointments()));
+        completedAppointmentsValueLabel.setText(String.valueOf(freshRow.completedAppointments()));
+        dossierStatusLabel.setText(freshRow.lastAppointmentDate() == null
                 ? "Aucun rendez-vous"
-                : "Dernier RDV : " + formatDate(row.lastAppointmentDate()));
+                : "Dernier RDV : " + formatDate(freshRow.lastAppointmentDate()));
 
-        renderHistory(row.appointments());
+        renderHistory(freshRow.appointments());
         renderPatientCards(new ArrayList<>(patientsForCurrentFilter()));
     }
 
@@ -265,6 +269,27 @@ public class PatientsMedecinController {
         return emptyState;
     }
 
+    private PatientRowData refreshPatientSnapshot(Users patient) {
+        try {
+            List<Appointment> appointments = appointmentDao.findByUserId(patient.getIdUsers());
+            List<MedicalRecord> records = medicalRecordDao.findByUserId(patient.getIdUsers());
+            return new PatientRowData(
+                    patient,
+                    appointments,
+                    records,
+                    countByStatus(appointments, "CONFIRME"),
+                    countByStatus(appointments, "TERMINE"),
+                    appointments.stream()
+                            .map(Appointment::getDate)
+                            .filter(Objects::nonNull)
+                            .max(Comparator.naturalOrder())
+                            .orElse(null)
+            );
+        } catch (Exception ex) {
+            throw new IllegalStateException("Impossible de charger le dossier du patient.", ex);
+        }
+    }
+
     private void showEmptyDossier() {
         selectedPatient = null;
         selectedPatientNameLabel.setText("Sélectionne un patient");
@@ -318,7 +343,8 @@ public class PatientsMedecinController {
     }
 
     private HBox createPatientCard(PatientRowData patient) {
-        boolean active = selectedPatient != null && selectedPatient.equals(patient);
+        boolean active = selectedPatient != null
+                && selectedPatient.patient().getIdUsers() == patient.patient().getIdUsers();
 
         HBox card = new HBox(14);
         card.setAlignment(Pos.CENTER_LEFT);
@@ -328,8 +354,13 @@ public class PatientsMedecinController {
             card.getStyleClass().add("doctor-patient-card-active");
         }
 
-        Label badge = new Label(String.valueOf(patient.totalAppointments()));
-        badge.getStyleClass().add("doctor-patient-badge");
+        Circle avatarCircle = new Circle(24);
+        Label initialsLabel = new Label(AvatarUtil.buildInitials(patient.patient()));
+        initialsLabel.setMouseTransparent(true);
+        initialsLabel.setStyle("-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: 800;");
+        StackPane avatar = new StackPane(avatarCircle, initialsLabel);
+        avatar.getStyleClass().add("doctor-patient-avatar");
+        AvatarUtil.applyAvatar(avatarCircle, initialsLabel, patient.patient());
 
         VBox info = new VBox(4);
         HBox.setHgrow(info, Priority.ALWAYS);
@@ -344,7 +375,7 @@ public class PatientsMedecinController {
         lastRdv.getStyleClass().add("doctor-patient-meta");
 
         info.getChildren().addAll(name, rdvCount, lastRdv);
-        card.getChildren().addAll(badge, info);
+        card.getChildren().addAll(avatar, info);
         return card;
     }
 
