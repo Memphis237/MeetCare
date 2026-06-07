@@ -6,12 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.HBox;
@@ -20,6 +15,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.example.meetcare.dao.DoctorDao;
+import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.AccountStatus;
 import org.example.meetcare.model.DoctorAdminEntry;
 import org.example.meetcare.model.Users;
@@ -45,6 +41,7 @@ public class DoctorsAdminController {
     private Label totalCountLabel;
     private Label validatedCountLabel;
     private Label pendingCountLabel;
+    private Label rejectedCountLabel;
     private VBox cardsContainer;
 
     private List<DoctorAdminEntry> allDoctors = List.of();
@@ -67,18 +64,21 @@ public class DoctorsAdminController {
         }
 
         contentContainer.getChildren().clear();
-        contentContainer.setSpacing(24);
+        contentContainer.setSpacing(26);
         contentContainer.setPadding(new Insets(0));
 
         contentContainer.getChildren().addAll(
-                buildHeader(),
+                buildHeroPanel(),
                 buildStatsRow(),
                 buildFilterCard(),
                 buildCardsContainer()
         );
     }
 
-    private HBox buildHeader() {
+    private VBox buildHeroPanel() {
+        VBox hero = new VBox(14);
+        hero.getStyleClass().add("admin-hero-panel");
+
         HBox header = new HBox(16);
         header.setAlignment(Pos.CENTER_LEFT);
 
@@ -86,7 +86,7 @@ public class DoctorsAdminController {
         Label title = new Label("Gestion des médecins");
         title.getStyleClass().add("admin-page-title");
 
-        Label subtitle = new Label("Valider et gérer les comptes des professionnels de santé");
+        Label subtitle = new Label("Valider, suivre et piloter les comptes des professionnels de santé");
         subtitle.getStyleClass().add("admin-page-subtitle");
         texts.getChildren().addAll(title, subtitle);
 
@@ -98,7 +98,17 @@ public class DoctorsAdminController {
         refreshButton.setOnAction(this::handleRefresh);
 
         header.getChildren().addAll(texts, spacer, refreshButton);
-        return header;
+
+        HBox chips = new HBox(10);
+        chips.setAlignment(Pos.CENTER_LEFT);
+        chips.getChildren().addAll(
+                createHeroChip("Validation BDD"),
+                createHeroChip("Filtre rapide"),
+                createHeroChip("Recherche temps réel")
+        );
+
+        hero.getChildren().addAll(header, chips);
+        return hero;
     }
 
     private HBox buildStatsRow() {
@@ -107,7 +117,8 @@ public class DoctorsAdminController {
         row.getChildren().addAll(
                 createStatCard("Total médecins", "0", "admin-stat-card-completed", "admin-stat-title-completed", "admin-stat-value-completed", "⌘"),
                 createStatCard("Validés", "0", "admin-stat-card-confirmed", "admin-stat-title-confirmed", "admin-stat-value-confirmed", "✓"),
-                createStatCard("En attente", "0", "admin-stat-card-urgent", "admin-stat-title-urgent", "admin-stat-value-urgent", "⨯")
+                createStatCard("En attente", "0", "admin-stat-card-urgent", "admin-stat-title-urgent", "admin-stat-value-urgent", "≡"),
+                createStatCard("Refusés", "0", "admin-stat-card-cancelled", "admin-stat-title-cancelled", "admin-stat-value-cancelled", "✕")
         );
         return row;
     }
@@ -123,6 +134,7 @@ public class DoctorsAdminController {
         card.setAlignment(Pos.CENTER_LEFT);
 
         Label icon = new Label(iconText);
+        icon.getStyleClass().addAll("admin-stat-icon", titleStyle.replace("title", "icon"));
         icon.setFont(Font.font(20));
 
         Label title = new Label(titleText);
@@ -135,6 +147,7 @@ public class DoctorsAdminController {
             case "Total médecins" -> totalCountLabel = value;
             case "Validés" -> validatedCountLabel = value;
             case "En attente" -> pendingCountLabel = value;
+            case "Refusés" -> rejectedCountLabel = value;
             default -> {
             }
         }
@@ -211,6 +224,7 @@ public class DoctorsAdminController {
         totalCountLabel.setText(String.valueOf(allDoctors.size()));
         validatedCountLabel.setText(String.valueOf(countByStatus(AccountStatus.VERIFIED)));
         pendingCountLabel.setText(String.valueOf(countByStatus(AccountStatus.PENDING)));
+        rejectedCountLabel.setText(String.valueOf(countByStatus(AccountStatus.REJECTED)));
     }
 
     private long countByStatus(AccountStatus status) {
@@ -252,11 +266,23 @@ public class DoctorsAdminController {
         card.getStyleClass().add("doctor-admin-card");
         card.setAlignment(Pos.TOP_LEFT);
 
+        VBox avatarBlock = new VBox(10);
+        avatarBlock.setAlignment(Pos.TOP_CENTER);
+
         Label avatar = new Label(initialsOf(doctorDisplayName(doctor)));
         avatar.getStyleClass().add("doctor-admin-avatar");
+        avatarBlock.getChildren().add(avatar);
+
+        Label sector = new Label(safeText(doctor.getSector(), "Secteur"));
+        sector.getStyleClass().add("doctor-admin-sector");
+        sector.setWrapText(true);
+        sector.setMaxWidth(72);
+        sector.setAlignment(Pos.CENTER);
+        avatarBlock.getChildren().add(sector);
 
         VBox details = new VBox(8);
         HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
         VBox nameBlock = new VBox(2);
 
         Label name = new Label(doctorDisplayName(doctor));
@@ -300,6 +326,7 @@ public class DoctorsAdminController {
         );
 
         HBox actions = new HBox(10);
+        actions.setAlignment(Pos.CENTER_LEFT);
         Button validate = new Button("Valider");
         validate.getStyleClass().add("doctor-admin-action-validate");
         validate.setOnAction(event -> handleValidate(doctor));
@@ -313,7 +340,7 @@ public class DoctorsAdminController {
         details.getChildren().addAll(header, bio, metaRow, contact, badges, actions);
         HBox.setHgrow(details, Priority.ALWAYS);
 
-        card.getChildren().addAll(avatar, details);
+        card.getChildren().addAll(avatarBlock, details);
         return card;
     }
 
@@ -321,6 +348,12 @@ public class DoctorsAdminController {
         Label label = new Label(text);
         label.setStyle("-fx-background-color: #f8fafc; -fx-text-fill: #334155; -fx-background-radius: 999; -fx-padding: 6 10 6 10; -fx-font-size: 12px;");
         return label;
+    }
+
+    private Label createHeroChip(String text) {
+        Label chip = new Label(text);
+        chip.getStyleClass().add("admin-hero-chip");
+        return chip;
     }
 
     private void handleValidate(DoctorAdminEntry doctor) {
@@ -331,7 +364,7 @@ public class DoctorsAdminController {
         }
 
         doctorDao.saveVerificationDecision(doctor.getDoctorId(), admin.getIdUsers(), "APPROVED", "Validation du compte médecin");
-        new org.example.meetcare.dao.UsersDao().updateAccountStatus(doctor.getUserId(), AccountStatus.VERIFIED.name());
+        new UsersDao().updateAccountStatus(doctor.getUserId(), AccountStatus.VERIFIED.name());
         refreshData();
         showAlert(Alert.AlertType.INFORMATION, "Médecin validé", doctorDisplayName(doctor) + " a été validé avec succès.");
     }
@@ -356,7 +389,7 @@ public class DoctorsAdminController {
             }
 
             doctorDao.saveVerificationDecision(doctor.getDoctorId(), admin.getIdUsers(), "REJECTED", trimmed);
-            new org.example.meetcare.dao.UsersDao().updateAccountStatus(doctor.getUserId(), AccountStatus.REJECTED.name());
+            new UsersDao().updateAccountStatus(doctor.getUserId(), AccountStatus.REJECTED.name());
             refreshData();
             showAlert(Alert.AlertType.INFORMATION, "Médecin refusé", doctorDisplayName(doctor) + " a été refusé.");
         });
