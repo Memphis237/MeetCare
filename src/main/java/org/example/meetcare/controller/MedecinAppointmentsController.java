@@ -187,14 +187,17 @@ public class MedecinAppointmentsController {
 
         VBox formCard = new VBox(14);
         formCard.setStyle("-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 18; -fx-padding: 18;");
+        formCard.setMaxWidth(Double.MAX_VALUE);
 
         GridPane form = new GridPane();
         form.setHgap(12);
         form.setVgap(12);
+        form.setMaxWidth(Double.MAX_VALUE);
 
         DatePicker datePicker = new DatePicker(LocalDate.now());
         datePicker.getStyleClass().add("doctor-input");
         datePicker.setPrefWidth(180);
+        datePicker.setMaxWidth(Double.MAX_VALUE);
 
         ToggleGroup modeGroup = new ToggleGroup();
         RadioButton wholeDayRadio = new RadioButton("Journée entière");
@@ -208,22 +211,26 @@ public class MedecinAppointmentsController {
 
         HBox modeBox = new HBox(16, wholeDayRadio, slotRadio);
         modeBox.setAlignment(Pos.CENTER_LEFT);
+        modeBox.setMaxWidth(Double.MAX_VALUE);
 
         ComboBox<String> startTimeBox = new ComboBox<>(FXCollections.observableArrayList(TIME_OPTIONS));
         startTimeBox.setPromptText("Début");
         startTimeBox.getStyleClass().add("doctor-input");
         startTimeBox.setPrefWidth(140);
+        startTimeBox.setMaxWidth(Double.MAX_VALUE);
         startTimeBox.setDisable(true);
 
         ComboBox<String> endTimeBox = new ComboBox<>(FXCollections.observableArrayList(TIME_OPTIONS));
         endTimeBox.setPromptText("Fin");
         endTimeBox.getStyleClass().add("doctor-input");
         endTimeBox.setPrefWidth(140);
+        endTimeBox.setMaxWidth(Double.MAX_VALUE);
         endTimeBox.setDisable(true);
 
         TextField reasonField = new TextField();
         reasonField.setPromptText("Motif du blocage");
         reasonField.getStyleClass().add("doctor-input");
+        reasonField.setMaxWidth(Double.MAX_VALUE);
 
         modeGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
             boolean timed = newToggle == slotRadio;
@@ -251,10 +258,12 @@ public class MedecinAppointmentsController {
 
         VBox blocksCard = new VBox(12);
         blocksCard.setStyle("-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 18; -fx-padding: 18;");
+        blocksCard.setMaxWidth(Double.MAX_VALUE);
         Label blocksTitle = new Label("Blocages enregistrés");
         blocksTitle.setStyle("-fx-font-size: 17px; -fx-font-weight: 800; -fx-text-fill: #0f172a;");
         VBox blocksContainer = new VBox(10);
         blocksContainer.setFillWidth(true);
+        blocksContainer.setMaxWidth(Double.MAX_VALUE);
         refreshAvailabilityBlocks(blocksContainer, currentUser.getIdUsers());
         blocksCard.getChildren().addAll(blocksTitle, blocksContainer);
 
@@ -301,8 +310,19 @@ public class MedecinAppointmentsController {
             showAlert(AlertType.INFORMATION, "Blocage ajouté", "La disponibilité a bien été mise à jour.");
         });
 
+        HBox cardsRow = new HBox(16, formCard, blocksCard);
+        cardsRow.setFillHeight(true);
+        HBox.setHgrow(formCard, Priority.ALWAYS);
+        HBox.setHgrow(blocksCard, Priority.ALWAYS);
+
+        GridPane.setHgrow(datePicker, Priority.ALWAYS);
+        GridPane.setHgrow(modeBox, Priority.ALWAYS);
+        GridPane.setHgrow(startTimeBox, Priority.ALWAYS);
+        GridPane.setHgrow(endTimeBox, Priority.ALWAYS);
+        GridPane.setHgrow(reasonField, Priority.ALWAYS);
+
         formCard.getChildren().addAll(form, addBlockButton);
-        content.getChildren().addAll(intro, formCard, new Separator(), blocksCard);
+        content.getChildren().addAll(intro, cardsRow);
 
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
