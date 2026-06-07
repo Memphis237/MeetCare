@@ -397,6 +397,16 @@
     -fx-font-weight: bold;
 }
 
+.doctor-admin-action-edit {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #1d4ed8;
+    -fx-border-color: #bfdbfe;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 10 16 10 16;
+    -fx-font-weight: bold;
+}
+
 .admin-chart-card {
     -fx-background-color: white;
     -fx-background-radius: 20;

@@ -285,6 +285,29 @@ public class UsersDao {
         }
     }
 
+    public void updateProfileAndRole(Users user) {
+        String sql = """
+                UPDATE users
+                SET prenom = ?, username = ?, email = ?, phone = ?, address = ?, city = ?, code_postal = ?, country = ?, role = ?
+                WHERE id_users = ?
+                """;
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, user.getPrenom());
+            statement.setString(2, user.getUsername());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getPhone());
+            statement.setString(5, user.getAddress());
+            statement.setString(6, user.getCity());
+            statement.setString(7, user.getCodePostal());
+            statement.setString(8, user.getCountry());
+            statement.setString(9, user.getRole() == null ? Role.USER.name() : user.getRole().name());
+            statement.setInt(10, user.getIdUsers());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la mise Ã  jour du profil et du rÃ´le.", e);
+        }
+    }
+
     public void updatePassword(int userId, String hashedPassword) {
         String sql = "UPDATE users SET password = ? WHERE id_users = ?";
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
