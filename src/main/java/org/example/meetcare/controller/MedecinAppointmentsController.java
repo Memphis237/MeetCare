@@ -9,15 +9,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -172,26 +171,25 @@ public class MedecinAppointmentsController {
         DialogPane dialogPane = dialog.getDialogPane();
         dialogPane.getButtonTypes().add(ButtonType.CLOSE);
         dialogPane.getStylesheets().add(getClass().getResource("/css/doctor-pages.css").toExternalForm());
-        dialogPane.setPrefWidth(860);
+        dialogPane.setPrefWidth(1120);
         dialogPane.setPrefHeight(720);
 
         VBox content = new VBox(18);
-        content.setStyle("-fx-padding: 22; -fx-background-color: #f8fbff;");
-
-        VBox intro = new VBox(4);
-        Label title = new Label("Gestion disponibilité");
-        title.setStyle("-fx-font-size: 22px; -fx-font-weight: 800; -fx-text-fill: #0f172a;");
-        Label subtitle = new Label("Bloquez une journée ou un créneau horaire, puis retirez les blocages déjà posés.");
-        subtitle.setStyle("-fx-font-size: 13px; -fx-text-fill: #64748b;");
-        intro.getChildren().addAll(title, subtitle);
+        content.setStyle("-fx-padding: 24; -fx-background-color: #f8fbff;");
 
         VBox formCard = new VBox(14);
-        formCard.setStyle("-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 18; -fx-padding: 18;");
+        formCard.setStyle("-fx-background-color: white; -fx-background-radius: 22; -fx-border-color: #e5e7eb; -fx-border-radius: 22; -fx-padding: 22;");
         formCard.setMaxWidth(Double.MAX_VALUE);
 
-        GridPane form = new GridPane();
-        form.setHgap(12);
-        form.setVgap(12);
+        VBox formHeader = new VBox(8);
+        Label title = new Label("Gestion des disponibilités");
+        title.setStyle("-fx-font-size: 24px; -fx-font-weight: 800; -fx-text-fill: #0f172a;");
+        Label subtitle = new Label("Bloque une journée entière ou un créneau précis. Les patients verront ces plages comme indisponibles.");
+        subtitle.setWrapText(true);
+        subtitle.setStyle("-fx-font-size: 14px; -fx-text-fill: #64748b;");
+        formHeader.getChildren().addAll(title, subtitle, new Separator());
+
+        VBox form = new VBox(16);
         form.setMaxWidth(Double.MAX_VALUE);
 
         DatePicker datePicker = new DatePicker(LocalDate.now());
@@ -199,19 +197,9 @@ public class MedecinAppointmentsController {
         datePicker.setPrefWidth(180);
         datePicker.setMaxWidth(Double.MAX_VALUE);
 
-        ToggleGroup modeGroup = new ToggleGroup();
-        RadioButton wholeDayRadio = new RadioButton("Journée entière");
-        wholeDayRadio.setToggleGroup(modeGroup);
-        wholeDayRadio.setSelected(true);
-        wholeDayRadio.getStyleClass().add("doctor-filter-label");
-
-        RadioButton slotRadio = new RadioButton("Créneau horaire");
-        slotRadio.setToggleGroup(modeGroup);
-        slotRadio.getStyleClass().add("doctor-filter-label");
-
-        HBox modeBox = new HBox(16, wholeDayRadio, slotRadio);
-        modeBox.setAlignment(Pos.CENTER_LEFT);
-        modeBox.setMaxWidth(Double.MAX_VALUE);
+        CheckBox wholeDayCheck = new CheckBox("Journée complète");
+        wholeDayCheck.setSelected(true);
+        wholeDayCheck.setStyle("-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #475569;");
 
         ComboBox<String> startTimeBox = new ComboBox<>(FXCollections.observableArrayList(TIME_OPTIONS));
         startTimeBox.setPromptText("Début");
@@ -228,44 +216,68 @@ public class MedecinAppointmentsController {
         endTimeBox.setDisable(true);
 
         TextField reasonField = new TextField();
-        reasonField.setPromptText("Motif du blocage");
+        reasonField.setPromptText("Ex: rendez-vous perso, congé, intervention...");
         reasonField.getStyleClass().add("doctor-input");
         reasonField.setMaxWidth(Double.MAX_VALUE);
 
-        modeGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-            boolean timed = newToggle == slotRadio;
+        Label fullDayHint = new Label("La journée entière sera bloquée.");
+        fullDayHint.setStyle("-fx-font-size: 13px; -fx-text-fill: #64748b;");
+        fullDayHint.setWrapText(true);
+
+        wholeDayCheck.selectedProperty().addListener((obs, oldValue, isSelected) -> {
+            boolean timed = !isSelected;
             startTimeBox.setDisable(!timed);
             endTimeBox.setDisable(!timed);
+            fullDayHint.setText(isSelected
+                    ? "La journée entière sera bloquée."
+                    : "Choisissez un créneau précis entre deux heures.");
             if (!timed) {
                 startTimeBox.setValue(null);
                 endTimeBox.setValue(null);
             }
         });
 
-        form.add(new Label("Date"), 0, 0);
-        form.add(datePicker, 1, 0);
-        form.add(new Label("Type"), 0, 1);
-        form.add(modeBox, 1, 1);
-        form.add(new Label("Début"), 0, 2);
-        form.add(startTimeBox, 1, 2);
-        form.add(new Label("Fin"), 0, 3);
-        form.add(endTimeBox, 1, 3);
-        form.add(new Label("Motif"), 0, 4);
-        form.add(reasonField, 1, 4);
+        Label dateLabel = new Label("Date");
+        dateLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #334155;");
+        Label typeLabel = new Label("Type");
+        typeLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #334155;");
+        Label startLabel = new Label("Début");
+        startLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #334155;");
+        Label endLabel = new Label("Fin");
+        endLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #334155;");
+        Label reasonLabel = new Label("Motif");
+        reasonLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #334155;");
 
-        Button addBlockButton = new Button("Ajouter le blocage");
+        VBox dateField = new VBox(8, dateLabel, datePicker);
+        VBox typeField = new VBox(8, typeLabel, wholeDayCheck);
+        VBox startField = new VBox(8, startLabel, startTimeBox);
+        VBox endField = new VBox(8, endLabel, endTimeBox);
+        VBox reasonFieldBox = new VBox(8, reasonLabel, reasonField, fullDayHint);
+        dateField.setFillWidth(true);
+        typeField.setFillWidth(true);
+        startField.setFillWidth(true);
+        endField.setFillWidth(true);
+        reasonFieldBox.setFillWidth(true);
+
+        form.getChildren().addAll(dateField, typeField, startField, endField, reasonFieldBox);
+
+        Button addBlockButton = new Button("Bloquer");
         addBlockButton.getStyleClass().add("doctor-primary-button");
+        addBlockButton.setStyle("-fx-font-size: 14px; -fx-font-weight: 800; -fx-background-radius: 12; -fx-padding: 10 20;");
 
         VBox blocksCard = new VBox(12);
-        blocksCard.setStyle("-fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #e5e7eb; -fx-border-radius: 18; -fx-padding: 18;");
+        blocksCard.setStyle("-fx-background-color: white; -fx-background-radius: 22; -fx-border-color: #e5e7eb; -fx-border-radius: 22; -fx-padding: 22;");
         blocksCard.setMaxWidth(Double.MAX_VALUE);
-        Label blocksTitle = new Label("Blocages enregistrés");
-        blocksTitle.setStyle("-fx-font-size: 17px; -fx-font-weight: 800; -fx-text-fill: #0f172a;");
+        Label blocksTitle = new Label("Blocages existants");
+        blocksTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: 800; -fx-text-fill: #0f172a;");
+        Label blocksSubtitle = new Label("Supprime un blocage pour rouvrir automatiquement les créneaux.");
+        blocksSubtitle.setWrapText(true);
+        blocksSubtitle.setStyle("-fx-font-size: 14px; -fx-text-fill: #64748b;");
         VBox blocksContainer = new VBox(10);
         blocksContainer.setFillWidth(true);
         blocksContainer.setMaxWidth(Double.MAX_VALUE);
         refreshAvailabilityBlocks(blocksContainer, currentUser.getIdUsers());
-        blocksCard.getChildren().addAll(blocksTitle, blocksContainer);
+        blocksCard.getChildren().addAll(blocksTitle, blocksSubtitle, blocksContainer);
 
         addBlockButton.setOnAction(addEvent -> {
             LocalDate selectedDate = datePicker.getValue();
@@ -274,7 +286,7 @@ public class MedecinAppointmentsController {
                 return;
             }
 
-            boolean wholeDay = wholeDayRadio.isSelected();
+            boolean wholeDay = wholeDayCheck.isSelected();
             String startTime = startTimeBox.getValue();
             String endTime = endTimeBox.getValue();
 
@@ -314,15 +326,14 @@ public class MedecinAppointmentsController {
         cardsRow.setFillHeight(true);
         HBox.setHgrow(formCard, Priority.ALWAYS);
         HBox.setHgrow(blocksCard, Priority.ALWAYS);
+        formCard.setPrefWidth(640);
+        blocksCard.setPrefWidth(400);
 
-        GridPane.setHgrow(datePicker, Priority.ALWAYS);
-        GridPane.setHgrow(modeBox, Priority.ALWAYS);
-        GridPane.setHgrow(startTimeBox, Priority.ALWAYS);
-        GridPane.setHgrow(endTimeBox, Priority.ALWAYS);
-        GridPane.setHgrow(reasonField, Priority.ALWAYS);
+        HBox buttonRow = new HBox(addBlockButton);
+        buttonRow.setAlignment(Pos.CENTER_RIGHT);
 
-        formCard.getChildren().addAll(form, addBlockButton);
-        content.getChildren().addAll(intro, cardsRow);
+        formCard.getChildren().addAll(formHeader, form, buttonRow);
+        content.getChildren().add(cardsRow);
 
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
