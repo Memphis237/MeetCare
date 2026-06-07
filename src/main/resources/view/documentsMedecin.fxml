@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21.0.6"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.DocumentsMedecinController"
+            prefWidth="1200"
+            prefHeight="780"
+            stylesheets="@../css/doctor-pages.css"
+            style="-fx-background-color: #f8fafc;">
+
+    <left>
+        <fx:include source="sidebarMedecin.fxml"/>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="22" style="-fx-padding: 28; -fx-background-color: #f8fafc;">
+
+                <HBox alignment="CENTER_LEFT">
+                    <VBox spacing="4">
+                        <Label text="Documents" styleClass="doctor-page-title"/>
+                        <Label text="Gerez les documents patients, filtrez-les et creez des ordonnances"
+                               styleClass="doctor-page-subtitle"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Button fx:id="createPrescriptionButton"
+                            text="Rx  + Nouvelle ordonnance"
+                            onAction="#handleCreateDocument"
+                            styleClass="doctor-primary-button"/>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="8" styleClass="doctor-stat-card" HBox.hgrow="ALWAYS">
+                        <Label text="Total documents" styleClass="doctor-stat-label"/>
+                        <Label fx:id="totalDocumentsLabel" text="0" styleClass="doctor-stat-value blue-value"/>
+                    </VBox>
+                    <VBox spacing="8" styleClass="doctor-stat-card" HBox.hgrow="ALWAYS">
+                        <Label text="Ordonnances generees" styleClass="doctor-stat-label"/>
+                        <Label fx:id="prescriptionsCountLabel" text="0" styleClass="doctor-stat-value purple-value"/>
+                    </VBox>
+                    <VBox spacing="8" styleClass="doctor-stat-card" HBox.hgrow="ALWAYS">
+                        <Label text="Biologie / Imagerie" styleClass="doctor-stat-label"/>
+                        <Label fx:id="biologyImagingCountLabel" text="0" styleClass="doctor-stat-value green-value"/>
+                    </VBox>
+                    <VBox spacing="8" styleClass="doctor-stat-card" HBox.hgrow="ALWAYS">
+                        <Label text="Patients concernes" styleClass="doctor-stat-label"/>
+                        <Label fx:id="patientsCountLabel" text="0" styleClass="doctor-stat-value orange-value"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="14" styleClass="doctor-filter-card">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Tous les documents" styleClass="doctor-section-title"/>
+                            <TextField fx:id="searchField"
+                                       promptText="Rechercher par titre, patient, type..."
+                                       onAction="#handleFilterChange"
+                                       styleClass="doctor-input"/>
+                        </VBox>
+
+                        <VBox spacing="6" prefWidth="220">
+                            <Label text="Patients" styleClass="doctor-filter-label"/>
+                            <ComboBox fx:id="patientFilterComboBox" prefWidth="220" styleClass="doctor-input"/>
+                        </VBox>
+
+                        <VBox spacing="6" prefWidth="180">
+                            <Label text="Types" styleClass="doctor-filter-label"/>
+                            <ComboBox fx:id="typeFilterComboBox" prefWidth="180" styleClass="doctor-input"/>
+                        </VBox>
+                    </HBox>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="allFilterButton" text="Tous" onAction="#handleQuickFilter" styleClass="filter-chip"/>
+                        <Button fx:id="ordonnanceFilterButton" text="Ordonnances" onAction="#handleQuickFilter" styleClass="filter-chip"/>
+                        <Button fx:id="biologieFilterButton" text="Biologie" onAction="#handleQuickFilter" styleClass="filter-chip"/>
+                        <Button fx:id="imagerieFilterButton" text="Imagerie" onAction="#handleQuickFilter" styleClass="filter-chip"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="filteredCountLabel" text="0 document" styleClass="doctor-filter-count"/>
+                    </HBox>
+                </VBox>
+
+                <HBox spacing="18">
+                    <VBox spacing="12" styleClass="doctor-list-pane" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Documents disponibles" styleClass="doctor-section-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Separator prefWidth="1" opacity="0.0"/>
+                        </HBox>
+                        <ScrollPane fitToWidth="true" styleClass="doctor-list-scroll">
+                            <VBox fx:id="documentsListContainer" spacing="12" style="-fx-padding: 0 2 0 0;"/>
+                        </ScrollPane>
+                    </VBox>
+
+                    <VBox spacing="14" styleClass="doctor-preview-pane" prefWidth="420">
+                        <VBox spacing="4">
+                            <Label text="Apercu PDF" styleClass="doctor-section-title"/>
+                            <Label fx:id="previewTitleLabel" text="Aucun document selectionne" styleClass="doctor-preview-title"/>
+                            <Label fx:id="previewMetaLabel" text="" styleClass="doctor-preview-meta"/>
+                        </VBox>
+
+                        <HBox spacing="8">
+                            <Label fx:id="previewTypeLabel" text="-" styleClass="doctor-badge"/>
+                            <Label fx:id="previewConsentLabel" text="" styleClass="doctor-badge doctor-badge-soft"/>
+                        </HBox>
+
+                        <StackPane styleClass="doctor-preview-frame">
+                            <WebView fx:id="previewWebView" prefWidth="380" prefHeight="520" maxWidth="Infinity" maxHeight="Infinity"/>
+                            <VBox fx:id="previewPlaceholder" alignment="CENTER" spacing="8" styleClass="doctor-preview-placeholder">
+                                <Label text="Apercu du document" styleClass="doctor-preview-placeholder-title"/>
+                                <Label text="Selectionnez un document pour afficher son contenu ici." styleClass="doctor-preview-placeholder-subtitle"/>
+                            </VBox>
+                        </StackPane>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

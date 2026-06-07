@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
@@ -22,6 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.example.meetcare.dao.MedicalRecordDao;
+import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.MedicalRecord;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AppSession;
@@ -56,6 +58,7 @@ public class DocumentsPatientController {
     );
 
     private final MedicalRecordDao medicalRecordDao = new MedicalRecordDao();
+    private final UsersDao usersDao = new UsersDao();
     private final MedicalRecordDocumentUtil documentUtil = new MedicalRecordDocumentUtil();
     private final List<MedicalRecord> allRecords = new ArrayList<>();
 
@@ -127,6 +130,14 @@ public class DocumentsPatientController {
             showAlert(Alert.AlertType.WARNING, "Titre requis", "Le titre du document est obligatoire.");
             return;
         }
+        if (formData.shareConsent() && formData.sharedDoctor() == null) {
+            showAlert(Alert.AlertType.WARNING, "Medecin requis", "Veuillez selectionner un medecin si vous cochez le consentement de partage.");
+            return;
+        }
+        if (formData.sharedDoctor() != null && !formData.shareConsent()) {
+            showAlert(Alert.AlertType.WARNING, "Consentement requis", "Veuillez cocher la case de consentement pour partager ce document.");
+            return;
+        }
 
         try {
             Path savedPath = copyToMedicalRecordsFolder(currentUser.getIdUsers(), selectedFile);
@@ -137,6 +148,8 @@ public class DocumentsPatientController {
             record.setFilePath(savedPath.toString());
             record.setIdDoctors(null);
             record.setIdUsers(currentUser.getIdUsers());
+            record.setShareConsent(formData.shareConsent());
+            record.setSharedDoctorId(formData.sharedDoctor() == null ? null : resolveDoctorId(formData.sharedDoctor()));
 
             try {
                 medicalRecordDao.insert(record);
@@ -245,6 +258,13 @@ public class DocumentsPatientController {
         Label typeBadge = new Label(normalizeDisplayType(record.getDocumentType()));
         typeBadge.setStyle(documentBadgeStyle(record.getDocumentType()));
 
+        Label shareBadge = new Label(record.getSharedDoctorName() == null || record.getSharedDoctorName().isBlank()
+                ? "Document prive"
+                : "Partage a " + record.getSharedDoctorName());
+        shareBadge.setStyle(record.getSharedDoctorName() == null || record.getSharedDoctorName().isBlank()
+                ? "-fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-background-radius: 10; -fx-padding: 5 12; -fx-font-size: 11px;"
+                : "-fx-background-color: #e0f2fe; -fx-text-fill: #0369a1; -fx-background-radius: 10; -fx-padding: 5 12; -fx-font-size: 11px;");
+
         HBox buttons = new HBox(8);
         buttons.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
         buttons.getChildren().addAll(
@@ -252,7 +272,7 @@ public class DocumentsPatientController {
                 documentUtil.createDownloadButton(record)
         );
 
-        actions.getChildren().addAll(typeBadge, buttons);
+        actions.getChildren().addAll(typeBadge, shareBadge, buttons);
         card.getChildren().addAll(icon, info, actions);
         return card;
     }
@@ -264,6 +284,10 @@ public class DocumentsPatientController {
         if (owner != null) {
             dialog.initOwner(owner);
         }
+
+        List<Users> doctors = usersDao.findAllDoctors().stream()
+                .filter(Users::isVerifiedDoctor)
+                .toList();
 
         TextField titleField = new TextField();
         titleField.setPromptText("Titre du document");
@@ -279,12 +303,32 @@ public class DocumentsPatientController {
         typeBox.setValue("Ordonnance");
         typeBox.setMaxWidth(Double.MAX_VALUE);
 
+        ComboBox<Users> doctorBox = new ComboBox<>(FXCollections.observableArrayList(doctors));
+        doctorBox.setPromptText("Aucun medecin");
+        doctorBox.setMaxWidth(Double.MAX_VALUE);
+        doctorBox.setConverter(new javafx.util.StringConverter<>() {
+            @Override
+            public String toString(Users user) {
+                return user == null ? "Aucun medecin" : buildDoctorDisplayName(user);
+            }
+
+            @Override
+            public Users fromString(String string) {
+                return null;
+            }
+        });
+
+        CheckBox consentCheckBox = new CheckBox("J'autorise le partage de ce document au medecin selectionne");
+        consentCheckBox.setStyle("-fx-font-size: 13px; -fx-text-fill: #111827;");
+
         VBox form = new VBox(10);
         form.setStyle("-fx-padding: 8 2 0 2;");
         form.getChildren().addAll(
                 fieldBlock("Titre", titleField),
                 fieldBlock("Description", descriptionArea),
-                fieldBlock("Type", typeBox)
+                fieldBlock("Type", typeBox),
+                fieldBlock("Medecin destinataire", doctorBox),
+                consentCheckBox
         );
 
         DialogPane pane = dialog.getDialogPane();
@@ -299,7 +343,9 @@ public class DocumentsPatientController {
             return new DocumentFormData(
                     titleField.getText() == null ? "" : titleField.getText().trim(),
                     descriptionArea.getText() == null ? "" : descriptionArea.getText().trim(),
-                    typeBox.getValue() == null ? "Autre" : typeBox.getValue().trim()
+                    typeBox.getValue() == null ? "Autre" : typeBox.getValue().trim(),
+                    doctorBox.getValue(),
+                    consentCheckBox.isSelected()
             );
         });
 
@@ -406,6 +452,28 @@ public class DocumentsPatientController {
         return value == null || value.isBlank() ? fallback : value;
     }
 
+    private int resolveDoctorId(Users doctorUser) {
+        if (doctorUser == null) {
+            return 0;
+        }
+        return new org.example.meetcare.dao.DoctorDao().ensureDoctorIdForUser(doctorUser.getIdUsers());
+    }
+
+    private String buildDoctorDisplayName(Users user) {
+        String prenom = user.getPrenom() == null ? "" : user.getPrenom().trim();
+        String username = user.getUsername() == null ? "" : user.getUsername().trim();
+        if (prenom.isEmpty() && username.isEmpty()) {
+            return "Medecin";
+        }
+        if (prenom.isEmpty()) {
+            return username;
+        }
+        if (username.isEmpty()) {
+            return prenom;
+        }
+        return prenom + " " + username;
+    }
+
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -427,6 +495,6 @@ public class DocumentsPatientController {
         return message == null || message.isBlank() ? current.getClass().getSimpleName() : message;
     }
 
-    private record DocumentFormData(String title, String description, String documentType) {
+    private record DocumentFormData(String title, String description, String documentType, Users sharedDoctor, boolean shareConsent) {
     }
 }

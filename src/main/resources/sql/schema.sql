@@ -156,8 +156,16 @@ CREATE TABLE medical_records (
     date DATETIME DEFAULT CURRENT_TIMESTAMP,
     id_doctors INT,
     id_users INT,
+    share_consent BOOLEAN DEFAULT FALSE,
+    id_shared_doctors INT,
+    shared_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    prescription_diagnosis TEXT,
+    prescription_treatment TEXT,
+    prescription_instructions TEXT,
+    prescription_validity VARCHAR(50),
     FOREIGN KEY (id_doctors) REFERENCES doctors(id_doctors) ON DELETE CASCADE,
-    FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
+    FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE,
+    FOREIGN KEY (id_shared_doctors) REFERENCES doctors(id_doctors) ON DELETE SET NULL
 );
 
 

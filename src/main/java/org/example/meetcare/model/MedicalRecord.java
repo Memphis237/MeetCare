@@ -11,6 +11,14 @@ public class MedicalRecord {
     private LocalDateTime date;
     private Integer idDoctors;
     private int idUsers;
+    private Integer sharedDoctorId;
+    private String sharedDoctorName;
+    private String patientName;
+    private boolean shareConsent;
+    private String prescriptionDiagnosis;
+    private String prescriptionTreatment;
+    private String prescriptionInstructions;
+    private String prescriptionValidity;
 
     public MedicalRecord() {
     }
@@ -77,5 +85,69 @@ public class MedicalRecord {
 
     public void setIdUsers(int idUsers) {
         this.idUsers = idUsers;
+    }
+
+    public Integer getSharedDoctorId() {
+        return sharedDoctorId;
+    }
+
+    public void setSharedDoctorId(Integer sharedDoctorId) {
+        this.sharedDoctorId = sharedDoctorId;
+    }
+
+    public String getSharedDoctorName() {
+        return sharedDoctorName;
+    }
+
+    public void setSharedDoctorName(String sharedDoctorName) {
+        this.sharedDoctorName = sharedDoctorName;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public boolean isShareConsent() {
+        return shareConsent;
+    }
+
+    public void setShareConsent(boolean shareConsent) {
+        this.shareConsent = shareConsent;
+    }
+
+    public String getPrescriptionDiagnosis() {
+        return prescriptionDiagnosis;
+    }
+
+    public void setPrescriptionDiagnosis(String prescriptionDiagnosis) {
+        this.prescriptionDiagnosis = prescriptionDiagnosis;
+    }
+
+    public String getPrescriptionTreatment() {
+        return prescriptionTreatment;
+    }
+
+    public void setPrescriptionTreatment(String prescriptionTreatment) {
+        this.prescriptionTreatment = prescriptionTreatment;
+    }
+
+    public String getPrescriptionInstructions() {
+        return prescriptionInstructions;
+    }
+
+    public void setPrescriptionInstructions(String prescriptionInstructions) {
+        this.prescriptionInstructions = prescriptionInstructions;
+    }
+
+    public String getPrescriptionValidity() {
+        return prescriptionValidity;
+    }
+
+    public void setPrescriptionValidity(String prescriptionValidity) {
+        this.prescriptionValidity = prescriptionValidity;
     }
 }

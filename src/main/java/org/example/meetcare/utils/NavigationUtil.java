@@ -147,7 +147,7 @@ public class NavigationUtil {
 
     public static void openMedecinDocuments(Event event) {
         AppSession.setSidebarRoute("documents");
-        navigateTo(event, "/view/homeMedecin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Documents");
+        navigateTo(event, "/view/documentsMedecin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Documents");
     }
 
     public static void openMedecinInvoices(Event event) {

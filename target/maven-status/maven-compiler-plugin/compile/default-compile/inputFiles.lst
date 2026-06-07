@@ -3,6 +3,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AbstractCha
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AbstractMessagingController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AppointmentBookingPatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DashboardController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DocumentsMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DocumentsPatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\HomeMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\HomePatientController.java
@@ -59,3 +60,4 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\LogoutUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\MedicalRecordDocumentUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\NavigationUtil.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\PasswordUtil.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\utils\PrescriptionDocumentUtil.java
