@@ -40,6 +40,19 @@ CREATE TABLE doctors (
     FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
 );
 
+-- DOCTOR AVAILABILITY BLOCKS
+CREATE TABLE IF NOT EXISTS doctor_availability_blocks (
+    id_blocks INT AUTO_INCREMENT PRIMARY KEY,
+    id_users INT NOT NULL,
+    block_date DATE NOT NULL,
+    start_time TIME NULL,
+    end_time TIME NULL,
+    whole_day BOOLEAN DEFAULT FALSE,
+    reason VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
+);
+
 -- APPOINTMENTS
 CREATE TABLE appointments (
     id_appointments INT AUTO_INCREMENT PRIMARY KEY,

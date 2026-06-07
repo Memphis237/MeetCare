@@ -18,6 +18,7 @@ import java.util.List;
 
 public class AppointmentDao {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private final AvailabilityBlockDao availabilityBlockDao = new AvailabilityBlockDao();
 
     public int insertAppointment(int doctorId, int userId, LocalDate date, String time, String notes) {
         String sql = """
@@ -62,11 +63,20 @@ public class AppointmentDao {
             stmt.setDate(2, Date.valueOf(date));
             stmt.setTime(3, Time.valueOf(LocalTime.parse(time)));
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next() && rs.getInt("total") == 0;
+                if (!rs.next() || rs.getInt("total") > 0) {
+                    return false;
+                }
             }
         } catch (SQLException ex) {
             throw new IllegalStateException("Impossible de verifier la disponibilite du creneau.", ex);
         }
+
+        Integer doctorUserId = findDoctorUserId(doctorId);
+        if (doctorUserId != null && availabilityBlockDao.isBlocked(doctorUserId, date, time)) {
+            return false;
+        }
+
+        return true;
     }
 
     public List<Appointment> findByUserId(int userId) {
@@ -196,5 +206,21 @@ public class AppointmentDao {
 
     private String safeText(String value) {
         return value == null || value.isBlank() ? "-" : value.trim();
+    }
+
+    private Integer findDoctorUserId(int doctorId) {
+        String sql = "SELECT id_users FROM doctors WHERE id_doctors = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, doctorId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_users");
+                }
+                return null;
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Impossible de resoudre le medecin associe au creneau.", ex);
+        }
     }
 }

@@ -24,6 +24,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SidebarPati
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\ValidationAdminController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\ValidationMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\AppointmentDao.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\AvailabilityBlockDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\ChatbotMessageDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\ChatConversationDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\ChatMessageDao.java
@@ -36,6 +37,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\exception\DatabaseExce
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\Main.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\AccountStatus.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Appointment.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\AvailabilityBlock.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\ChatbotMessage.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\ChatConversation.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\ChatMessage.java

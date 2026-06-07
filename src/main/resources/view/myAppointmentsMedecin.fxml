@@ -25,7 +25,7 @@
             <VBox spacing="20" style="-fx-padding: 28; -fx-background-color: #EBF3FB;">
                 <VBox spacing="4">
                     <Label text="Mes rendez-vous" styleClass="doctor-page-title"/>
-                    <Label fx:id="subtitleLabel" text="Agenda de la semaine et détails de vos consultations." styleClass="doctor-page-subtitle"/>
+                    <Label fx:id="subtitleLabel" text="Agenda de la semaine et dÃ©tails de vos consultations." styleClass="doctor-page-subtitle"/>
                 </VBox>
 
                 <GridPane hgap="14" vgap="14">
@@ -55,7 +55,7 @@
                     </VBox>
 
                     <VBox GridPane.columnIndex="3" spacing="6" styleClass="doctor-stat-card">
-                        <Label text="Téléconsultations" styleClass="doctor-stat-label"/>
+                        <Label text="TÃ©lÃ©consultations" styleClass="doctor-stat-label"/>
                         <Label fx:id="teleconsultationsCountLabel" text="0" styleClass="doctor-stat-value orange-value"/>
                         <Label fx:id="teleconsultationsMetaLabel" text="A distance" styleClass="doctor-stat-label"/>
                     </VBox>
@@ -68,12 +68,13 @@
                             <Label fx:id="rangeLabel" text="Du 07/06 au 13/06" styleClass="doctor-filter-count"/>
                         </VBox>
                         <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="manageAvailabilityButton" text="Gestion disponibilite" onAction="#handleManageAvailability" styleClass="doctor-primary-button"/>
                         <Button fx:id="todayFilterButton" text="Aujourd'hui" onAction="#handleTodayFilter" styleClass="filter-chip"/>
                         <Button fx:id="allFilterButton" text="Tous" onAction="#handleAllFilter" styleClass="filter-chip"/>
-                        <Button fx:id="confirmedFilterButton" text="Confirmés" onAction="#handleConfirmedFilter" styleClass="filter-chip"/>
-                        <Button fx:id="completedFilterButton" text="Terminés" onAction="#handleCompletedFilter" styleClass="filter-chip"/>
-                        <Button fx:id="cancelledFilterButton" text="Annulés" onAction="#handleCancelledFilter" styleClass="filter-chip"/>
-                        <Button fx:id="teleconsultationFilterButton" text="Téléconsultation" onAction="#handleTeleconsultationFilter" styleClass="filter-chip"/>
+                        <Button fx:id="confirmedFilterButton" text="ConfirmÃ©s" onAction="#handleConfirmedFilter" styleClass="filter-chip"/>
+                        <Button fx:id="completedFilterButton" text="TerminÃ©s" onAction="#handleCompletedFilter" styleClass="filter-chip"/>
+                        <Button fx:id="cancelledFilterButton" text="AnnulÃ©s" onAction="#handleCancelledFilter" styleClass="filter-chip"/>
+                        <Button fx:id="teleconsultationFilterButton" text="TÃ©lÃ©consultation" onAction="#handleTeleconsultationFilter" styleClass="filter-chip"/>
                     </HBox>
                 </VBox>
 

@@ -33,6 +33,21 @@ CREATE TABLE doctors (
 );
 
 -- =========================
+-- TABLE DOCTOR AVAILABILITY BLOCKS
+-- =========================
+CREATE TABLE doctor_availability_blocks (
+                                            id_blocks INT PRIMARY KEY AUTO_INCREMENT,
+                                            id_users INT NOT NULL,
+                                            block_date DATE NOT NULL,
+                                            start_time TIME NULL,
+                                            end_time TIME NULL,
+                                            whole_day BOOLEAN DEFAULT FALSE,
+                                            reason VARCHAR(255),
+                                            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                            FOREIGN KEY (id_users) REFERENCES users(id_users) ON DELETE CASCADE
+);
+
+-- =========================
 -- TABLE APPOINTMENTS (CONSULTATIONS)
 -- =========================
 CREATE TABLE appointments (
