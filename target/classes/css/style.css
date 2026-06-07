@@ -406,6 +406,62 @@
     -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.06), 12, 0, 0, 2);
 }
 
+.admin-chart-card .chart {
+    -fx-padding: 8 0 0 0;
+    -fx-background-color: transparent;
+}
+
+.admin-chart-card .chart-content {
+    -fx-padding: 0;
+}
+
+.admin-chart-card .chart-plot-background {
+    -fx-background-color: #fbfdff;
+}
+
+.admin-chart-card .chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 8 0 0 0;
+}
+
+.admin-chart-card .axis {
+    -fx-tick-label-fill: #64748b;
+    -fx-tick-label-font-size: 11px;
+}
+
+.admin-chart-card .axis-label {
+    -fx-text-fill: #475569;
+    -fx-font-size: 11px;
+}
+
+.admin-chart-card .chart-horizontal-grid-lines,
+.admin-chart-card .chart-vertical-grid-lines {
+    -fx-stroke: #e2e8f0;
+}
+
+.admin-chart-card .default-color0.chart-series-line {
+    -fx-stroke: #2563eb;
+    -fx-stroke-width: 3px;
+}
+
+.admin-chart-card .default-color0.chart-line-symbol {
+    -fx-background-color: #2563eb, white;
+    -fx-background-insets: 0, 2;
+}
+
+.admin-chart-card .default-color0.chart-bar {
+    -fx-bar-fill: #2563eb;
+}
+
+.admin-chart-card .chart-pie-label {
+    -fx-fill: #334155;
+    -fx-font-size: 11px;
+}
+
+.admin-chart-card .chart-pie {
+    -fx-pie-label-visible: true;
+}
+
 .chart-plot-background {
     -fx-background-color: transparent;
 }

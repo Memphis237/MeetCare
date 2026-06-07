@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
@@ -12,6 +13,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -25,6 +27,8 @@ import org.example.meetcare.model.DoctorAdminEntry;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 
+import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Comparator;
@@ -32,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DashboardController {
     private final UsersDao usersDao = new UsersDao();
@@ -46,9 +51,10 @@ public class DashboardController {
     private Label appointmentsCountLabel;
     private Label verifiedRateLabel;
 
-    private BarChart<Number, String> specialityBarChart;
+    private BarChart<String, Number> weeklyAppointmentsBarChart;
     private PieChart statusPieChart;
-    private LineChart<String, Number> appointmentsLineChart;
+    private BarChart<Number, String> specialityBarChart;
+    private LineChart<String, Number> monthlyAppointmentsLineChart;
 
     private List<Users> loadedUsers = List.of();
     private List<DoctorAdminEntry> loadedDoctors = List.of();
@@ -77,26 +83,27 @@ public class DashboardController {
                 buildHeader(),
                 buildKpiRow(),
                 buildChartsGrid(),
-                buildBottomSection()
+                buildFooterInsights()
         );
     }
 
     private HBox buildHeader() {
         HBox header = new HBox(16);
         header.setAlignment(Pos.CENTER_LEFT);
+        header.getStyleClass().add("admin-hero-panel");
 
         VBox texts = new VBox(6);
         Label title = new Label("Tableau de bord admin");
         title.getStyleClass().add("admin-page-title");
 
-        Label subtitle = new Label("Pilotage global de l'activité médicale et administrative");
+        Label subtitle = new Label("Vue globale de l'activité médicale, des rendez-vous et des comptes professionnels");
         subtitle.getStyleClass().add("admin-page-subtitle");
         texts.getChildren().addAll(title, subtitle);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label liveLabel = new Label("Données synchronisées en base");
+        Label liveLabel = new Label("Données en base synchronisées");
         liveLabel.setStyle("-fx-background-color: #e0f2fe; -fx-text-fill: #0369a1; -fx-background-radius: 999; -fx-padding: 8 12 8 12; -fx-font-size: 12px; -fx-font-weight: bold;");
 
         header.getChildren().addAll(texts, spacer, liveLabel);
@@ -147,31 +154,40 @@ public class DashboardController {
         return card;
     }
 
-    private HBox buildChartsGrid() {
-        HBox grid = new HBox(18);
-        grid.setAlignment(Pos.CENTER_LEFT);
+    private GridPane buildChartsGrid() {
+        GridPane grid = new GridPane();
+        grid.setHgap(18);
+        grid.setVgap(18);
 
-        VBox barCard = chartCard("Médecins par spécialité", buildSpecialityBarChart());
-        VBox pieCard = chartCard("Répartition des statuts", buildStatusPieChart());
-        VBox lineCard = chartCard("Rendez-vous mensuels", buildAppointmentsLineChart());
+        VBox weeklyCard = chartCard("Rendez-vous hebdomadaires", "Nombre de rendez-vous par semaine sur les 8 dernières semaines", buildWeeklyAppointmentsChart());
+        VBox statusCard = chartCard("Statut des rendez-vous", "Répartition des rendez-vous par état", buildStatusPieChart());
+        VBox specialityCard = chartCard("Médecins par spécialité", "Top 6 des spécialités les plus représentées", buildSpecialityBarChart());
+        VBox monthlyCard = chartCard("Rendez-vous mensuels", "Évolution du volume de rendez-vous sur 12 mois", buildMonthlyAppointmentsChart());
 
-        barCard.setPrefWidth(360);
-        pieCard.setPrefWidth(340);
-        lineCard.setPrefWidth(360);
+        weeklyCard.setPrefHeight(340);
+        statusCard.setPrefHeight(340);
+        specialityCard.setPrefHeight(340);
+        monthlyCard.setPrefHeight(340);
 
-        grid.getChildren().addAll(barCard, pieCard, lineCard);
-        HBox.setHgrow(barCard, Priority.ALWAYS);
-        HBox.setHgrow(pieCard, Priority.ALWAYS);
-        HBox.setHgrow(lineCard, Priority.ALWAYS);
+        GridPane.setHgrow(weeklyCard, Priority.ALWAYS);
+        GridPane.setHgrow(statusCard, Priority.ALWAYS);
+        GridPane.setHgrow(specialityCard, Priority.ALWAYS);
+        GridPane.setHgrow(monthlyCard, Priority.ALWAYS);
+
+        grid.add(weeklyCard, 0, 0);
+        grid.add(statusCard, 1, 0);
+        grid.add(specialityCard, 0, 1);
+        grid.add(monthlyCard, 1, 1);
+
         return grid;
     }
 
-    private VBox buildBottomSection() {
+    private VBox buildFooterInsights() {
         VBox section = new VBox(14);
 
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        Label title = new Label("Indicateurs clés");
+        Label title = new Label("Indicateurs complémentaires");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a;");
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -181,7 +197,7 @@ public class DashboardController {
         stats.getChildren().addAll(
                 smallInfoCard("Validés", String.valueOf(verifiedDoctorsCount()), "#dcfce7", "#15803d"),
                 smallInfoCard("En attente", String.valueOf(pendingDoctorsCount()), "#fef3c7", "#b45309"),
-                smallInfoCard("Rejets", String.valueOf(rejectedDoctorsCount()), "#fee2e2", "#b91c1c"),
+                smallInfoCard("Refusés", String.valueOf(rejectedDoctorsCount()), "#fee2e2", "#b91c1c"),
                 smallInfoCard("Consultations", String.valueOf(totalAppointments()), "#dbeafe", "#1d4ed8")
         );
 
@@ -200,51 +216,75 @@ public class DashboardController {
         return card;
     }
 
-    private VBox chartCard(String titleText, javafx.scene.Node chart) {
-        VBox card = new VBox(14);
+    private VBox chartCard(String titleText, String subtitleText, Node chart) {
+        VBox card = new VBox(12);
         card.getStyleClass().add("admin-chart-card");
 
+        VBox texts = new VBox(3);
         Label title = new Label(titleText);
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0f172a;");
+        title.setStyle("-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #0f172a;");
+        Label subtitle = new Label(subtitleText);
+        subtitle.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748b;");
+        texts.getChildren().addAll(title, subtitle);
 
-        card.getChildren().addAll(title, chart);
+        card.getChildren().addAll(texts, chart);
         VBox.setVgrow(chart, Priority.ALWAYS);
         return card;
     }
 
-    private BarChart<Number, String> buildSpecialityBarChart() {
-        NumberAxis xAxis = new NumberAxis();
-        CategoryAxis yAxis = new CategoryAxis();
-        specialityBarChart = new BarChart<>(xAxis, yAxis);
-        specialityBarChart.setLegendVisible(false);
-        specialityBarChart.setCategoryGap(14);
-        specialityBarChart.setAnimated(false);
-        specialityBarChart.setPrefHeight(260);
-        specialityBarChart.setPrefWidth(340);
-        refreshSpecialityChart();
-        return specialityBarChart;
+    private BarChart<String, Number> buildWeeklyAppointmentsChart() {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel("Semaines");
+        yAxis.setLabel("Rendez-vous");
+        weeklyAppointmentsBarChart = new BarChart<>(xAxis, yAxis);
+        weeklyAppointmentsBarChart.setLegendVisible(false);
+        weeklyAppointmentsBarChart.setAnimated(false);
+        weeklyAppointmentsBarChart.setCategoryGap(16);
+        weeklyAppointmentsBarChart.setBarGap(8);
+        weeklyAppointmentsBarChart.setPrefHeight(260);
+        refreshWeeklyAppointmentsChart();
+        return weeklyAppointmentsBarChart;
     }
 
     private PieChart buildStatusPieChart() {
         statusPieChart = new PieChart();
         statusPieChart.setPrefHeight(260);
-        statusPieChart.setPrefWidth(320);
-        statusPieChart.setLegendSide(javafx.geometry.Side.BOTTOM);
+        statusPieChart.setLegendSide(javafx.geometry.Side.RIGHT);
         statusPieChart.setAnimated(false);
         refreshStatusPieChart();
         return statusPieChart;
     }
 
-    private LineChart<String, Number> buildAppointmentsLineChart() {
+    private BarChart<Number, String> buildSpecialityBarChart() {
+        NumberAxis xAxis = new NumberAxis();
+        CategoryAxis yAxis = new CategoryAxis();
+        xAxis.setLabel("Nombre de médecins");
+        yAxis.setLabel("Spécialité");
+        specialityBarChart = new BarChart<>(xAxis, yAxis);
+        specialityBarChart.setLegendVisible(false);
+        specialityBarChart.setAnimated(false);
+        specialityBarChart.setHorizontalGridLinesVisible(true);
+        specialityBarChart.setVerticalGridLinesVisible(false);
+        specialityBarChart.setCategoryGap(14);
+        specialityBarChart.setBarGap(6);
+        specialityBarChart.setPrefHeight(260);
+        refreshSpecialityChart();
+        return specialityBarChart;
+    }
+
+    private LineChart<String, Number> buildMonthlyAppointmentsChart() {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
-        appointmentsLineChart = new LineChart<>(xAxis, yAxis);
-        appointmentsLineChart.setCreateSymbols(true);
-        appointmentsLineChart.setAnimated(false);
-        appointmentsLineChart.setLegendVisible(false);
-        appointmentsLineChart.setPrefHeight(260);
-        refreshAppointmentsChart();
-        return appointmentsLineChart;
+        xAxis.setLabel("Mois");
+        yAxis.setLabel("Rendez-vous");
+        monthlyAppointmentsLineChart = new LineChart<>(xAxis, yAxis);
+        monthlyAppointmentsLineChart.setCreateSymbols(true);
+        monthlyAppointmentsLineChart.setAnimated(false);
+        monthlyAppointmentsLineChart.setLegendVisible(false);
+        monthlyAppointmentsLineChart.setPrefHeight(260);
+        refreshMonthlyAppointmentsChart();
+        return monthlyAppointmentsLineChart;
     }
 
     private void refreshData() {
@@ -269,9 +309,45 @@ public class DashboardController {
     }
 
     private void refreshCharts() {
-        refreshSpecialityChart();
+        refreshWeeklyAppointmentsChart();
         refreshStatusPieChart();
-        refreshAppointmentsChart();
+        refreshSpecialityChart();
+        refreshMonthlyAppointmentsChart();
+    }
+
+    private void refreshWeeklyAppointmentsChart() {
+        if (weeklyAppointmentsBarChart == null) {
+            return;
+        }
+
+        weeklyAppointmentsBarChart.getData().clear();
+        Map<String, Long> grouped = loadedAppointments.stream()
+                .filter(appointment -> appointment.getDate() != null)
+                .collect(Collectors.groupingBy(
+                        appointment -> weekLabel(appointment.getDate()),
+                        LinkedHashMap::new,
+                        Collectors.counting()
+                ));
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        List<String> lastWeeks = lastEightWeeks();
+        for (String weekLabel : lastWeeks) {
+            series.getData().add(new XYChart.Data<>(weekLabel, grouped.getOrDefault(weekLabel, 0L)));
+        }
+
+        weeklyAppointmentsBarChart.getData().add(series);
+    }
+
+    private void refreshStatusPieChart() {
+        if (statusPieChart == null) {
+            return;
+        }
+
+        statusPieChart.setData(FXCollections.observableArrayList(
+                new PieChart.Data("Confirmé", confirmedAppointmentsCount()),
+                new PieChart.Data("En attente", pendingAppointmentsCount()),
+                new PieChart.Data("Annulé", cancelledAppointmentsCount())
+        ));
     }
 
     private void refreshSpecialityChart() {
@@ -282,54 +358,41 @@ public class DashboardController {
         specialityBarChart.getData().clear();
         XYChart.Series<Number, String> series = new XYChart.Series<>();
         Map<String, Long> counts = loadedDoctors.stream()
-                .collect(java.util.stream.Collectors.groupingBy(
+                .collect(Collectors.groupingBy(
                         doctor -> safeText(doctor.getSpeciality(), "Non précisé"),
                         LinkedHashMap::new,
-                        java.util.stream.Collectors.counting()
+                        Collectors.counting()
                 ));
 
         counts.entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .limit(5)
+                .limit(6)
                 .forEach(entry -> series.getData().add(new XYChart.Data<>(entry.getValue(), entry.getKey())));
 
         specialityBarChart.getData().add(series);
     }
 
-    private void refreshStatusPieChart() {
-        if (statusPieChart == null) {
+    private void refreshMonthlyAppointmentsChart() {
+        if (monthlyAppointmentsLineChart == null) {
             return;
         }
 
-        statusPieChart.setData(FXCollections.observableArrayList(
-                new PieChart.Data("Validés", verifiedDoctorsCount()),
-                new PieChart.Data("En attente", pendingDoctorsCount()),
-                new PieChart.Data("Refusés", rejectedDoctorsCount()),
-                new PieChart.Data("Suspendus", suspendedDoctorsCount())
-        ));
-    }
-
-    private void refreshAppointmentsChart() {
-        if (appointmentsLineChart == null) {
-            return;
-        }
-
-        appointmentsLineChart.getData().clear();
+        monthlyAppointmentsLineChart.getData().clear();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         Map<YearMonth, Long> grouped = loadedAppointments.stream()
                 .filter(appointment -> appointment.getDate() != null)
-                .collect(java.util.stream.Collectors.groupingBy(
+                .collect(Collectors.groupingBy(
                         appointment -> YearMonth.from(appointment.getDate()),
                         LinkedHashMap::new,
-                        java.util.stream.Collectors.counting()
+                        Collectors.counting()
                 ));
 
         grouped.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
-                .skip(Math.max(0, grouped.size() - 6L))
+                .skip(Math.max(0, grouped.size() - 12))
                 .forEach(entry -> series.getData().add(new XYChart.Data<>(labelMonth(entry.getKey()), entry.getValue())));
 
-        appointmentsLineChart.getData().add(series);
+        monthlyAppointmentsLineChart.getData().add(series);
     }
 
     private String computeVerifiedRate(List<Users> users) {
@@ -368,15 +431,48 @@ public class DashboardController {
                 .count();
     }
 
-    private long suspendedDoctorsCount() {
-        return loadedUsers.stream()
-                .filter(user -> user.getRole() == Role.MEDECIN)
-                .filter(user -> user.getAccountStatus() == AccountStatus.SUSPENDED)
+    private long confirmedAppointmentsCount() {
+        return loadedAppointments.stream()
+                .filter(appointment -> "CONFIRME".equalsIgnoreCase(appointment.getStatus()))
+                .count();
+    }
+
+    private long pendingAppointmentsCount() {
+        return loadedAppointments.stream()
+                .filter(appointment -> {
+                    String status = appointment.getStatus();
+                    return status != null && ("PENDING".equalsIgnoreCase(status) || "EN_ATTENTE".equalsIgnoreCase(status));
+                })
+                .count();
+    }
+
+    private long cancelledAppointmentsCount() {
+        return loadedAppointments.stream()
+                .filter(appointment -> {
+                    String status = appointment.getStatus();
+                    return status != null && ("ANNULE".equalsIgnoreCase(status) || "CANCELLED".equalsIgnoreCase(status));
+                })
                 .count();
     }
 
     private long totalAppointments() {
         return loadedAppointments.size();
+    }
+
+    private String weekLabel(LocalDate date) {
+        int weekOfYear = date.get(java.time.temporal.IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+        int year = date.get(java.time.temporal.IsoFields.WEEK_BASED_YEAR);
+        return "S" + weekOfYear + " " + year;
+    }
+
+    private List<String> lastEightWeeks() {
+        LocalDate current = LocalDate.now();
+        return java.util.stream.IntStream.rangeClosed(7, 0)
+                .mapToObj(offset -> {
+                    LocalDate date = current.minusWeeks(offset);
+                    return weekLabel(date);
+                })
+                .toList();
     }
 
     private String labelMonth(YearMonth yearMonth) {
