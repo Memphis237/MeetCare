@@ -227,6 +227,16 @@ public class SettingsPatientController {
         alert.showAndWait();
     }
 
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("MeetCare");
+        alert.setHeaderText(null);
+        alert.setContentText(message == null || message.isBlank()
+                ? "Une erreur est survenue."
+                : message);
+        alert.showAndWait();
+    }
+
     private void navigateToLogin(Node source) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));

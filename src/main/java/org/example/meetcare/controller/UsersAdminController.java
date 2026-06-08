@@ -226,7 +226,7 @@ public class UsersAdminController {
         return users.stream().filter(user -> user.getRole() == role).count();
     }
 
-    private void refreshCards() {
+    private void refreshCardsDuplicate() {
         if (cardsContainer == null) {
             return;
         }

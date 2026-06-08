@@ -13,8 +13,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DoctorDao {
+    private static volatile boolean schemaChecked;
+
+    public DoctorDao() {
+        ensureSchema();
+    }
+
+    private void ensureSchema() {
+        if (schemaChecked) {
+            return;
+        }
+
+        synchronized (DoctorDao.class) {
+            if (schemaChecked) {
+                return;
+            }
+
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                ensureColumn(conn, "doctors", "speciality", "VARCHAR(100) NULL");
+                ensureColumn(conn, "doctors", "address", "VARCHAR(255) NULL");
+                ensureColumn(conn, "doctors", "experience", "INT NULL");
+                ensureColumn(conn, "doctors", "consultation_price", "DECIMAL(10,2) NULL");
+                ensureColumn(conn, "doctors", "biography", "TEXT NULL");
+                ensureColumn(conn, "doctors", "sector", "VARCHAR(20) NULL");
+                ensureColumn(conn, "doctors", "accepts_vitale", "BOOLEAN NOT NULL DEFAULT FALSE");
+                ensureColumn(conn, "doctors", "teleconsultation", "BOOLEAN NOT NULL DEFAULT FALSE");
+                ensureColumn(conn, "doctors", "public_profile_completed", "BOOLEAN NOT NULL DEFAULT FALSE");
+                schemaChecked = true;
+            } catch (SQLException ex) {
+                throw new IllegalStateException("Impossible de verifier le schema des medecins.", ex);
+            }
+        }
+    }
 
     public Optional<Integer> findDoctorIdByUserId(int userId) {
+        ensureSchema();
         String sql = "SELECT id_doctors FROM doctors WHERE id_users = ? LIMIT 1";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -30,7 +63,25 @@ public class DoctorDao {
         return Optional.empty();
     }
 
+    public Optional<Integer> findUserIdByDoctorId(int doctorId) {
+        ensureSchema();
+        String sql = "SELECT id_users FROM doctors WHERE id_doctors = ? LIMIT 1";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, doctorId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(rs.getInt("id_users"));
+                }
+            }
+        } catch (SQLException e) {
+            return Optional.empty();
+        }
+        return Optional.empty();
+    }
+
     public int ensureDoctorIdForUser(int userId) {
+        ensureSchema();
         Optional<Integer> existing = findDoctorIdByUserId(userId);
         if (existing.isPresent()) {
             return existing.get();
@@ -53,6 +104,7 @@ public class DoctorDao {
     }
 
     public Optional<Doctor> findByUserId(int userId) {
+        ensureSchema();
         ensureDoctorProfileForUser(userId);
 
         String sql = """
@@ -65,7 +117,10 @@ public class DoctorDao {
                    COALESCE(d.sector, 'Secteur 1') AS sector,
                    COALESCE(d.consultation_price, 0) AS consultation_price,
                    COALESCE(d.accepts_vitale, FALSE) AS accepts_vitale,
-                   COALESCE(d.teleconsultation, FALSE) AS teleconsultation
+                   COALESCE(d.teleconsultation, FALSE) AS teleconsultation,
+                   d.experience,
+                   d.biography,
+                   COALESCE(d.public_profile_completed, FALSE) AS public_profile_completed
             FROM doctors d
             JOIN users u ON d.id_users = u.id_users
             WHERE d.id_users = ?
@@ -84,11 +139,14 @@ public class DoctorDao {
                             rs.getString("city"),
                             rs.getString("speciality"),
                             rs.getString("address"),
-                            rs.getString("sector"),
-                            rs.getDouble("consultation_price"),
-                            rs.getBoolean("accepts_vitale"),
-                            rs.getBoolean("teleconsultation")
-                    ));
+                    rs.getString("sector"),
+                    rs.getDouble("consultation_price"),
+                    rs.getBoolean("accepts_vitale"),
+                    rs.getBoolean("teleconsultation"),
+                    getInteger(rs, "experience"),
+                    rs.getString("biography"),
+                    rs.getBoolean("public_profile_completed")
+            ));
                 }
                 return Optional.empty();
             }
@@ -97,9 +155,21 @@ public class DoctorDao {
         }
     }
 
+    public Optional<DoctorAdminEntry> findPublicProfileByUserId(int userId) {
+        ensureSchema();
+        ensureDoctorProfileForUser(userId);
+        return findPublicProfile("u.id_users = ?", userId);
+    }
+
+    public Optional<DoctorAdminEntry> findPublicProfileByDoctorId(int doctorId) {
+        ensureSchema();
+        return findPublicProfile("d.id_doctors = ?", doctorId);
+    }
+
     public void updateProfile(int userId, String speciality, String address, String sector,
                               String consultationPrice, String experience, String biography,
                               boolean acceptsVitale, boolean teleconsultation) {
+        ensureSchema();
         ensureDoctorProfileForUser(userId);
 
         String sql = """
@@ -132,9 +202,51 @@ public class DoctorDao {
         }
     }
 
+    private Optional<DoctorAdminEntry> findPublicProfile(String whereClause, int value) {
+        ensureSchema();
+        String sql = """
+                SELECT u.id_users,
+                       COALESCE(d.id_doctors, 0) AS id_doctors,
+                       u.prenom,
+                       u.username,
+                       u.email,
+                       u.phone,
+                       u.city,
+                       u.address,
+                       COALESCE(d.speciality, 'Medecine generale') AS speciality,
+                       COALESCE(d.address, u.address, '') AS doctor_address,
+                       d.experience,
+                       d.consultation_price,
+                       d.biography,
+                       d.sector,
+                       COALESCE(d.teleconsultation, FALSE) AS teleconsultation,
+                       COALESCE(d.accepts_vitale, FALSE) AS accepts_vitale,
+                       COALESCE(d.public_profile_completed, FALSE) AS public_profile_completed,
+                       COALESCE(u.account_status, 'PENDING') AS account_status
+                FROM users u
+                LEFT JOIN doctors d ON d.id_users = u.id_users
+                WHERE """ + whereClause + """
+                LIMIT 1
+                """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, value);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapPublicProfile(rs));
+                }
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Impossible de charger le profil public du medecin.", e);
+        }
+    }
+
     public List<Doctor> searchDoctors(String keyword, String city) {
         List<Doctor> doctors = new ArrayList<>();
 
+        ensureSchema();
         ensureDoctorProfilesForMedicalUsers();
 
         String sql = """
@@ -147,7 +259,10 @@ public class DoctorDao {
                    COALESCE(d.sector, 'Secteur 1') AS sector,
                    COALESCE(d.consultation_price, 0) AS consultation_price,
                    COALESCE(d.accepts_vitale, FALSE) AS accepts_vitale,
-                   COALESCE(d.teleconsultation, FALSE) AS teleconsultation
+                   COALESCE(d.teleconsultation, FALSE) AS teleconsultation,
+                   d.experience,
+                   d.biography,
+                   COALESCE(d.public_profile_completed, FALSE) AS public_profile_completed
             FROM users u
             LEFT JOIN doctors d ON d.id_users = u.id_users
             WHERE u.role = 'MEDECIN'
@@ -188,7 +303,10 @@ public class DoctorDao {
                         rs.getString("sector"),
                         rs.getDouble("consultation_price"),
                         rs.getBoolean("accepts_vitale"),
-                        rs.getBoolean("teleconsultation")
+                        rs.getBoolean("teleconsultation"),
+                        getInteger(rs, "experience"),
+                        rs.getString("biography"),
+                        rs.getBoolean("public_profile_completed")
                 );
 
                 doctors.add(doctor);
@@ -202,6 +320,7 @@ public class DoctorDao {
     }
 
     private void ensureDoctorProfilesForMedicalUsers() {
+        ensureSchema();
         String sql = """
                 SELECT u.id_users
                 FROM users u
@@ -222,6 +341,7 @@ public class DoctorDao {
     }
 
     private void ensureDoctorProfileForUser(int userId) {
+        ensureSchema();
         String sql = """
                 SELECT 1
                 FROM doctors
@@ -408,6 +528,7 @@ public class DoctorDao {
     }
 
     public void markPublicProfileCompleted(int doctorId) {
+        ensureSchema();
         String sql = "UPDATE doctors SET public_profile_completed = TRUE WHERE id_doctors = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -423,8 +544,44 @@ public class DoctorDao {
         return rs.wasNull() ? null : value;
     }
 
+    private DoctorAdminEntry mapPublicProfile(ResultSet rs) throws SQLException {
+        return new DoctorAdminEntry(
+                rs.getInt("id_users"),
+                rs.getInt("id_doctors"),
+                rs.getString("prenom"),
+                rs.getString("username"),
+                rs.getString("email"),
+                rs.getString("phone"),
+                rs.getString("city"),
+                rs.getString("address"),
+                rs.getString("speciality"),
+                rs.getString("doctor_address"),
+                getInteger(rs, "experience"),
+                getDouble(rs, "consultation_price"),
+                rs.getString("biography"),
+                rs.getString("sector"),
+                rs.getBoolean("teleconsultation"),
+                rs.getBoolean("accepts_vitale"),
+                rs.getBoolean("public_profile_completed"),
+                AccountStatus.fromDatabaseValue(rs.getString("account_status"))
+        );
+    }
+
     private Double getDouble(ResultSet rs, String column) throws SQLException {
         double value = rs.getDouble(column);
         return rs.wasNull() ? null : value;
+    }
+
+    private void ensureColumn(Connection conn, String tableName, String columnName, String columnDefinition) throws SQLException {
+        DatabaseMetaData metaData = conn.getMetaData();
+        try (ResultSet columns = metaData.getColumns(null, null, tableName, columnName)) {
+            if (columns.next()) {
+                return;
+            }
+        }
+
+        try (Statement statement = conn.createStatement()) {
+            statement.executeUpdate("ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + columnDefinition);
+        }
     }
 }

@@ -6,7 +6,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.meetcare.controller.AppointmentBookingPatientController;
 import org.example.meetcare.controller.AbstractMessagingController;
+import org.example.meetcare.controller.DoctorPublicProfileController;
 
 public class NavigationUtil {
     private static final double PATIENT_WIDTH = 1200;
@@ -52,6 +54,16 @@ public class NavigationUtil {
         navigateTo(event, "/view/appointmentBookingPatient.fxml", PATIENT_WIDTH, 760, "MeetCare - Prendre un rendez-vous");
     }
 
+    public static void openPatientAppointmentBooking(Event event, int doctorId, String doctorName, String speciality, String address) {
+        AppSession.setSidebarRoute("appointments");
+        navigateToWithPostLoad(event, "/view/appointmentBookingPatient.fxml", PATIENT_WIDTH, 760, "MeetCare - Prendre un rendez-vous", controller -> {
+            if (controller instanceof AppointmentBookingPatientController bookingController) {
+                bookingController.setInitialDoctor(doctorId, doctorName, speciality, address, null, null);
+                bookingController.applyInitialDoctorSelection();
+            }
+        });
+    }
+
     public static void openPatientDocuments(Event event) {
         AppSession.setSidebarRoute("documents");
         navigateTo(event, "/view/documentsPatient.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Documents");
@@ -79,6 +91,16 @@ public class NavigationUtil {
     public static void openPatientSettings(Event event) {
         AppSession.setSidebarRoute("settings");
         navigateTo(event, "/view/settingsPatient.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
+    }
+
+    public static void openDoctorPublicProfile(Event event, int doctorId) {
+        AppSession.setProfileReturnRoute(AppSession.getSidebarRoute());
+        AppSession.setSidebarRoute("search");
+        navigateToWithPostLoad(event, "/view/doctorPublicProfile.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Profil du medecin", controller -> {
+            if (controller instanceof DoctorPublicProfileController profileController) {
+                profileController.setDoctorId(doctorId);
+            }
+        });
     }
 
     public static void openAdminHome(Event event) {
