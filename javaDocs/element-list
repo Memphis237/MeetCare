@@ -1,0 +1,8 @@
+module:org.example.meetcare
+org.example.meetcare
+org.example.meetcare.controller
+org.example.meetcare.dao
+org.example.meetcare.exception
+org.example.meetcare.model
+org.example.meetcare.service
+org.example.meetcare.utils
