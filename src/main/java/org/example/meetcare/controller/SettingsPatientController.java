@@ -2,19 +2,27 @@ package org.example.meetcare.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.service.UserProfileService;
 import org.example.meetcare.utils.AppSession;
 import org.example.meetcare.utils.AvatarUtil;
+
+import java.util.Optional;
 
 public class SettingsPatientController {
     private final UserProfileService profileService = new UserProfileService();
@@ -165,6 +173,41 @@ public class SettingsPatientController {
         showInfo("Mot de passe mis a jour.");
     }
 
+    @FXML
+    private void handleDeleteAccount(ActionEvent event) {
+        Users currentUser = refreshCurrentUser();
+        if (currentUser == null) {
+            showError("Aucun utilisateur connecte.");
+            return;
+        }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Suppression du compte");
+        confirmation.setHeaderText("Voulez-vous vraiment supprimer votre compte ?");
+        confirmation.setContentText("Cette action est definitive. Vos donnees liees seront egalement supprimees.");
+
+        ButtonType deleteButton = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+        confirmation.getButtonTypes().setAll(deleteButton, cancelButton);
+
+        if (event.getSource() instanceof Node node && node.getScene() != null && node.getScene().getWindow() != null) {
+            confirmation.initOwner(node.getScene().getWindow());
+        }
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+        if (result.isEmpty() || result.get() != deleteButton) {
+            return;
+        }
+
+        try {
+            profileService.deleteAccount(currentUser);
+            AppSession.clear();
+            navigateToLogin((Node) event.getSource());
+        } catch (Exception ex) {
+            showError(ex.getMessage());
+        }
+    }
+
     private Users refreshCurrentUser() {
         Users user = AppSession.getCurrentUser();
         if (user == null || user.getIdUsers() <= 0) {
@@ -182,6 +225,31 @@ public class SettingsPatientController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("MeetCare");
+        alert.setHeaderText(null);
+        alert.setContentText(message == null || message.isBlank()
+                ? "Une erreur est survenue."
+                : message);
+        alert.showAndWait();
+    }
+
+    private void navigateToLogin(Node source) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
+            Scene scene = new Scene(root, 620, 520);
+            scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+            Stage stage = (Stage) source.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("MeetCare - Connexion");
+            stage.centerOnScreen();
+            stage.show();
+        } catch (Exception ex) {
+            showError("Impossible de revenir a la connexion.");
+        }
     }
 
     private void refreshAvatars(Users user) {

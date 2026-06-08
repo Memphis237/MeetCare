@@ -6,6 +6,7 @@ public final class AppSession {
     private static Users currentUser;
     private static boolean openAssistantConversation;
     private static String sidebarRoute;
+    private static String profileReturnRoute;
 
     private AppSession() {
     }
@@ -22,6 +23,7 @@ public final class AppSession {
         currentUser = null;
         openAssistantConversation = false;
         sidebarRoute = null;
+        profileReturnRoute = null;
     }
 
     public static boolean isOpenAssistantConversation() {
@@ -38,5 +40,13 @@ public final class AppSession {
 
     public static void setSidebarRoute(String sidebarRoute) {
         AppSession.sidebarRoute = sidebarRoute;
+    }
+
+    public static String getProfileReturnRoute() {
+        return profileReturnRoute;
+    }
+
+    public static void setProfileReturnRoute(String profileReturnRoute) {
+        AppSession.profileReturnRoute = profileReturnRoute;
     }
 }

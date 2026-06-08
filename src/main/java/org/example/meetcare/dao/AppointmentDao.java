@@ -15,6 +15,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AppointmentDao {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
@@ -269,6 +270,52 @@ public class AppointmentDao {
         }
     }
 
+    public Optional<AppointmentParticipantInfo> findParticipantInfoByAppointmentId(int appointmentId) {
+        String sql = """
+                SELECT a.id_appointments,
+                       a.appointment_date,
+                       a.appointment_time,
+                       a.status,
+                       COALESCE(a.urgency, 'NORMAL') AS urgency,
+                       a.notes,
+                       doctor_user.id_users AS doctor_user_id,
+                       patient_user.id_users AS patient_user_id,
+                       doctor_user.username AS doctor_username,
+                       doctor_user.prenom AS doctor_prenom,
+                       patient_user.username AS patient_username,
+                       patient_user.prenom AS patient_prenom
+                FROM appointments a
+                JOIN doctors d ON a.id_doctors = d.id_doctors
+                JOIN users doctor_user ON d.id_users = doctor_user.id_users
+                JOIN users patient_user ON a.id_users = patient_user.id_users
+                WHERE a.id_appointments = ?
+                LIMIT 1
+                """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, appointmentId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(new AppointmentParticipantInfo(
+                            rs.getInt("doctor_user_id"),
+                            rs.getInt("patient_user_id"),
+                            buildDoctorLabel(rs.getString("doctor_prenom"), rs.getString("doctor_username")),
+                            buildDisplayName(rs.getString("patient_prenom"), rs.getString("patient_username")),
+                            rs.getDate("appointment_date").toLocalDate(),
+                            rs.getTime("appointment_time").toLocalTime().format(TIME_FORMATTER),
+                            rs.getString("status"),
+                            rs.getString("urgency"),
+                            rs.getString("notes")
+                    ));
+                }
+            }
+        } catch (SQLException ex) {
+            throw new IllegalStateException("Impossible de recuperer les participants du rendez-vous.", ex);
+        }
+        return Optional.empty();
+    }
+
     private void ensureSchema() {
         if (schemaChecked) {
             return;
@@ -360,5 +407,18 @@ public class AppointmentDao {
         } catch (SQLException ex) {
             throw new IllegalStateException("Impossible de resoudre le medecin associe au creneau.", ex);
         }
+    }
+
+    public record AppointmentParticipantInfo(
+            int doctorUserId,
+            int patientUserId,
+            String doctorDisplayName,
+            String patientDisplayName,
+            LocalDate date,
+            String time,
+            String status,
+            String urgency,
+            String notes
+    ) {
     }
 }

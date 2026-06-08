@@ -74,13 +74,13 @@
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A; -fx-cursor: hand;" text="Assistant IA" />
         </HBox>
 
-        <HBox fx:id="notificationsItem" alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
+        <HBox fx:id="notificationsItem" alignment="CENTER_LEFT" onMouseClicked="#handleNotifications" spacing="12" style="-fx-padding: 10 14 10 14; -fx-background-radius: 8; -fx-cursor: hand;">
             <Label style="-fx-font-size: 14px; -fx-text-fill: #4A6B8A;" text="🔔" />
             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Notifications" />
             <Region HBox.hgrow="ALWAYS" />
-            <StackPane>
+            <StackPane fx:id="notificationsBadgeContainer" visible="false" managed="false">
                 <Circle radius="10" style="-fx-fill: #2B7FD4;" />
-                <Label style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: white;" text="15" />
+                <Label fx:id="notificationsBadgeLabel" style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: white;" text="" />
             </StackPane>
         </HBox>
 

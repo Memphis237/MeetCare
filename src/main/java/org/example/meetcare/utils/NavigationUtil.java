@@ -1,12 +1,15 @@
 package org.example.meetcare.utils;
 
 import javafx.event.Event;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.meetcare.controller.AppointmentBookingPatientController;
 import org.example.meetcare.controller.AbstractMessagingController;
+import org.example.meetcare.controller.DoctorPublicProfileController;
 
 public class NavigationUtil {
     private static final double PATIENT_WIDTH = 1200;
@@ -47,9 +50,26 @@ public class NavigationUtil {
         navigateTo(event, "/view/myAppointments.fxml", PATIENT_WIDTH, 720, "MeetCare - Mes rendez-vous");
     }
 
+    public static void openPatientAppointments(Node source) {
+        if (source == null) {
+            return;
+        }
+        openPatientAppointments(new ActionEvent(source, null));
+    }
+
     public static void openPatientAppointmentBooking(Event event) {
         AppSession.setSidebarRoute("appointments");
         navigateTo(event, "/view/appointmentBookingPatient.fxml", PATIENT_WIDTH, 760, "MeetCare - Prendre un rendez-vous");
+    }
+
+    public static void openPatientAppointmentBooking(Event event, int doctorId, String doctorName, String speciality, String address) {
+        AppSession.setSidebarRoute("appointments");
+        navigateToWithPostLoad(event, "/view/appointmentBookingPatient.fxml", PATIENT_WIDTH, 760, "MeetCare - Prendre un rendez-vous", controller -> {
+            if (controller instanceof AppointmentBookingPatientController bookingController) {
+                bookingController.setInitialDoctor(doctorId, doctorName, speciality, address, null, null);
+                bookingController.applyInitialDoctorSelection();
+            }
+        });
     }
 
     public static void openPatientDocuments(Event event) {
@@ -67,6 +87,18 @@ public class NavigationUtil {
         navigateTo(event, "/view/messagePatient.fxml", 1280, 760, "MeetCare - Messages");
     }
 
+    public static void openPatientMessages(Node source) {
+        if (source == null) {
+            return;
+        }
+        openPatientMessages(new ActionEvent(source, null));
+    }
+
+    public static void openPatientNotifications(Event event) {
+        AppSession.setSidebarRoute("notifications");
+        navigateTo(event, "/view/notificationsPatient.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Notifications");
+    }
+
     public static void openPatientAssistantMessages(Event event) {
         AppSession.setSidebarRoute("assistant");
         navigateToWithPostLoad(event, "/view/messagePatient.fxml", 1280, 760, "MeetCare - Messages", controller -> {
@@ -81,6 +113,16 @@ public class NavigationUtil {
         navigateTo(event, "/view/settingsPatient.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Parametres");
     }
 
+    public static void openDoctorPublicProfile(Event event, int doctorId) {
+        AppSession.setProfileReturnRoute(AppSession.getSidebarRoute());
+        AppSession.setSidebarRoute("search");
+        navigateToWithPostLoad(event, "/view/doctorPublicProfile.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Profil du medecin", controller -> {
+            if (controller instanceof DoctorPublicProfileController profileController) {
+                profileController.setDoctorId(doctorId);
+            }
+        });
+    }
+
     public static void openAdminHome(Event event) {
         AppSession.setSidebarRoute("home");
         navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Dashboard");
@@ -93,7 +135,7 @@ public class NavigationUtil {
 
     public static void openAdminAppointments(Event event) {
         AppSession.setSidebarRoute("appointments");
-        navigateTo(event, "/view/doctorsAdmin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Médecins");
+        navigateTo(event, "/view/doctorsAdmin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - MÃ©decins");
     }
 
     public static void openAdminDocuments(Event event) {
@@ -131,6 +173,13 @@ public class NavigationUtil {
         navigateTo(event, "/view/myAppointmentsMedecin.fxml", PATIENT_WIDTH, 720, "MeetCare - Agenda");
     }
 
+    public static void openMedecinAgenda(Node source) {
+        if (source == null) {
+            return;
+        }
+        openMedecinAgenda(new ActionEvent(source, null));
+    }
+
     public static void openMedecinValidation(Event event) {
         AppSession.setSidebarRoute("validation");
         navigateTo(event, "/view/validationMedecin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Patients");
@@ -161,6 +210,18 @@ public class NavigationUtil {
         navigateTo(event, "/view/messageMedecin.fxml", 1280, 760, "MeetCare - Messagerie");
     }
 
+    public static void openMedecinMessages(Node source) {
+        if (source == null) {
+            return;
+        }
+        openMedecinMessages(new ActionEvent(source, null));
+    }
+
+    public static void openMedecinNotifications(Event event) {
+        AppSession.setSidebarRoute("notifications");
+        navigateTo(event, "/view/notificationsMedecin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Notifications");
+    }
+
     public static void openMedecinAssistantMessages(Event event) {
         AppSession.setSidebarRoute("assistant");
         navigateToWithPostLoad(event, "/view/messageMedecin.fxml", 1280, 760, "MeetCare - Messagerie", controller -> {
@@ -189,14 +250,11 @@ public class NavigationUtil {
         String titleValue = title == null ? "" : title.toLowerCase();
         String pathValue = fxmlPath == null ? "" : fxmlPath.toLowerCase();
 
-        if (titleValue.contains("rendez-vous")) {
-            return "documents";
-        }
-        if (titleValue.contains("médecins") || titleValue.contains("medecins")) {
-            return "appointments";
-        }
         if (pathValue.contains("message")) {
             return "messages";
+        }
+        if (pathValue.contains("notifications")) {
+            return "notifications";
         }
         if (pathValue.contains("settings")) {
             return "settings";
@@ -213,6 +271,12 @@ public class NavigationUtil {
         if (pathValue.contains("invoice")) {
             return "invoices";
         }
+        if (titleValue.contains("mÃ©decins") || titleValue.contains("medecins")) {
+            return "appointments";
+        }
+        if (titleValue.contains("mes rendez-vous") || titleValue.contains("agenda")) {
+            return "appointments";
+        }
         if (titleValue.contains("utilisateurs") || titleValue.contains("recherche")) {
             return "search";
         }
@@ -224,6 +288,9 @@ public class NavigationUtil {
         }
         if (titleValue.contains("disponibilites")) {
             return "availability";
+        }
+        if (titleValue.contains("rendez-vous")) {
+            return "documents";
         }
         if (titleValue.contains("accueil") || titleValue.contains("tableau de bord") || titleValue.contains("dashboard")) {
             return "home";

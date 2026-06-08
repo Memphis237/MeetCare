@@ -19,6 +19,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Window;
 import org.example.meetcare.dao.DoctorDao;
 import org.example.meetcare.dao.DoctorDocumentDao;
+import org.example.meetcare.dao.NotificationDao;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.DoctorDocumentEntry;
 import org.example.meetcare.model.Users;
@@ -58,6 +59,7 @@ public class ValidationAdminController {
     private final DoctorDocumentDao doctorDocumentDao = new DoctorDocumentDao();
     private final DoctorDao doctorDao = new DoctorDao();
     private final UsersDao usersDao = new UsersDao();
+    private final NotificationDao notificationDao = new NotificationDao();
     private final Map<Integer, CheckBox> selectionBoxesByDocumentId = new HashMap<>();
 
     @FXML
@@ -216,9 +218,17 @@ public class ValidationAdminController {
 
         if (isDossierFullyApproved(userId)) {
             usersDao.updateAccountStatus(userId, "VERIFIED");
+            notificationDao.createNotification(userId,
+                    "Compte valide",
+                    "Bravo ! Votre dossier est complet et votre compte a ete valide.",
+                    "SYSTEM");
             showAlert(Alert.AlertType.INFORMATION, "Validation effectuee", "Les documents selectionnes ont ete valides et le dossier est complet.");
         } else {
             usersDao.updateAccountStatus(userId, "PENDING");
+            notificationDao.createNotification(userId,
+                    "Documents valides",
+                    "Les documents selectionnes ont ete valides. Vous pouvez continuer la finalisation de votre dossier.",
+                    "SYSTEM");
             showAlert(Alert.AlertType.INFORMATION, "Validation effectuee", "Les documents selectionnes ont ete valides.");
         }
         loadPendingDoctors();
@@ -256,6 +266,10 @@ public class ValidationAdminController {
             doctorDao.saveVerificationDecision(doctorId, admin.getIdUsers(), "REJECTED",
                     trimmed + " | Documents refuses: " + documentSummary(selectedDocuments));
             usersDao.updateAccountStatus(userId, "PENDING");
+            notificationDao.createNotification(userId,
+                    "Documents refuses",
+                    "Votre dossier contient des elements refuses: " + trimmed + ". Merci de renvoyer les documents corrigees.",
+                    "SYSTEM");
             showAlert(Alert.AlertType.INFORMATION, "Documents refuses", "Les documents selectionnes ont ete refuses. Le medecin peut les renvoyer.");
             loadPendingDoctors();
             refreshSidebar();

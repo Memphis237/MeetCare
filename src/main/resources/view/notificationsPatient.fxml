@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.NotificationsController"
+            style="-fx-background-color: #f4f7fb;">
+
+    <left>
+        <fx:include fx:id="sidebarPatient" source="sidebarPatient.fxml" />
+    </left>
+
+    <center>
+        <VBox spacing="18" style="-fx-padding: 28;">
+            <VBox spacing="8" style="-fx-background-color: linear-gradient(to right, #ffffff, #eef6ff); -fx-background-radius: 22; -fx-border-color: #dbe5ef; -fx-border-radius: 22; -fx-padding: 24;">
+                <Label text="Notifications" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" />
+                <Label text="Tous les messages systeme, rendez-vous et alertes importantes au meme endroit." style="-fx-font-size: 14px; -fx-text-fill: #53657d;" />
+
+                <HBox spacing="16" alignment="CENTER_LEFT">
+                    <VBox spacing="3" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 14 18 14 18; -fx-border-color: #dbe5ef; -fx-border-radius: 16;">
+                        <Label text="Non lues" style="-fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                        <Label fx:id="unreadCountLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1d4ed8;" />
+                    </VBox>
+                    <VBox spacing="3" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 14 18 14 18; -fx-border-color: #dbe5ef; -fx-border-radius: 16;">
+                        <Label text="Total" style="-fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                        <Label fx:id="totalCountLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" />
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="allFilterButton" text="Toutes" onAction="#handleAllNotifications" style="-fx-background-color: white; -fx-text-fill: #334155; -fx-background-radius: 14; -fx-border-color: #dbe5ef; -fx-border-radius: 14; -fx-padding: 10 16 10 16; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;" />
+                    <Button fx:id="unreadFilterButton" text="Non lues" onAction="#handleUnreadNotifications" style="-fx-background-color: white; -fx-text-fill: #334155; -fx-background-radius: 14; -fx-border-color: #dbe5ef; -fx-border-radius: 14; -fx-padding: 10 16 10 16; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;" />
+                    <Button text="Tout marquer comme lu" onAction="#handleMarkAllAsRead" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-background-radius: 14; -fx-padding: 10 16 10 16; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;" />
+                    <Button text="Rafraichir" onAction="#handleRefresh" style="-fx-background-color: #eef2ff; -fx-text-fill: #4338ca; -fx-background-radius: 14; -fx-padding: 10 16 10 16; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;" />
+                </HBox>
+            </VBox>
+
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" hbarPolicy="NEVER">
+                <content>
+                    <VBox fx:id="notificationsContainer" spacing="14" style="-fx-padding: 0 2 18 2;" />
+                </content>
+            </ScrollPane>
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -15,10 +15,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.meetcare.dao.DoctorDao;
 import org.example.meetcare.model.Doctor;
+import org.example.meetcare.utils.NavigationUtil;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -46,8 +48,11 @@ public class SearchDoctorController {
 
     @FXML
     private void initialize() {
-        doctors = loadDoctors();
-
+        try {
+            doctors = loadDoctors();
+        } catch (Exception ex) {
+            doctors = Collections.emptyList();
+        }
         refreshResults(doctors);
     }
 
@@ -75,7 +80,8 @@ public class SearchDoctorController {
 
         if (doctorsToDisplay.isEmpty()) {
             VBox emptyState = new VBox(8);
-            emptyState.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
+            emptyState.setStyle(
+                    "-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
             Label title = new Label("Aucun medecin trouve");
             title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
@@ -95,10 +101,12 @@ public class SearchDoctorController {
 
     private HBox createDoctorCard(DoctorViewData doctor) {
         HBox card = new HBox(25);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
+        card.setStyle(
+                "-fx-background-color: white; -fx-background-radius: 15; -fx-padding: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
-        Label avatar = new Label(doctor.name().substring(4, 5).toUpperCase(Locale.ROOT));
-        avatar.setStyle("-fx-background-color: #dbeafe; -fx-text-fill: #2563eb; -fx-font-size: 20px; -fx-font-weight: bold; -fx-alignment: center; -fx-min-width: 60; -fx-min-height: 60; -fx-background-radius: 30;");
+        Label avatar = new Label(initialsFromName(doctor.name()));
+        avatar.setStyle(
+                "-fx-background-color: #dbeafe; -fx-text-fill: #2563eb; -fx-font-size: 20px; -fx-font-weight: bold; -fx-alignment: center; -fx-min-width: 60; -fx-min-height: 60; -fx-background-radius: 30;");
 
         VBox content = new VBox(8);
         HBox.setHgrow(content, Priority.ALWAYS);
@@ -117,10 +125,12 @@ public class SearchDoctorController {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label rating = new Label("Note " + doctor.rating());
-        rating.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        Label profileState = new Label(doctor.publicProfileCompleted() ? "Profil complet" : "Profil a completer");
+        profileState.setStyle(doctor.publicProfileCompleted()
+                ? "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #16a34a;"
+                : "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #b45309;");
 
-        header.getChildren().addAll(identity, spacer, rating);
+        header.getChildren().addAll(identity, spacer, profileState);
 
         Label address = new Label(doctor.address());
         address.setStyle("-fx-font-size: 14px; -fx-text-fill: #4b5563;");
@@ -128,9 +138,17 @@ public class SearchDoctorController {
         HBox badges = new HBox(10);
         badges.getChildren().addAll(
                 createBadge(doctor.sector(), "badge"),
-                createBadge(doctor.price(), "badge"),
-                createBadge("Carte Vitale", "badge-green")
-        );
+                createBadge(doctor.price(), "badge"));
+
+        if (doctor.experience() != null) {
+            badges.getChildren().add(createBadge(doctor.experience() + " ans exp.", "badge"));
+        }
+
+        if (doctor.acceptsVitale()) {
+            badges.getChildren().add(createBadge("Carte Vitale", "badge-green"));
+        } else {
+            badges.getChildren().add(createBadge("Sans Vitale", "badge"));
+        }
 
         if (doctor.teleconsultation()) {
             badges.getChildren().add(createBadge("Teleconsultation", "badge-blue"));
@@ -138,17 +156,21 @@ public class SearchDoctorController {
 
         HBox actions = new HBox(15);
 
-        Label nextSlot = new Label("Prochain creneau: " + formatDate(doctor.nextSlotDate()) + " a " + doctor.nextSlotTime());
+        Label nextSlot = new Label(
+                "Prochain creneau: " + formatDate(doctor.nextSlotDate()) + " a " + doctor.nextSlotTime());
         nextSlot.setStyle("-fx-text-fill: #16a34a; -fx-font-size: 16px;");
 
         Region actionsSpacer = new Region();
         HBox.setHgrow(actionsSpacer, Priority.ALWAYS);
 
         Button profileButton = new Button("Voir profil");
-        profileButton.setStyle("-fx-background-color: white; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 15px; -fx-padding: 10 20;");
+        profileButton.setStyle(
+                "-fx-background-color: white; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 15px; -fx-padding: 10 20;");
+        profileButton.setOnAction(event -> NavigationUtil.openDoctorPublicProfile(event, doctor.id()));
 
         Button appointmentButton = new Button("Prendre rendez-vous");
-        appointmentButton.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 10; -fx-padding: 10 20;");
+        appointmentButton.setStyle(
+                "-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 10; -fx-padding: 10 20;");
         appointmentButton.setOnAction(event -> handleAppointmentBooking(doctor, appointmentButton));
 
         actions.getChildren().addAll(nextSlot, actionsSpacer, profileButton, appointmentButton);
@@ -168,7 +190,8 @@ public class SearchDoctorController {
             Scene scene = new Scene(loader.load());
             scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
             AppointmentBookingPatientController controller = loader.getController();
-            controller.setInitialDoctor(doctor.id(), doctor.name(), doctor.speciality(), doctor.address(), doctor.nextSlotDate(), doctor.nextSlotTime());
+            controller.setInitialDoctor(doctor.id(), doctor.name(), doctor.speciality(), doctor.address(),
+                    doctor.nextSlotDate(), doctor.nextSlotTime());
             controller.applyInitialDoctorSelection();
 
             Stage stage = (Stage) sourceButton.getScene().getWindow();
@@ -207,6 +230,17 @@ public class SearchDoctorController {
         return date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear();
     }
 
+    private String initialsFromName(String name) {
+        if (name == null || name.isBlank()) {
+            return "D";
+        }
+        String trimmed = name.trim();
+        if (trimmed.length() <= 4) {
+            return trimmed.substring(0, 1).toUpperCase(Locale.ROOT);
+        }
+        return trimmed.substring(4, Math.min(5, trimmed.length())).toUpperCase(Locale.ROOT);
+    }
+
     private List<DoctorViewData> loadDoctors() {
         List<Doctor> doctorRows = doctorDao.searchDoctors("", "");
         List<DoctorViewData> viewData = new ArrayList<>();
@@ -236,7 +270,6 @@ public class SearchDoctorController {
             default -> "15:30";
         };
 
-        String rating = String.format(Locale.ROOT, "%.1f", 4.5 + ((doctor.getId() % 5) * 0.1));
         return new DoctorViewData(
                 doctor.getId(),
                 "Dr. " + doctor.getUsername(),
@@ -247,10 +280,11 @@ public class SearchDoctorController {
                 doctor.getPrice() + " EUR",
                 doctor.isAcceptsVitale(),
                 doctor.isTeleconsultation(),
-                rating,
+                doctor.getExperience(),
+                doctor.getBiography(),
+                doctor.isPublicProfileCompleted(),
                 nextDate,
-                nextTime
-        );
+                nextTime);
     }
 
     private record DoctorViewData(
@@ -263,9 +297,10 @@ public class SearchDoctorController {
             String price,
             boolean acceptsVitale,
             boolean teleconsultation,
-            String rating,
+            Integer experience,
+            String biography,
+            boolean publicProfileCompleted,
             LocalDate nextSlotDate,
-            String nextSlotTime
-    ) {
+            String nextSlotTime) {
     }
 }

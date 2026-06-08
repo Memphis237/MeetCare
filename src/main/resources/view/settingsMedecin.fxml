@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -64,6 +65,62 @@
                             </VBox>
 
                             <Button onAction="#handleChangePassword" styleClass="secondary-button" text="Modifier le mot de passe"/>
+                        </VBox>
+
+                        <VBox spacing="14" styleClass="card">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Profil public"/>
+                                    <Label fx:id="publicProfileStatusLabel" style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="Profil public a configurer"/>
+                                </VBox>
+                                <Button onAction="#handlePreviewPublicProfile" styleClass="secondary-button" text="Apercu"/>
+                            </HBox>
+
+                            <VBox spacing="6">
+                                <Label text="Specialite"/>
+                                <TextField fx:id="specialityField" promptText="Cardiologie"/>
+                            </VBox>
+
+                            <VBox spacing="6">
+                                <Label text="Adresse du cabinet"/>
+                                <TextField fx:id="publicAddressField" promptText="12 rue Victor Hugo"/>
+                            </VBox>
+
+                            <VBox spacing="6">
+                                <Label text="Secteur"/>
+                                <TextField fx:id="sectorField" promptText="Secteur 1"/>
+                            </VBox>
+
+                            <HBox spacing="10">
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="Experience"/>
+                                    <TextField fx:id="experienceField" promptText="15"/>
+                                </VBox>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="Prix consultation"/>
+                                    <TextField fx:id="consultationPriceField" promptText="70,00"/>
+                                </VBox>
+                            </HBox>
+
+                            <VBox spacing="6">
+                                <Label text="Biographie"/>
+                                <TextArea fx:id="biographyArea" promptText="Parcours, approche, specialites..." prefRowCount="5" wrapText="true"/>
+                            </VBox>
+
+                            <HBox spacing="18">
+                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Carte Vitale"/>
+                                    <CheckBox fx:id="acceptsVitaleToggle"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Teleconsultation"/>
+                                    <CheckBox fx:id="teleconsultationToggle"/>
+                                </HBox>
+                            </HBox>
+
+                            <HBox alignment="CENTER_RIGHT">
+                                <Button onAction="#handleSavePublicProfile" styleClass="primary-button" text="Enregistrer le profil public"/>
+                            </HBox>
                         </VBox>
                     </VBox>
 

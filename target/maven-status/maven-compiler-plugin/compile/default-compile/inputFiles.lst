@@ -4,6 +4,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AbstractMes
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AppointmentBookingPatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\AppointmentsAdminController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DashboardController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DoctorPublicProfileController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DoctorsAdminController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DocumentsMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\DocumentsPatientController.java
@@ -16,6 +17,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\MedecinAppo
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\MessageMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\MessagePatientController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\MyAppointmentsController.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\NotificationsController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\PatientsMedecinController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\RegisterController.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\controller\SearchDoctorController.java
@@ -37,6 +39,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\DoctorDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\DoctorDocumentDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\InvoiceDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\MedicalRecordDao.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\NotificationDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\dao\UsersDao.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\exception\DatabaseException.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\Main.java
@@ -52,6 +55,7 @@ C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\DoctorAdminEntry
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\DoctorDocumentEntry.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Invoice.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\MedicalRecord.java
+C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\NotificationEntry.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Role.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\model\Users.java
 C:\wamp64\www\MeetCare\src\main\java\org\example\meetcare\service\DoctorProfileService.java

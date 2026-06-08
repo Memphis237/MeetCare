@@ -62,27 +62,27 @@
                         <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
                     </columnConstraints>
 
-                    <VBox GridPane.columnIndex="0" spacing="6" styleClass="doctor-stat-card">
+                    <VBox GridPane.columnIndex="0" spacing="8" styleClass="doctor-stat-card" alignment="CENTER">
                         <Label text="Rendez-vous aujourd'hui" styleClass="doctor-stat-label"/>
-                        <Label fx:id="todayAppointmentsCountLabel" text="0" styleClass="doctor-stat-value blue-value"/>
+                        <Label fx:id="todayAppointmentsCountLabel" text="0" styleClass="doctor-stat-value"/>
                         <Label fx:id="todayAppointmentsMetaLabel" text="Aucun rendez-vous aujourd'hui" styleClass="doctor-stat-label"/>
                     </VBox>
 
-                    <VBox GridPane.columnIndex="1" spacing="6" styleClass="doctor-stat-card">
+                    <VBox GridPane.columnIndex="1" spacing="8" styleClass="doctor-stat-card" alignment="CENTER">
                         <Label text="Rendez-vous semaine" styleClass="doctor-stat-label"/>
-                        <Label fx:id="weekAppointmentsCountLabel" text="0" styleClass="doctor-stat-value green-value"/>
+                        <Label fx:id="weekAppointmentsCountLabel" text="0" styleClass="doctor-stat-value"/>
                         <Label fx:id="weekAppointmentsMetaLabel" text="Sur les 7 prochains jours" styleClass="doctor-stat-label"/>
                     </VBox>
 
-                    <VBox GridPane.columnIndex="2" spacing="6" styleClass="doctor-stat-card">
+                    <VBox GridPane.columnIndex="2" spacing="8" styleClass="doctor-stat-card" alignment="CENTER">
                         <Label text="Patients distincts" styleClass="doctor-stat-label"/>
-                        <Label fx:id="uniquePatientsCountLabel" text="0" styleClass="doctor-stat-value purple-value"/>
+                        <Label fx:id="uniquePatientsCountLabel" text="0" styleClass="doctor-stat-value"/>
                         <Label fx:id="uniquePatientsMetaLabel" text="Patients differents" styleClass="doctor-stat-label"/>
                     </VBox>
 
-                    <VBox GridPane.columnIndex="3" spacing="6" styleClass="doctor-stat-card">
+                    <VBox GridPane.columnIndex="3" spacing="8" styleClass="doctor-stat-card" alignment="CENTER">
                         <Label text="Taux de remplissage" styleClass="doctor-stat-label"/>
-                        <Label fx:id="fillRateCountLabel" text="0%" styleClass="doctor-stat-value orange-value"/>
+                        <Label fx:id="fillRateCountLabel" text="0%" styleClass="doctor-stat-value"/>
                         <Label fx:id="fillRateMetaLabel" text="Confirmes: 0 | Termines: 0 | Annules: 0" styleClass="doctor-stat-label" wrapText="true"/>
                     </VBox>
                 </GridPane>

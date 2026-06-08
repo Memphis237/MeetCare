@@ -1,13 +1,19 @@
 package org.example.meetcare.controller;
 
-import javafx.fxml.FXML;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Window;
+import javafx.util.Duration;
+import org.example.meetcare.dao.ChatMessageDao;
+import org.example.meetcare.dao.NotificationDao;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.Role;
 import org.example.meetcare.model.Users;
@@ -34,6 +40,12 @@ public class SidebarPatientController {
 
     @FXML
     private Label messagesBadgeLabel;
+
+    @FXML
+    private StackPane notificationsBadgeContainer;
+
+    @FXML
+    private Label notificationsBadgeLabel;
 
     @FXML
     private HBox homeItem;
@@ -65,9 +77,14 @@ public class SidebarPatientController {
     @FXML
     private HBox logoutItem;
 
+    private final ChatMessageDao chatMessageDao = new ChatMessageDao();
+    private final NotificationDao notificationDao = new NotificationDao();
+    private Timeline badgeTimeline;
+
     @FXML
     private void initialize() {
         refreshSidebar(null);
+        startBadgeMonitor();
         Platform.runLater(() -> applyActiveRoute(AppSession.getSidebarRoute()));
     }
 
@@ -80,6 +97,7 @@ public class SidebarPatientController {
         patientNameLabel.setText(buildDisplayName(user));
         roleLabel.setText(roleToLabel(user.getRole()));
         AvatarUtil.applyAvatar(avatarCircle, avatarInitialsLabel, user);
+        refreshUnreadBadges(user);
     }
 
     public void setMessageBadgeCount(int count) {
@@ -93,6 +111,17 @@ public class SidebarPatientController {
         messagesBadgeLabel.setText(hasUnread ? (count > 99 ? "99+" : String.valueOf(count)) : "");
     }
 
+    public void setNotificationBadgeCount(int count) {
+        if (notificationsBadgeContainer == null || notificationsBadgeLabel == null) {
+            return;
+        }
+
+        boolean hasUnread = count > 0;
+        notificationsBadgeContainer.setVisible(hasUnread);
+        notificationsBadgeContainer.setManaged(hasUnread);
+        notificationsBadgeLabel.setText(hasUnread ? (count > 99 ? "99+" : String.valueOf(count)) : "");
+    }
+
     public void applyActiveRoute(String route) {
         setInactive(homeItem, searchItem, appointmentsItem, documentsItem, invoicesItem, messagesItem, assistantItem, notificationsItem, settingsItem, logoutItem);
 
@@ -103,6 +132,7 @@ public class SidebarPatientController {
             case "invoices" -> invoicesItem;
             case "messages" -> messagesItem;
             case "assistant" -> assistantItem;
+            case "notifications" -> notificationsItem;
             case "settings" -> settingsItem;
             default -> homeItem;
         };
@@ -143,6 +173,11 @@ public class SidebarPatientController {
     @FXML
     private void handleAssistant(MouseEvent event) {
         NavigationUtil.openPatientAssistantMessages(event);
+    }
+
+    @FXML
+    private void handleNotifications(MouseEvent event) {
+        NavigationUtil.openPatientNotifications(event);
     }
 
     @FXML
@@ -194,6 +229,46 @@ public class SidebarPatientController {
         };
     }
 
+    private void refreshUnreadBadges(Users user) {
+        if (user == null || user.getIdUsers() <= 0) {
+            setMessageBadgeCount(0);
+            setNotificationBadgeCount(0);
+            return;
+        }
+
+        setMessageBadgeCount(chatMessageDao.countUnreadTotalForUser(user.getIdUsers()));
+        setNotificationBadgeCount(notificationDao.countUnreadForUser(user.getIdUsers()));
+    }
+
+    private void startBadgeMonitor() {
+        badgeTimeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> refreshUnreadBadges(AppSession.getCurrentUser())));
+        badgeTimeline.setCycleCount(Timeline.INDEFINITE);
+        badgeTimeline.playFromStart();
+
+        if (messagesItem == null) {
+            return;
+        }
+
+        messagesItem.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene == null) {
+                return;
+            }
+
+            newScene.windowProperty().addListener((windowObservable, oldWindow, newWindow) -> {
+                if (newWindow instanceof Window) {
+                    Window window = (Window) newWindow;
+                    window.setOnHidden(event -> stopBadgeMonitor());
+                }
+            });
+        });
+    }
+
+    private void stopBadgeMonitor() {
+        if (badgeTimeline != null) {
+            badgeTimeline.stop();
+        }
+    }
+
     private void setInactive(HBox... items) {
         for (HBox item : items) {
             if (item == null) {
@@ -215,12 +290,15 @@ public class SidebarPatientController {
     private void styleLabels(HBox item, boolean active) {
         item.getChildren().forEach(child -> {
             if (child instanceof Label label) {
+                if (label == messagesBadgeLabel || label == notificationsBadgeLabel) {
+                    return;
+                }
                 String text = label.getText() == null ? "" : label.getText();
-                if (text.equals("Déconnexion")) {
+                if (text.toLowerCase().contains("connexion")) {
                     label.setStyle("-fx-font-size: 13px; -fx-text-fill: red;");
                     return;
                 }
-                boolean isPrimaryText = !"".equals(text) && !"15".equals(text);
+                boolean isPrimaryText = !text.isBlank();
                 if (active) {
                     label.setStyle(isPrimaryText
                             ? "-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2B7FD4;"

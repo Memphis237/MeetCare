@@ -1,6 +1,7 @@
 package org.example.meetcare.controller;
 
 import javafx.fxml.FXML;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.Node;
@@ -98,12 +99,21 @@ public class HomePatientController {
             welcomeLabel.setText("Bienvenue, " + displayName);
             roleLabel.setText(roleToLabel(user.getRole()));
 
+            applyCounterStyles();
             refreshDashboard(user);
             refreshUpcomingAppointments(user);
         } catch (Exception ex) {
             System.err.println("Erreur lors de l'initialisation de l'accueil patient:");
             ex.printStackTrace();
         }
+    }
+
+    private void applyCounterStyles() {
+        String style = "-fx-font-size: 28px; -fx-font-weight: bold;";
+        appointmentsCountLabel.setStyle(style + " -fx-text-fill: #2563eb;");
+        documentsCountLabel.setStyle(style + " -fx-text-fill: #7c3aed;");
+        invoicesCountLabel.setStyle(style + " -fx-text-fill: #ea580c;");
+        messagesCountLabel.setStyle(style + " -fx-text-fill: #16a34a;");
     }
 
     @FXML
@@ -123,6 +133,11 @@ public class HomePatientController {
 
     @FXML
     private void handleGoToAppointments(MouseEvent event) {
+        NavigationUtil.openPatientAppointments(event);
+    }
+
+    @FXML
+    private void handleGoToAppointmentsButton(ActionEvent event) {
         NavigationUtil.openPatientAppointments(event);
     }
 

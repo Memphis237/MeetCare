@@ -18,6 +18,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Window;
 import org.example.meetcare.dao.AppointmentDao;
 import org.example.meetcare.dao.DoctorDao;
+import org.example.meetcare.dao.NotificationDao;
 import org.example.meetcare.model.Doctor;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AppSession;
@@ -36,6 +37,7 @@ public class AppointmentBookingPatientController {
 
     private final DoctorDao doctorDao = new DoctorDao();
     private final AppointmentDao appointmentDao = new AppointmentDao();
+    private final NotificationDao notificationDao = new NotificationDao();
     private final List<DoctorData> doctors = new ArrayList<>();
 
     private Integer initialDoctorId;
@@ -194,6 +196,8 @@ public class AppointmentBookingPatientController {
                 "Motif: " + motif
         );
 
+        notifyAppointmentBooking(selectedDoctor, selectedDate, selectedTime, motif, currentUser);
+
         showSuccessDialog(getWindow(event), selectedDoctor, selectedDate, selectedTime, event);
     }
 
@@ -317,6 +321,24 @@ public class AppointmentBookingPatientController {
         NavigationUtil.openPatientAppointments(event);
     }
 
+    private void notifyAppointmentBooking(DoctorData doctor, LocalDate date, String time, String motif, Users currentUser) {
+        String summary = doctor.displayLabel() + " - " + date.format(DATE_FORMATTER) + " à " + time;
+        String details = "Motif: " + motif;
+
+        notificationDao.createNotification(
+                currentUser.getIdUsers(),
+                "Rendez-vous confirme",
+                "Votre demande de rendez-vous a ete enregistree. " + summary + ". " + details,
+                "APPOINTMENT");
+
+        doctorDao.findUserIdByDoctorId(doctor.id()).ifPresent(doctorUserId ->
+                notificationDao.createNotification(
+                        doctorUserId,
+                        "Nouveau rendez-vous",
+                        displayName(currentUser) + " a reserve un rendez-vous. " + summary + ". " + details,
+                        "APPOINTMENT"));
+    }
+
     private void showCustomDialog(Window owner, String title, String message) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle(title);
@@ -346,6 +368,25 @@ public class AppointmentBookingPatientController {
         return event == null || !(event.getSource() instanceof Node node) || node.getScene() == null
                 ? null
                 : node.getScene().getWindow();
+    }
+
+    private String displayName(Users user) {
+        if (user == null) {
+            return "Un patient";
+        }
+
+        String prenom = user.getPrenom() == null ? "" : user.getPrenom().trim();
+        String username = user.getUsername() == null ? "" : user.getUsername().trim();
+        if (prenom.isEmpty() && username.isEmpty()) {
+            return "Un patient";
+        }
+        if (prenom.isEmpty()) {
+            return username;
+        }
+        if (username.isEmpty()) {
+            return prenom;
+        }
+        return prenom + " " + username;
     }
 
     private record DoctorData(int id, String name, String speciality, String address, String city) {
