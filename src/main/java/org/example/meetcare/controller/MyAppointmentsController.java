@@ -9,6 +9,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.example.meetcare.dao.AppointmentDao;
+import org.example.meetcare.dao.NotificationDao;
 import org.example.meetcare.model.Appointment;
 import org.example.meetcare.model.Users;
 import org.example.meetcare.utils.AppSession;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 public class MyAppointmentsController {
     private final AppointmentDao appointmentDao = new AppointmentDao();
+    private final NotificationDao notificationDao = new NotificationDao();
     private final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @FXML
@@ -171,6 +173,7 @@ public class MyAppointmentsController {
             completeButton.setStyle("-fx-background-color: white; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 15px; -fx-padding: 10 20;");
             completeButton.setOnAction(event -> {
                 appointmentDao.updateStatus(appointment.getId(), "TERMINE");
+                notifyDoctor(appointment.getId(), "TERMINE");
                 refreshView();
             });
 
@@ -178,6 +181,7 @@ public class MyAppointmentsController {
             cancelButton.setStyle("-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-radius: 10; -fx-background-radius: 10; -fx-text-fill: red; -fx-font-size: 13px; -fx-padding: 6 10;");
             cancelButton.setOnAction(event -> {
                 appointmentDao.updateStatus(appointment.getId(), "ANNULE");
+                notifyDoctor(appointment.getId(), "ANNULE");
                 refreshView();
             });
 
@@ -210,6 +214,15 @@ public class MyAppointmentsController {
             return "Termine";
         }
         return "Confirme";
+    }
+
+    private void notifyDoctor(int appointmentId, String status) {
+        appointmentDao.findParticipantInfoByAppointmentId(appointmentId).ifPresent(info ->
+                notificationDao.createNotification(
+                        info.doctorUserId(),
+                        "Rendez-vous " + getDisplayStatus(status),
+                        "Le patient a mis a jour le rendez-vous du " + formatDate(info.date()) + " a " + info.time() + ".",
+                        "APPOINTMENT"));
     }
 
     private String getInitial(String doctorName) {

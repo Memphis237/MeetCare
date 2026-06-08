@@ -18,6 +18,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.example.meetcare.dao.AppointmentDao;
+import org.example.meetcare.dao.NotificationDao;
 import org.example.meetcare.model.Appointment;
 
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ public class AppointmentsAdminController {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.FRENCH);
 
     private final AppointmentDao appointmentDao = new AppointmentDao();
+    private final NotificationDao notificationDao = new NotificationDao();
 
     @FXML
     private VBox contentContainer;
@@ -379,8 +381,20 @@ public class AppointmentsAdminController {
         dialog.showAndWait().ifPresent(result -> {
             if ("Enregistrer".equals(result.getText())) {
                 appointmentDao.updateStatusAndUrgency(appointment.getId(), statusBox.getValue(), urgencyBox.getValue());
+                notifyAppointmentUpdate(appointment.getId(), statusBox.getValue(), urgencyBox.getValue());
                 refreshData();
             }
+        });
+    }
+
+    private void notifyAppointmentUpdate(int appointmentId, String status, String urgency) {
+        appointmentDao.findParticipantInfoByAppointmentId(appointmentId).ifPresent(info -> {
+            String title = "Rendez-vous mis a jour";
+            String message = "Statut: " + displayStatus(status) + ", urgence: " + displayUrgency(urgency)
+                    + ". Date: " + formatDate(info.date()) + " - " + formatTime(info.time()) + ".";
+
+            notificationDao.createNotification(info.patientUserId(), title, "Votre rendez-vous a ete mis a jour. " + message, "APPOINTMENT");
+            notificationDao.createNotification(info.doctorUserId(), title, "Le rendez-vous avec le patient a ete mis a jour. " + message, "APPOINTMENT");
         });
     }
 

@@ -1,6 +1,7 @@
 package org.example.meetcare.utils;
 
 import javafx.event.Event;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -49,6 +50,13 @@ public class NavigationUtil {
         navigateTo(event, "/view/myAppointments.fxml", PATIENT_WIDTH, 720, "MeetCare - Mes rendez-vous");
     }
 
+    public static void openPatientAppointments(Node source) {
+        if (source == null) {
+            return;
+        }
+        openPatientAppointments(new ActionEvent(source, null));
+    }
+
     public static void openPatientAppointmentBooking(Event event) {
         AppSession.setSidebarRoute("appointments");
         navigateTo(event, "/view/appointmentBookingPatient.fxml", PATIENT_WIDTH, 760, "MeetCare - Prendre un rendez-vous");
@@ -77,6 +85,18 @@ public class NavigationUtil {
     public static void openPatientMessages(Event event) {
         AppSession.setSidebarRoute("messages");
         navigateTo(event, "/view/messagePatient.fxml", 1280, 760, "MeetCare - Messages");
+    }
+
+    public static void openPatientMessages(Node source) {
+        if (source == null) {
+            return;
+        }
+        openPatientMessages(new ActionEvent(source, null));
+    }
+
+    public static void openPatientNotifications(Event event) {
+        AppSession.setSidebarRoute("notifications");
+        navigateTo(event, "/view/notificationsPatient.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Notifications");
     }
 
     public static void openPatientAssistantMessages(Event event) {
@@ -153,6 +173,13 @@ public class NavigationUtil {
         navigateTo(event, "/view/myAppointmentsMedecin.fxml", PATIENT_WIDTH, 720, "MeetCare - Agenda");
     }
 
+    public static void openMedecinAgenda(Node source) {
+        if (source == null) {
+            return;
+        }
+        openMedecinAgenda(new ActionEvent(source, null));
+    }
+
     public static void openMedecinValidation(Event event) {
         AppSession.setSidebarRoute("validation");
         navigateTo(event, "/view/validationMedecin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Patients");
@@ -181,6 +208,18 @@ public class NavigationUtil {
     public static void openMedecinMessages(Event event) {
         AppSession.setSidebarRoute("messages");
         navigateTo(event, "/view/messageMedecin.fxml", 1280, 760, "MeetCare - Messagerie");
+    }
+
+    public static void openMedecinMessages(Node source) {
+        if (source == null) {
+            return;
+        }
+        openMedecinMessages(new ActionEvent(source, null));
+    }
+
+    public static void openMedecinNotifications(Event event) {
+        AppSession.setSidebarRoute("notifications");
+        navigateTo(event, "/view/notificationsMedecin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Notifications");
     }
 
     public static void openMedecinAssistantMessages(Event event) {
@@ -213,6 +252,9 @@ public class NavigationUtil {
 
         if (pathValue.contains("message")) {
             return "messages";
+        }
+        if (pathValue.contains("notifications")) {
+            return "notifications";
         }
         if (pathValue.contains("settings")) {
             return "settings";

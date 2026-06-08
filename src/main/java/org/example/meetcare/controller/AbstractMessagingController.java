@@ -37,6 +37,7 @@ import javafx.util.Duration;
 import org.example.meetcare.dao.ChatbotMessageDao;
 import org.example.meetcare.dao.ChatConversationDao;
 import org.example.meetcare.dao.ChatMessageDao;
+import org.example.meetcare.dao.NotificationDao;
 import org.example.meetcare.dao.UsersDao;
 import org.example.meetcare.model.ChatbotMessage;
 import org.example.meetcare.model.ChatConversation;
@@ -72,6 +73,7 @@ public abstract class AbstractMessagingController {
     private final ChatConversationDao conversationDao = new ChatConversationDao();
     private final ChatMessageDao messageDao = new ChatMessageDao();
     private final ChatbotMessageDao chatbotMessageDao = new ChatbotMessageDao();
+    private final NotificationDao notificationDao = new NotificationDao();
     private final GroqChatService groqChatService = new GroqChatService();
     private final UsersDao usersDao = new UsersDao();
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
@@ -396,11 +398,43 @@ public abstract class AbstractMessagingController {
         List<ChatMessageAttachment> attachments = persistSelectedFiles(savedMessage.getIdMessage(),
                 currentConversation.getIdConversation());
         messageDao.saveAttachments(savedMessage.getIdMessage(), attachments);
+        notifyConversationParticipant(savedMessage.getContent(), attachments.size());
         selectedFiles.clear();
         attachmentStatusLabel.setText("Aucune pièce jointe");
 
         renderConversationMessages(currentConversation.getIdConversation());
         loadConversations();
+    }
+
+    private void notifyConversationParticipant(String messageContent, int attachmentCount) {
+        if (currentConversation == null || currentOtherUser == null || currentUser == null) {
+            return;
+        }
+
+        StringBuilder message = new StringBuilder();
+        if (messageContent != null && !messageContent.isBlank()) {
+            message.append(messageContent.trim());
+        }
+        if (attachmentCount > 0) {
+            if (message.length() > 0) {
+                message.append(" ");
+            }
+            message.append("(").append(attachmentCount).append(" piece");
+            if (attachmentCount > 1) {
+                message.append("s");
+            }
+            message.append(" jointe").append(attachmentCount > 1 ? "s" : "").append(")");
+        }
+        if (message.length() == 0) {
+            message.append("Nouveau message");
+        }
+
+        String sender = buildDisplayName(currentUser);
+        notificationDao.createNotification(
+                currentOtherUser.getIdUsers(),
+                "Nouveau message",
+                sender + " vous a envoye un message. " + message,
+                "MESSAGE");
     }
 
     protected void sendAssistantMessage(String content) {
