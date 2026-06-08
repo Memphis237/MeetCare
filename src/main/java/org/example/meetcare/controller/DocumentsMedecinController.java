@@ -87,8 +87,17 @@ public class DocumentsMedecinController {
         }
 
         currentDoctorId = doctorDao.findDoctorIdByUserId(currentUser.getIdUsers()).orElse(null);
+        applyCounterStyles();
         setupFilters();
         refreshRecords();
+    }
+
+    private void applyCounterStyles() {
+        String base = "-fx-font-size: 28px; -fx-font-weight: bold;";
+        totalDocumentsLabel.setStyle(base + " -fx-text-fill: #0f172a;");
+        prescriptionsCountLabel.setStyle(base + " -fx-text-fill: #2563eb;");
+        biologyImagingCountLabel.setStyle(base + " -fx-text-fill: #7c3aed;");
+        patientsCountLabel.setStyle(base + " -fx-text-fill: #16a34a;");
     }
 
     @FXML
