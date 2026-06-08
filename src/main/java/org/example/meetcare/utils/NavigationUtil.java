@@ -150,7 +150,7 @@ public class NavigationUtil {
 
     public static void openAdminStats(Event event) {
         AppSession.setSidebarRoute("stats");
-        navigateTo(event, "/view/dashboard.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Statistiques");
+        navigateTo(event, "/view/statsAdmin.fxml", HOME_WIDTH, HOME_HEIGHT, "MeetCare - Statistiques");
     }
 
     public static void openAdminValidation(Event event) {
