@@ -136,7 +136,7 @@ public class UsersDao {
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
                        code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
-                WHERE role = 'USER'
+                WHERE UPPER(role) IN ('USER', 'PATIENT')
                 ORDER BY prenom, username
                 """;
 
@@ -200,26 +200,32 @@ public class UsersDao {
     }
 
     public java.util.List<Users> searchByRole(Role role, String query) {
+        String roleSql = role == null
+                ? "('USER', 'PATIENT')"
+                : switch (role) {
+                    case USER -> "('USER', 'PATIENT')";
+                    default -> "('" + role.name() + "')";
+                };
+
         String sql = """
                 SELECT id_users, username, prenom, email, password, phone, avatar, role, address, city,
                        code_postal, country, account_status, is_online, last_seen, `date`
                 FROM users
-                WHERE role = ?
+                WHERE UPPER(role) IN %s
                   AND (
                     LOWER(username) LIKE ?
                     OR LOWER(prenom) LIKE ?
                     OR LOWER(email) LIKE ?
                   )
                 ORDER BY prenom, username
-                """;
+                """.formatted(roleSql);
 
         java.util.List<Users> users = new java.util.ArrayList<>();
         String normalizedQuery = "%" + (query == null ? "" : query.trim().toLowerCase()) + "%";
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-            statement.setString(1, role == null ? Role.USER.name() : role.name());
+            statement.setString(1, normalizedQuery);
             statement.setString(2, normalizedQuery);
             statement.setString(3, normalizedQuery);
-            statement.setString(4, normalizedQuery);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {

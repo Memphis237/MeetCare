@@ -27,11 +27,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PatientsMedecinController {
@@ -105,7 +103,7 @@ public class PatientsMedecinController {
         allPatients.clear();
 
         try {
-            List<Users> sourcePatients = loadRelevantPatients();
+            List<Users> sourcePatients = usersDao.findAllPatients();
             for (Users patient : sourcePatients) {
                 List<Appointment> appointments = appointmentDao.findByUserId(patient.getIdUsers());
                 List<MedicalRecord> records = medicalRecordDao.findByUserId(patient.getIdUsers());
@@ -129,29 +127,6 @@ public class PatientsMedecinController {
             applyFilter();
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Erreur de chargement", rootCauseMessage(ex));
-        }
-    }
-
-    private List<Users> loadRelevantPatients() {
-        try {
-            if (currentUser == null || currentUser.getIdUsers() <= 0) {
-                return usersDao.findAllPatients();
-            }
-
-            Set<Integer> ids = new LinkedHashSet<>();
-            medicalRecordDao.findSharedByDoctorUserId(currentUser.getIdUsers()).forEach(record -> ids.add(record.getIdUsers()));
-
-            if (ids.isEmpty()) {
-                return usersDao.findAllPatients();
-            }
-
-            List<Users> patients = new ArrayList<>();
-            for (Integer id : ids) {
-                usersDao.findById(id).ifPresent(patients::add);
-            }
-            return patients;
-        } catch (Exception ex) {
-            throw new IllegalStateException("Impossible de charger les patients.", ex);
         }
     }
 

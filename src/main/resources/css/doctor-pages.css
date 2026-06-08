@@ -287,13 +287,18 @@
 
 .doctor-metric-card {
     -fx-background-color: white;
-    -fx-background-radius: 16;
-    -fx-border-color: #e5e7eb;
-    -fx-border-width: 1;
+    -fx-background-radius: 18;
+    -fx-border-width: 1.5;
     -fx-border-style: solid;
-    -fx-border-radius: 16;
-    -fx-padding: 18 20 18 20;
-    -fx-pref-width: 0;
+    -fx-border-radius: 18;
+    -fx-background-insets: 0;
+    -fx-padding: 16 18 16 18;
+    -fx-pref-width: 210;
+    -fx-pref-height: 100;
+    -fx-min-height: 100;
+    -fx-min-width: 150;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.04), 12, 0, 0, 4);
 }
 
 .doctor-metric-content {
@@ -303,28 +308,28 @@
 .doctor-metric-title {
     -fx-font-size: 13px;
     -fx-text-fill: #64748b;
-    -fx-font-weight: 600;
+    -fx-font-weight: 700;
 }
 
 .doctor-metric-value {
-    -fx-font-size: 28px;
+    -fx-font-size: 30px;
     -fx-font-weight: 800;
     -fx-text-fill: #0f172a;
 }
 
 .doctor-metric-card-total {
-    -fx-background-color: #eff6ff;
-    -fx-border-color: #bfdbfe;
+    -fx-background-color: #eef4ff;
+    -fx-border-color: #bfd2ff;
 }
 
 .doctor-metric-card-confirmed {
-    -fx-background-color: #ecfdf3;
-    -fx-border-color: #bbf7d0;
+    -fx-background-color: #edfbee;
+    -fx-border-color: #bbebc3;
 }
 
 .doctor-metric-card-completed {
-    -fx-background-color: #fafafa;
-    -fx-border-color: #e5e7eb;
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #d7dee8;
 }
 
 .doctor-metric-title-total {
@@ -337,6 +342,24 @@
 
 .doctor-metric-title-completed {
     -fx-text-fill: #334155;
+}
+
+.doctor-metric-badge-total {
+    -fx-background-color: #dfeaff;
+    -fx-border-color: #b8d0ff;
+    -fx-text-fill: #1d4ed8;
+}
+
+.doctor-metric-badge-confirmed {
+    -fx-background-color: #dff7e5;
+    -fx-border-color: #bdecc8;
+    -fx-text-fill: #15803d;
+}
+
+.doctor-metric-badge-completed {
+    -fx-background-color: #eef2f7;
+    -fx-border-color: #d5dde8;
+    -fx-text-fill: #0f172a;
 }
 
 .doctor-patient-card {
