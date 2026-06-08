@@ -99,6 +99,15 @@ public class UserProfileService {
         return updatedUser;
     }
 
+    public void deleteAccount(Users currentUser) {
+        if (currentUser == null) {
+            throw new IllegalArgumentException("Aucun utilisateur connectÃ©.");
+        }
+
+        removeAvatar(currentUser);
+        usersDao.deleteById(currentUser.getIdUsers());
+    }
+
     private String saveAvatarFile(Users user, File sourceFile) {
         try {
             Path avatarsDir = Paths.get(System.getProperty("user.dir"), "uploads", "avatars");

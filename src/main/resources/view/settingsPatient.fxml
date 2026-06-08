@@ -135,6 +135,15 @@
                                 <CheckBox fx:id="smsNotifToggle" selected="true"/>
                             </HBox>
                         </VBox>
+
+                        <VBox spacing="14" styleClass="card">
+                            <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #991b1b;" text="Zone de danger"/>
+                            <Label style="-fx-font-size: 13px; -fx-text-fill: #64748b; -fx-wrap-text: true;"
+                                   text="La suppression du compte est definitive. Toutes vos informations rattachees a ce compte seront supprimees."/>
+                            <HBox alignment="CENTER_RIGHT">
+                                <Button onAction="#handleDeleteAccount" styleClass="danger-button" text="Supprimer mon compte"/>
+                            </HBox>
+                        </VBox>
                     </VBox>
                 </HBox>
             </VBox>

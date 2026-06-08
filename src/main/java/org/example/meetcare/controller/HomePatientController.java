@@ -1,6 +1,7 @@
 package org.example.meetcare.controller;
 
 import javafx.fxml.FXML;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.Node;
@@ -123,6 +124,11 @@ public class HomePatientController {
 
     @FXML
     private void handleGoToAppointments(MouseEvent event) {
+        NavigationUtil.openPatientAppointments(event);
+    }
+
+    @FXML
+    private void handleGoToAppointmentsButton(ActionEvent event) {
         NavigationUtil.openPatientAppointments(event);
     }
 

@@ -93,7 +93,7 @@ public class NavigationUtil {
 
     public static void openAdminAppointments(Event event) {
         AppSession.setSidebarRoute("appointments");
-        navigateTo(event, "/view/doctorsAdmin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - Médecins");
+        navigateTo(event, "/view/doctorsAdmin.fxml", PATIENT_WIDTH, PATIENT_HEIGHT, "MeetCare - MÃ©decins");
     }
 
     public static void openAdminDocuments(Event event) {
@@ -189,12 +189,6 @@ public class NavigationUtil {
         String titleValue = title == null ? "" : title.toLowerCase();
         String pathValue = fxmlPath == null ? "" : fxmlPath.toLowerCase();
 
-        if (titleValue.contains("rendez-vous")) {
-            return "documents";
-        }
-        if (titleValue.contains("médecins") || titleValue.contains("medecins")) {
-            return "appointments";
-        }
         if (pathValue.contains("message")) {
             return "messages";
         }
@@ -213,6 +207,12 @@ public class NavigationUtil {
         if (pathValue.contains("invoice")) {
             return "invoices";
         }
+        if (titleValue.contains("mÃ©decins") || titleValue.contains("medecins")) {
+            return "appointments";
+        }
+        if (titleValue.contains("mes rendez-vous") || titleValue.contains("agenda")) {
+            return "appointments";
+        }
         if (titleValue.contains("utilisateurs") || titleValue.contains("recherche")) {
             return "search";
         }
@@ -224,6 +224,9 @@ public class NavigationUtil {
         }
         if (titleValue.contains("disponibilites")) {
             return "availability";
+        }
+        if (titleValue.contains("rendez-vous")) {
+            return "documents";
         }
         if (titleValue.contains("accueil") || titleValue.contains("tableau de bord") || titleValue.contains("dashboard")) {
             return "home";

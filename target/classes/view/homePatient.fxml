@@ -11,31 +11,22 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
 
 <BorderPane prefHeight="700" prefWidth="1100" style="-fx-background-color: #EBF3FB;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.meetcare.controller.HomePatientController">
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--  SIDEBAR GAUCHE                                                  -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <left>
         <fx:include source="sidebarPatient.fxml" />
     </left>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!--  CONTENU PRINCIPAL                                               -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <center>
         <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
             <VBox spacing="20" style="-fx-padding: 28 28 28 28; -fx-background-color: #EBF3FB;">
 
-                <!-- ── En-tête de bienvenue ── -->
                 <VBox managed="false" spacing="4" visible="false">
                     <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Bienvenue, Jean" />
-                    <Label style="-fx-font-size: 13px; -fx-text-fill: #6B8CAD;" text="Votre espace santé personnel" />
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #6B8CAD;" text="Votre espace sante personnel" />
                 </VBox>
 
-                <!-- ── Cartes statistiques (4 colonnes) ── -->
                 <HBox alignment="CENTER_LEFT" spacing="16">
                     <VBox spacing="4" HBox.hgrow="ALWAYS">
                         <Label fx:id="welcomeLabel" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Bienvenue, Jean" />
@@ -52,27 +43,24 @@
                         <ColumnConstraints hgrow="ALWAYS" percentWidth="25" />
                     </columnConstraints>
 
-                    <!-- Rendez-vous -->
                     <VBox spacing="8" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 20 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);" GridPane.columnIndex="0">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;" text="📅" />
                             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Rendez-vous" />
                         </HBox>
                         <Label fx:id="appointmentsCountLabel" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="0" />
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="À venir" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="A venir" />
                     </VBox>
 
-                    <!-- Documents -->
                     <VBox spacing="8" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 20 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);" GridPane.columnIndex="1">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;" text="📁" />
                             <Label style="-fx-font-size: 13px; -fx-text-fill: #4A6B8A;" text="Documents" />
                         </HBox>
                         <Label fx:id="documentsCountLabel" style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="0" />
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="Documents médicaux" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="Documents medicaux" />
                     </VBox>
 
-                    <!-- Factures -->
                     <VBox spacing="8" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 20 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);" GridPane.columnIndex="2">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;" text="💲" />
@@ -82,7 +70,6 @@
                         <Label style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="En attente" />
                     </VBox>
 
-                    <!-- Messages -->
                     <VBox spacing="8" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 20 20 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);" GridPane.columnIndex="3">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label style="-fx-font-size: 18px; -fx-text-fill: #2B7FD4;" text="💬" />
@@ -96,20 +83,17 @@
                     </rowConstraints>
                 </GridPane>
 
-                <!-- ── Ligne centrale : Prochain RDV + Notifications ── -->
                 <HBox spacing="14">
-
-                    <!-- Prochain rendez-vous -->
                     <VBox spacing="18" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 22 22 22; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);" HBox.hgrow="ALWAYS">
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Prochain rendez-vous" />
                             <Region HBox.hgrow="ALWAYS" />
-                            <Button fx:id="nextAppointmentDetailsButton" onAction="#handleGoToAppointments" style="-fx-background-color: #2B7FD4; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 8; -fx-padding: 8 16 8 16; -fx-cursor: hand;" text="Voir les détails" />
+                            <Button fx:id="nextAppointmentDetailsButton" onAction="#handleGoToAppointmentsButton" style="-fx-background-color: #2B7FD4; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 8; -fx-padding: 8 16 8 16; -fx-cursor: hand;" text="Voir les details" />
                         </HBox>
 
                         <VBox spacing="10" style="-fx-background-color: #F7FBFF; -fx-background-radius: 12; -fx-padding: 18 18 18 18;">
                             <Label fx:id="nextAppointmentTitleLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Aucun rendez-vous" />
-                            <Label fx:id="nextAppointmentSubtitleLabel" style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="Tes rendez-vous confirmés s'affichent ici." />
+                            <Label fx:id="nextAppointmentSubtitleLabel" style="-fx-font-size: 12px; -fx-text-fill: #6B8CAD;" text="Tes rendez-vous confirmes s'affichent ici." />
                             <HBox alignment="CENTER_LEFT" spacing="10">
                                 <Label style="-fx-font-size: 12px;" text="🕐" />
                                 <Label fx:id="nextAppointmentDateLabel" style="-fx-font-size: 12px; -fx-text-fill: #4A6B8A;" text="-" />
@@ -123,37 +107,32 @@
                         </ScrollPane>
                     </VBox>
 
-                    <!-- Notifications récentes -->
                     <VBox prefWidth="320" spacing="12" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 22 22 22 22; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);">
-                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Notifications récentes" />
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Notifications recentes" />
 
-                        <!-- Notification 1 : Rappel RDV -->
                         <HBox alignment="TOP_LEFT" spacing="12" style="-fx-background-color: #EBF3FB; -fx-background-radius: 10; -fx-padding: 14 14 14 14;">
                             <Label style="-fx-font-size: 18px;" text="🔔" />
                             <VBox spacing="4" HBox.hgrow="ALWAYS">
                                 <HBox alignment="CENTER_LEFT">
                                     <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Rappel de rendez-vous" />
                                     <Region HBox.hgrow="ALWAYS" />
-                                    <Button style="-fx-background-color: #2B7FD4; -fx-text-fill: white; -fx-font-size: 11px; -fx-background-radius: 5; -fx-padding: 4 10 4 10; -fx-cursor: hand;" text="Voir les détails" />
+                                    <Button style="-fx-background-color: #2B7FD4; -fx-text-fill: white; -fx-font-size: 11px; -fx-background-radius: 5; -fx-padding: 4 10 4 10; -fx-cursor: hand;" text="Voir les details" />
                                 </HBox>
                                 <Label style="-fx-font-size: 11px; -fx-text-fill: #6B8CAD;" text="Votre rendez-vous avec Dr." wrapText="true" />
                             </VBox>
                         </HBox>
 
-                        <!-- Notification 2 : Nouveau document -->
                         <HBox alignment="TOP_LEFT" spacing="12" style="-fx-background-color: #EBF3FB; -fx-background-radius: 10; -fx-padding: 14 14 14 14;">
                             <Label style="-fx-font-size: 18px;" text="📄" />
                             <VBox spacing="4">
                                 <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Nouveau document" />
-                                <Label style="-fx-font-size: 11px; -fx-text-fill: #6B8CAD;" text="Dr. Dupont vous a envoyé une ordonnance" wrapText="true" />
+                                <Label style="-fx-font-size: 11px; -fx-text-fill: #6B8CAD;" text="Dr. Dupont vous a envoye une ordonnance" wrapText="true" />
                                 <Label style="-fx-font-size: 11px; -fx-text-fill: #9BB5CC;" text="Hier" />
                             </VBox>
                         </HBox>
-
                     </VBox>
                 </HBox>
 
-                <!-- ── Raccourcis rapides (3 tuiles) ── -->
                 <GridPane hgap="14">
                     <columnConstraints>
                         <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
@@ -161,23 +140,21 @@
                         <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33" />
                     </columnConstraints>
 
-                    <!-- Rechercher un médecin -->
                     <StackPane onMouseClicked="#handleGoToSearch" style="-fx-background-color: #C8DDEF; -fx-background-radius: 12; -fx-cursor: hand; -fx-min-height: 100;" GridPane.columnIndex="0">
                         <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 24 24 24 24;">
                             <VBox spacing="4">
                                 <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Rechercher" />
-                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="un médecin" />
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="un medecin" />
                             </VBox>
                             <Region HBox.hgrow="ALWAYS" />
                             <Label style="-fx-font-size: 48px; -fx-text-fill: #2B7FD4;" text="🔍" />
                         </HBox>
                     </StackPane>
 
-                    <!-- Gérer mes rendez-vous -->
                     <StackPane onMouseClicked="#handleGoToAppointments" style="-fx-background-color: #C8DDEF; -fx-background-radius: 12; -fx-cursor: hand; -fx-min-height: 100;" GridPane.columnIndex="1">
                         <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 24 24 24 24;">
                             <VBox spacing="4">
-                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Gérer mes" />
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="Gerer mes" />
                                 <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1A2C42;" text="rendez-vous" />
                             </VBox>
                             <Region HBox.hgrow="ALWAYS" />
@@ -185,7 +162,6 @@
                         </HBox>
                     </StackPane>
 
-                    <!-- Mes documents -->
                     <StackPane onMouseClicked="#handleGoToDocuments" style="-fx-background-color: #C8DDEF; -fx-background-radius: 12; -fx-cursor: hand; -fx-min-height: 100;" GridPane.columnIndex="2">
                         <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 24 24 24 24;">
                             <VBox spacing="4">
@@ -199,7 +175,6 @@
                     <rowConstraints>
                         <RowConstraints />
                     </rowConstraints>
-
                 </GridPane>
 
             </VBox>
