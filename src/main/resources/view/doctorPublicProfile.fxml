@@ -87,7 +87,7 @@
                                 </VBox>
                                 <VBox spacing="8" HBox.hgrow="ALWAYS" style="-fx-background-color: #f8fafc; -fx-background-radius: 14; -fx-padding: 14;">
                                     <Label style="-fx-font-size: 12px; -fx-text-fill: #64748b;" text="Adresse du cabinet"/>
-                                    <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Voir le panneau Cabinet"/>
+                                    <Label fx:id="cabinetAddressLabel" wrapText="true" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Adresse non renseignee"/>
                                 </VBox>
                             </HBox>
                         </VBox>

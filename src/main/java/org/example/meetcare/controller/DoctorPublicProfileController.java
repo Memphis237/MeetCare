@@ -59,6 +59,9 @@ public class DoctorPublicProfileController {
     private Label teleconsultationLabel;
 
     @FXML
+    private Label cabinetAddressLabel;
+
+    @FXML
     private Button bookAppointmentButton;
 
     @FXML
@@ -100,8 +103,7 @@ public class DoctorPublicProfileController {
                 profile.getDoctorId(),
                 displayName(profile),
                 safeText(profile.getSpeciality(), "Medecine generale"),
-                safeText(profile.getDoctorAddress(), safeText(profile.getAddress(), ""))
-        );
+                safeText(profile.getDoctorAddress(), safeText(profile.getAddress(), "")));
     }
 
     private void loadProfile() {
@@ -131,89 +133,101 @@ public class DoctorPublicProfileController {
 
         this.profile = profile;
 
-        if (doctorNameLabel != null) {
-            doctorNameLabel.setText(displayName(profile));
-        }
-        if (specialityLabel != null) {
-            specialityLabel.setText(safeText(profile.getSpeciality(), "Medecine generale"));
-        }
-        if (cityLabel != null) {
-            cityLabel.setText(safeText(profile.getCity(), "Ville non renseignee"));
-        }
-        if (addressLabel != null) {
-            addressLabel.setText(safeText(profile.getDoctorAddress(), "Adresse du cabinet non renseignee"));
-        }
-        if (statusLabel != null) {
-            statusLabel.setText(profile.isPublicProfileCompleted()
-                    ? "Profil public verifie"
-                    : "Profil en cours de finalisation");
-        }
-        if (biographyLabel != null) {
-            biographyLabel.setText(safeText(profile.getBiography(), "Aucune biographie renseignee pour le moment."));
-        }
-        if (sectorLabel != null) {
-            sectorLabel.setText(safeText(profile.getSector(), "Secteur 1"));
-        }
-        if (experienceLabel != null) {
-            experienceLabel.setText(profile.getExperience() == null
-                    ? "Experience non precisee"
-                    : profile.getExperience() + " ans d'experience");
-        }
-        if (consultationPriceLabel != null) {
-            consultationPriceLabel.setText(profile.getConsultationPrice() == null
-                    ? "Tarif non renseigne"
-                    : String.format(Locale.FRANCE, "%.2f EUR", profile.getConsultationPrice()));
-        }
-        if (acceptsVitaleLabel != null) {
-            acceptsVitaleLabel.setText(profile.isAcceptsVitale() ? "Oui, accepte" : "Non");
-        }
-        if (teleconsultationLabel != null) {
-            teleconsultationLabel.setText(profile.isTeleconsultation() ? "Disponible" : "Non disponible");
-        }
-        if (avatarInitialsLabel != null) {
+        // Nom et infos de base
+        String displayName = displayName(profile);
+        if (doctorNameLabel != null)
+            doctorNameLabel.setText(displayName);
+        if (avatarInitialsLabel != null)
             avatarInitialsLabel.setText(initials(profile));
-        }
+
+        // Spécialité
+        String speciality = safeText(profile.getSpeciality(), "Médecine générale");
+        if (specialityLabel != null)
+            specialityLabel.setText(speciality);
+
+        // Ville
+        String city = safeText(profile.getCity(), "Ville non renseignée");
+        if (cityLabel != null)
+            cityLabel.setText(city);
+
+        // Status
+        String status = profile.isPublicProfileCompleted()
+                ? "Profil public vérifié"
+                : "Profil en cours de finalisation";
+        if (statusLabel != null)
+            statusLabel.setText(status);
+
+        // Biographie - important!
+        String biography = safeText(profile.getBiography(), "Aucune biographie renseignée pour le moment.");
+        if (biographyLabel != null)
+            biographyLabel.setText(biography);
+
+        // Secteur
+        String sector = safeText(profile.getSector(), "Secteur 1");
+        if (sectorLabel != null)
+            sectorLabel.setText(sector);
+
+        // Expérience
+        String experience = profile.getExperience() == null
+                ? "Expérience non précisée"
+                : profile.getExperience() + " ans d'expérience";
+        if (experienceLabel != null)
+            experienceLabel.setText(experience);
+
+        // Prix consultation
+        String price = profile.getConsultationPrice() == null
+                ? "Tarif non renseigné"
+                : String.format(Locale.FRANCE, "%.2f EUR", profile.getConsultationPrice());
+        if (consultationPriceLabel != null)
+            consultationPriceLabel.setText(price);
+
+        // Adresse du cabinet (2 champs)
+        String doctorAddress = safeText(profile.getDoctorAddress(), "Adresse non renseignée");
+        if (addressLabel != null)
+            addressLabel.setText(doctorAddress);
+        if (cabinetAddressLabel != null)
+            cabinetAddressLabel.setText(doctorAddress);
+
+        // Carte Vitale
+        String vitale = profile.isAcceptsVitale() ? "Oui, accepte" : "Non";
+        if (acceptsVitaleLabel != null)
+            acceptsVitaleLabel.setText(vitale);
+
+        // Téléconsultation
+        String teleCons = profile.isTeleconsultation() ? "Disponible" : "Non disponible";
+        if (teleconsultationLabel != null)
+            teleconsultationLabel.setText(teleCons);
     }
 
     private void renderFallbackProfile() {
         profile = null;
 
-        if (doctorNameLabel != null) {
+        if (doctorNameLabel != null)
             doctorNameLabel.setText("Profil public indisponible");
-        }
-        if (specialityLabel != null) {
-            specialityLabel.setText("Profil a completer");
-        }
-        if (cityLabel != null) {
-            cityLabel.setText("Ville non renseignee");
-        }
-        if (addressLabel != null) {
-            addressLabel.setText("Adresse du cabinet non renseignee");
-        }
-        if (statusLabel != null) {
-            statusLabel.setText("Profil incomplet");
-        }
-        if (biographyLabel != null) {
-            biographyLabel.setText("Le medecin n'a pas encore publie sa biographie.");
-        }
-        if (sectorLabel != null) {
-            sectorLabel.setText("Secteur non renseigne");
-        }
-        if (experienceLabel != null) {
-            experienceLabel.setText("Experience non renseignee");
-        }
-        if (consultationPriceLabel != null) {
-            consultationPriceLabel.setText("Tarif non renseigne");
-        }
-        if (acceptsVitaleLabel != null) {
-            acceptsVitaleLabel.setText("Non");
-        }
-        if (teleconsultationLabel != null) {
-            teleconsultationLabel.setText("Non disponible");
-        }
-        if (avatarInitialsLabel != null) {
+        if (avatarInitialsLabel != null)
             avatarInitialsLabel.setText("D");
-        }
+        if (specialityLabel != null)
+            specialityLabel.setText("Profil à compléter");
+        if (cityLabel != null)
+            cityLabel.setText("Ville non renseignée");
+        if (addressLabel != null)
+            addressLabel.setText("Adresse du cabinet non renseignée");
+        if (cabinetAddressLabel != null)
+            cabinetAddressLabel.setText("Adresse non renseignée");
+        if (statusLabel != null)
+            statusLabel.setText("Profil incomplet");
+        if (biographyLabel != null)
+            biographyLabel.setText("Le médecin n'a pas encore publié sa biographie.");
+        if (sectorLabel != null)
+            sectorLabel.setText("Secteur non renseigné");
+        if (experienceLabel != null)
+            experienceLabel.setText("Expérience non renseignée");
+        if (consultationPriceLabel != null)
+            consultationPriceLabel.setText("Tarif non renseigné");
+        if (acceptsVitaleLabel != null)
+            acceptsVitaleLabel.setText("Non");
+        if (teleconsultationLabel != null)
+            teleconsultationLabel.setText("Non disponible");
     }
 
     private String displayName(DoctorAdminEntry doctor) {
