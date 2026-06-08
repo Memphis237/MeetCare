@@ -2,6 +2,7 @@ package org.example.meetcare.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -188,10 +189,14 @@ public class PatientsMedecinController {
         }
 
         historyContainer.getChildren().clear();
+
         if (appointments == null || appointments.isEmpty()) {
             historyContainer.getChildren().add(createEmptyHistoryState());
             return;
         }
+
+        // Ajout du résumé statistique en haut de l'historique
+        historyContainer.getChildren().add(createHistoryStatsHeader(appointments));
 
         List<Appointment> ordered = appointments.stream()
                 .sorted(Comparator.comparing(Appointment::getDate, Comparator.nullsLast(Comparator.reverseOrder()))
@@ -201,6 +206,36 @@ public class PatientsMedecinController {
         for (Appointment appointment : ordered) {
             historyContainer.getChildren().add(createHistoryCard(appointment));
         }
+    }
+
+    private HBox createHistoryStatsHeader(List<Appointment> appointments) {
+        HBox header = new HBox(12);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(0, 0, 15, 0)); // Espacement sous les cartes
+
+        long total = appointments.size();
+        long confirmed = countByStatus(appointments, "CONFIRME");
+        long completed = countByStatus(appointments, "TERMINE");
+
+        header.getChildren().addAll(
+                createStatMiniCard("Total RDV", String.valueOf(total), "#f1f5f9", "#475569"),
+                createStatMiniCard("Confirmés", String.valueOf(confirmed), "#dcfce7", "#15803d"),
+                createStatMiniCard("Terminés", String.valueOf(completed), "#eff6ff", "#2563eb")
+        );
+        return header;
+    }
+
+    private VBox createStatMiniCard(String label, String value, String bgColor, String textColor) {
+        VBox card = new VBox(2);
+        card.setAlignment(Pos.CENTER);
+        card.setMinWidth(110);
+        card.setStyle("-fx-background-color: " + bgColor + "; -fx-background-radius: 12; -fx-padding: 10;");
+        Label val = new Label(value);
+        val.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+        Label title = new Label(label);
+        title.setStyle("-fx-font-size: 10px; -fx-text-fill: " + textColor + "; -fx-font-weight: bold; -fx-text-transform: uppercase;");
+        card.getChildren().addAll(val, title);
+        return card;
     }
 
     private VBox createHistoryCard(Appointment appointment) {
