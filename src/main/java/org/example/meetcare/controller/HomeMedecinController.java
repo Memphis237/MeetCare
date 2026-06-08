@@ -76,7 +76,16 @@ public class HomeMedecinController {
 
     @FXML
     private void initialize() {
+        applyCounterStyles();
         refreshDashboard();
+    }
+
+    private void applyCounterStyles() {
+        String style = "-fx-font-size: 32px; -fx-font-weight: bold;";
+        todayAppointmentsCountLabel.setStyle(style + " -fx-text-fill: #2563eb;");
+        weekAppointmentsCountLabel.setStyle(style + " -fx-text-fill: #16a34a;");
+        uniquePatientsCountLabel.setStyle(style + " -fx-text-fill: #7c3aed;");
+        fillRateCountLabel.setStyle(style + " -fx-text-fill: #ea580c;");
     }
 
     @FXML
