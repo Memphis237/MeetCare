@@ -228,6 +228,13 @@ public class StatsAdminController {
         Label amount = new Label(value);
         amount.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
 
+        switch (label) {
+            case "Validés" -> validatedDoctorsLabel = amount;
+            case "En attente" -> pendingDoctorsLabel = amount;
+            case "Refusés" -> rejectedDoctorsLabel = amount;
+            case "Consultations" -> totalConsultationsLabel = amount;
+        }
+
         card.getChildren().addAll(title, amount);
         return card;
     }
