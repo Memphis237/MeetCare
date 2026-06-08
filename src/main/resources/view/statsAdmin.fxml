@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760" prefWidth="1200"
+            style="-fx-background-color: #F4F7FB;"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.meetcare.controller.StatsAdminController">
+
+    <left>
+        <fx:include source="sidebarAdmin.fxml" />
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <content>
+                <VBox fx:id="contentContainer"
+                      spacing="24"
+                      style="-fx-background-color: #F4F7FB; -fx-padding: 36 36 36 36;" />
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
