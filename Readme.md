@@ -87,5 +87,6 @@ mvnw.cmd test
 
 ## Notes
 
+
 - Le wrapper livré ici retombe sur `mvn` si le jar officiel du wrapper n'est pas présent.
 - Si tu veux le comportement Maven Wrapper complet, il suffit d'ajouter plus tard `./mvnw -N wrapper:wrapper` dans un environnement avec accès réseau.
